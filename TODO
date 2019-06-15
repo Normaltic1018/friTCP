@@ -1,0 +1,9 @@
+2019.06.15
+
+normlatic
+1. json 타입으로 스트링 완성
+2. hexdump 파싱
+
+ikeeby
+1. gui-core 통신 구현
+2. proxy threading 구현 (send, recv)
