@@ -9,8 +9,10 @@ def get_script(script_name):
 
 def validate_setting(mode, value):
 	if value in settings_validation[mode]:
-		return True
+                print("true")
+                return True
 
+	print("false")
 	return False
 
 def set_cmd(cmd):
@@ -25,14 +27,16 @@ def set_cmd(cmd):
 						new_api_list.append(cmd[2+i])
 					else:
 						gui.print_error("\"{}\" is not API Name".format(cmd[2+i]))
-						
+
 				if len(new_api_list) != 0:
-					settings[cmd[1]] = new_api_list
-					gui.print_response("NOT_CHANGED")
-					gui.print_current_settings()
-					#dev.show_current_settings()
+                                        print("aaa")
+                                        settings[cmd[1]] = new_api_list
+                                        gui.print_response("NOT_CHANGED")
+                                        gui.print_current_settings()
+                                        #dev.show_current_settings()
 				else:
-					print("#>Not Changed...")
+                                        print("bbb")
+                                        gui.print_response("#>Not Changed...")
 			else:
 				if(validate_setting(cmd[1],cmd[2])):
 					settings[cmd[1]] = cmd[2]
@@ -53,13 +57,13 @@ def hook_api(session,capture_api):
 	script.on('message', on_input_message)
 	script.load()
 
-		
+
 def on_message(message, data):
 	if message['type'] == 'send':
 		print(message['payload'])
 	elif message['type'] == 'error':
 		print(message['stack'])
-		
+
 def on_input_message(message, data):
 	print(message)
 	if message['type'] == 'send':
@@ -70,4 +74,4 @@ def on_input_message(message, data):
 			print(message['payload'])
 	elif message['type'] == 'error':
 		print(message['stack'])
-		
+
