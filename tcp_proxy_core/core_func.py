@@ -85,7 +85,8 @@ def parsing_hexdata(hexdump):
 
 	hex_list = []
 	for i in range(4):
-		indexing = format(start_address + (i*16),'x')
+		indexing = format(start_address + (i*16),'x').zfill(8)
+		
 		start_index = hexdata.index(indexing)
 
 		for hex_byte in hexdata[start_index+1:start_index+1+16]:
