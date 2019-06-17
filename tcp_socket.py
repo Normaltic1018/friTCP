@@ -2,8 +2,6 @@ import socket
 import time
 
 class TCP_SOCKET:
-
-
     def __init__(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind(('127.0.0.1', 12345))

@@ -35,6 +35,12 @@ for(var key in hook_diction){
 			
 			// i is arg index
 			var user_write_data;
+			
+			var socket_fd = args[0].toInt32();
+			
+			var socket_address = Socket.peerAddress(socket_fd);
+			send('{"ip":"'+socket_address.ip+'","port":"'+socket_address.port+'"}')
+			
 			var memory_arg = ptr(args[buf_index]);
 			//for (key in memory_arg){
 				//console.log('key : ' + key + ', value : ' + memory_arg[key]);
@@ -42,9 +48,8 @@ for(var key in hook_diction){
 			var res = hexdump(memory_arg,{offset:0,length:64,header:false,ansi:false});
 			//var res = memory_arg.readByteArray(64);
 			send("[HEXDUMP]" + res);
-			//for (key in res){console.log('key : ' + key + ', value : ' + memory_arg[key]);}
-			//console.log(typeof(res));
-			//console.log(Memory.readByteArray(args[buf_index],64));
+
+			
 			send("interactive");
 			var op = recv('input',function(value){
 				user_write_data = value.payload;
