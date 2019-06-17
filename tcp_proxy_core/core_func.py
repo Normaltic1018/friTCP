@@ -66,7 +66,7 @@ def on_input_message(message, data):
 	#print(message)
 	if message['type'] == 'send':
 		if(message['payload'] == "interactive"):
-			user_input = input("Data : ")
+			user_input = gui.input_data()
 			script.post({'type':'input','payload':user_input})
 		elif(message['payload'].startswith("[HEXDUMP]")):
 			#print("Parsing Process")

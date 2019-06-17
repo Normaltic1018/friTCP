@@ -62,6 +62,15 @@ def print_command():
 		print("print_command: "+send_data)
 	else:
 		sock.send(send_data)
+
+def input_data():
+	if(console_mode):
+		res = input("Data : ")
+	else:
+		# recv 로 바꿔주세요!
+		res = input("Data : ")
+		
+	return res
 	
 def print_js_response(message,hex_data):
 	if(console_mode):
