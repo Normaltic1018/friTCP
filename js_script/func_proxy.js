@@ -39,9 +39,9 @@ for(var key in hook_diction){
 			//for (key in memory_arg){
 				//console.log('key : ' + key + ', value : ' + memory_arg[key]);
 			//}
-			var res = hexdump(memory_arg,64);
+			var res = hexdump(memory_arg,{offset:0,length:64,header:false,ansi:false});
 			//var res = memory_arg.readByteArray(64);
-			send(res);
+			send("[HEXDUMP]" + res);
 			//for (key in res){console.log('key : ' + key + ', value : ' + memory_arg[key]);}
 			//console.log(typeof(res));
 			//console.log(Memory.readByteArray(args[buf_index],64));

@@ -29,13 +29,11 @@ def set_cmd(cmd):
 						gui.print_error("\"{}\" is not API Name".format(cmd[2+i]))
 
 				if len(new_api_list) != 0:
-                                        print("aaa")
                                         settings[cmd[1]] = new_api_list
                                         gui.print_response("NOT_CHANGED")
                                         gui.print_current_settings()
                                         #dev.show_current_settings()
 				else:
-                                        print("bbb")
                                         gui.print_response("#>Not Changed...")
 			else:
 				if(validate_setting(cmd[1],cmd[2])):
@@ -65,13 +63,35 @@ def on_message(message, data):
 		print(message['stack'])
 
 def on_input_message(message, data):
-	print(message)
+	#print(message)
 	if message['type'] == 'send':
 		if(message['payload'] == "interactive"):
 			user_input = input("Data : ")
 			script.post({'type':'input','payload':user_input})
+		elif(message['payload'].startswith("[HEXDUMP]")):
+			#print("Parsing Process")
+			parsing_data = parsing_hexdata(message['payload'])
+			gui.print_js_response("[HEXDUMP]",parsing_data)
 		else:
-			print(message['payload'])
+			gui.print_js_response("[frida_response]",message['payload'])
 	elif message['type'] == 'error':
-		print(message['stack'])
+		gui.print_js_response("[frida_error]",message['stack'])
+		#print(message['stack'])
+
+def parsing_hexdata(hexdump):
+	hexdata = hexdump.split("[HEXDUMP]")[1].split()
+
+	start_address = int(hexdata[0],16)
+
+	hex_list = []
+	for i in range(4):
+		indexing = format(start_address + (i*16),'x')
+		start_index = hexdata.index(indexing)
+
+		for hex_byte in hexdata[start_index+1:start_index+1+16]:
+			hex_list.append(hex_byte)
+
+	return hex_list
+
+
 
