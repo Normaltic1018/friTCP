@@ -3,7 +3,7 @@
 from tcp_proxy_core.tcp_proxy_config import *
 from tcp_socket import *
 
-console_mode = True
+console_mode = False
 
 if(console_mode == False):
 	sock = TCP_SOCKET()
