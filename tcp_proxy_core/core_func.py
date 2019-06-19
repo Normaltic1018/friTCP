@@ -89,16 +89,16 @@ def on_input_message(message, data):
 def parsing_hexdata(hexdump):
 	hexdata = hexdump.split("[HEXDUMP]")[1].split()
 
-	start_address = int(hexdata[0],16)
+	hex_len = int(hexdata[0])
+	start_address = int(hexdata[1],16)
 
 	hex_list = []
-	for i in range(4):
-		indexing = format(start_address + (i*16),'x').zfill(8)
-		
+	
+	for i in range(hex_len):
+		indexing = format(start_address + (int(i/16)*16),'x')
+	
 		start_index = hexdata.index(indexing)
-
-		for hex_byte in hexdata[start_index+1:start_index+1+16]:
-			hex_list.append(hex_byte)
+		hex_list.append(hexdata[start_index+1+(i%16)])
 
 	return hex_list
 

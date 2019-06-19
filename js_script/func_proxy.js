@@ -45,9 +45,10 @@ for(var key in hook_diction){
 			//for (key in memory_arg){
 				//console.log('key : ' + key + ', value : ' + memory_arg[key]);
 			//}
+			var buf_length = args[buf_index+1].toInt32();
 			var res = hexdump(buf_address,{offset:0,length:64,header:false,ansi:false});
 			//var res = memory_arg.readByteArray(64);
-			send("[HEXDUMP]" + res);
+			send("[HEXDUMP]"+buf_length+" " + res);
 
 			send("[intercept_on/off]");
 			var op = recv('intercept',function(value){
