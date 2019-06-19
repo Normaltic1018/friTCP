@@ -101,7 +101,7 @@ def parsing_hex(hexdump):
 	hex_list = []
 	
 	for i in range(hex_len):
-		indexing = format(start_address + (int(i/16)*16),'x')
+		indexing = format(start_address + (int(i/16)*16),'x').zfill(8)
 	
 		start_index = hexdata.index(indexing)
 		hex_list.append(hexdata[start_index+1+(i%16)])
