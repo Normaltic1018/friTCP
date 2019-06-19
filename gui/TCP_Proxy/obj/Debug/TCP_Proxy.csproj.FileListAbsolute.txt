@@ -9,3 +9,6 @@ C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\bin\Debug\TCP_Proxy.pdb
 C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\obj\Debug\TCP_Proxy.Attach.resources
 C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\obj\Debug\TCP_Proxy.exe
 C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\obj\Debug\TCP_Proxy.pdb
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\bin\Debug\Newtonsoft.Json.dll
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\bin\Debug\Newtonsoft.Json.xml
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\obj\Debug\TCP_Proxy.csproj.CopyComplete
