@@ -23,13 +23,13 @@ for(var key in hook_diction){
 	var hook_function_name = hook_diction[key];
 	
 	var hookPtr = Module.findExportByName(hook_module_name, hook_function_name);
-	send("["+hook_module_name+":"+hook_function_name+"]'s "+' address :' + hookPtr.toString());
+	send("[HOOK_INFO][PID]"+Process.id+" [MODULE]"+hook_module_name+" [FUNCTION]"+hook_function_name+" [ADDRESS]"+ hookPtr.toString());
 	
 	var buf_ptr;
 	
 	Interceptor.attach(hookPtr,{
 		onEnter: function(args){
-			send("["+hook_module_name+":"+hook_function_name+"]"+' Caught');
+			//send("["+hook_module_name+":"+hook_function_name+"]"+' Caught');
 			var buf_index;
 			buf_index = 1;
 			
@@ -39,7 +39,7 @@ for(var key in hook_diction){
 			var socket_fd = args[0].toInt32();
 			
 			var socket_address = Socket.peerAddress(socket_fd);
-			send('{"ip":"'+socket_address.ip+'","port":"'+socket_address.port+'"}')
+			//send('{"ip":"'+socket_address.ip+'","port":"'+socket_address.port+'"}')
 			
 			var buf_address = ptr(args[buf_index]);
 			//for (key in memory_arg){
@@ -48,7 +48,8 @@ for(var key in hook_diction){
 			var buf_length = args[buf_index+1].toInt32();
 			var res = hexdump(buf_address,{offset:0,length:64,header:false,ansi:false});
 			//var res = memory_arg.readByteArray(64);
-			send("[HEXDUMP]"+buf_length+" " + res);
+			send("[PROXY][IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
+			//send("[HEXDUMP]"+buf_length+" " + res);
 
 			send("[intercept_on/off]");
 			var op = recv('intercept',function(value){

@@ -75,18 +75,24 @@ def on_input_message(message, data):
 			script.post({'type':'input','payload':user_input})
 		elif(message['payload'] == "[intercept_on/off]"):
 			script.post({'type':'intercept','payload':settings["intercept"]})
-		
+		elif(message['payload'].startswith("[HOOK_INFO]")):
+			hook_info = parsing_hook_info(message['payload'])
+			gui.print_js_response("[HOOK_INFO]", hook_info, [])
 		elif(message['payload'].startswith("[HEXDUMP]")):
 			#print("Parsing Process")
 			parsing_data = parsing_hexdata(message['payload'])
 			gui.print_js_response("[HEXDUMP]",parsing_data)
+		elif(message['payload'].startswith("[PROXY]")):
+			parsing_info_data = parsing_info(message['payload'])
+			parsing_hex_data = parsing_hex(message['payload'])
+			gui.print_js_response("[PROXY]", parsing_info_data, parsing_hex_data)
 		else:
 			gui.print_js_response("[frida_response]",message['payload'])
 	elif message['type'] == 'error':
-		gui.print_js_response("[frida_error]",message['stack'])
+		gui.print_js_response("[frida_error]",message['stack'],[])
 		#print(message['stack'])
 
-def parsing_hexdata(hexdump):
+def parsing_hex(hexdump):
 	hexdata = hexdump.split("[HEXDUMP]")[1].split()
 
 	hex_len = int(hexdata[0])
@@ -102,5 +108,16 @@ def parsing_hexdata(hexdump):
 
 	return hex_list
 
+def parsing_info(data):
+	ip_info = data.split("[IP]")[1].split()[0]
+	port_info = data.split("[PORT]")[1].split()[0]
 
+	return ip_info, port_info
 
+def parsing_hook_info(data):
+	hook_pid = data.split("[PID]")[1].split()[0]
+	hook_module = data.split("[MODULE]")[1].split()[0]
+	hook_function = data.split("[FUNCTION]")[1].split()[0]
+	hook_address = data.split("[ADDRESS]")[1].split()[0]
+	
+	return hook_pid, hook_module, hook_function, hook_address

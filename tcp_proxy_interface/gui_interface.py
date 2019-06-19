@@ -72,9 +72,15 @@ def input_data():
 		
 	return res
 	
-def print_js_response(message,hex_data):
+def print_js_response(message,proxy_info,hex_data):
 	if(console_mode):
-		if(message.startswith("[HEXDUMP]")):
+		if(message.startswith("[PROXY]")):
+			send_data = '{"type":"frida","data":{"res":"success","message":{"IP":"%s","PORT":"%s","hex_dump":"%s"}}}' % (proxy_info[0],proxy_info[1],str(hex_data))
+			print(send_data)
+		elif(message.startswith("[HOOK_INFO]")):
+			send_data = '{"type":"frida","data":{"res":"success","message":{"PID":"%s","MODULE":"%s","FUNCTION":"%s","ADDRESS":"%s"}}}' % (proxy_info[0],proxy_info[1],proxy_info[2],proxy_info[3])
+			print(send_data)		
+		elif(message.startswith("[HEXDUMP]")):
 			send_data = '{"type":"frida","data":{"res":"success","message":{"hex_dump":"%s"}}}' % (str(hex_data))
 			print(send_data)
 		elif(message.startswith("[frida_error]")):
@@ -84,7 +90,13 @@ def print_js_response(message,hex_data):
 			send_data = '{"type":"frida","data":{"res":"success","message":{"data":"%s"}}}' % (str(hex_data))
 			print(send_data)
 	else:
-		if(message.startswith("[HEXDUMP]")):
+		if(message.startswith("[PROXY]")):
+			send_data = '{"type":"frida","data":{"res":"success","message":{"IP":"%s","PORT":"%s","hex_dump":"%s"}}}' % (proxy_info[0],proxy_info[1],str(hex_data))
+			sock.send(send_data)
+		elif(message.startswith("[HOOK_INFO]")):
+			send_data = '{"type":"frida","data":{"res":"success","message":{"PID":"%s","MODULE":"%s","FUNCTION":"%s","ADDRESS":"%s"}}}' % (proxy_info[0],proxy_info[1],proxy_info[2],proxy_info[3])
+			sock.send(send_data)	
+		elif(message.startswith("[HEXDUMP]")):
 			send_data = '{"type":"frida","data":{"res":"success","message":{"hex_dump":"%s"}}}' % (str(hex_data))
 			sock.send(send_data)
 		elif(message.startswith("[frida_error]")):
