@@ -1,18 +1,17 @@
 # core Function Library
 from tcp_proxy_interface import gui_interface as gui
 from tcp_proxy_core.tcp_proxy_config import *
+import os
 
 def get_script(script_name):
-	with open('js_script\\'+script_name, 'r') as f:
+	with open(js_path+script_name, 'r') as f:
 		script = f.read()
 	return script
 
 def validate_setting(mode, value):
 	if value in settings_validation[mode]:
-                print("true")
                 return True
 
-	print("false")
 	return False
 
 def set_cmd(cmd):
@@ -48,6 +47,12 @@ def set_cmd(cmd):
 			#dev.show_settings()
 	else:
 		gui.print_error("WRONG_CMD_ARG")
+	
+	if(settings["intercept"] == "on"):
+		intercept = True
+	else:
+		intercept = False
+	#gui.print_current_settings()
 
 def hook_api(session,capture_api):
 	global script
@@ -68,6 +73,9 @@ def on_input_message(message, data):
 		if(message['payload'] == "interactive"):
 			user_input = gui.input_data()
 			script.post({'type':'input','payload':user_input})
+		elif(message['payload'] == "[intercept_on/off]"):
+			script.post({'type':'intercept','payload':settings["intercept"]})
+		
 		elif(message['payload'].startswith("[HEXDUMP]")):
 			#print("Parsing Process")
 			parsing_data = parsing_hexdata(message['payload'])

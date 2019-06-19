@@ -16,7 +16,6 @@ def main(target_process):
 	while True:
 		#cmd = dev.shell_loop()
 		cmd = gui.get_cmd()
-		print(cmd)
       		
 		if cmd == 'proxy':
 			if len(settings['capture_list']) != 0 :
