@@ -3,7 +3,7 @@
 from tcp_proxy_core.tcp_proxy_config import *
 from tcp_socket import *
 
-console_mode = False
+console_mode = True
 
 if(console_mode == False):
 	cmd_sock = TCP_SOCKET(12345)
@@ -85,7 +85,7 @@ def print_js_response(message,proxy_info,hex_data):
 			send_data = '{"type":"frida","data":{"service":"hexdump","res":"success","message":{"hex_dump":"%s"}}}' % (str(hex_data))
 			print(send_data)
 		elif(message.startswith("[frida_error]")):
-			send_data = '{"type":"frida","data":{"service":"frida_error","res":"fail","message":{"error":"%s"}}}' % (str(hex_data))
+			send_data = '{"type":"frida","data":{"service":"frida_error","res":"fail","message":{"error":"%s"}}}' % proxy_info
 			print(send_data)
 		else:
 			send_data = '{"type":"frida","data":{"service":"else","res":"success","message":{"data":"%s"}}}' % (str(hex_data))
@@ -101,7 +101,7 @@ def print_js_response(message,proxy_info,hex_data):
 			send_data = '{"type":"frida","data":{"service":"hexdump","res":"success","message":{"hex_dump":"%s"}}}' % (str(hex_data))
 			proxy_sock.send(send_data)
 		elif(message.startswith("[frida_error]")):
-			send_data = '{"type":"frida","data":{"service":"frida_error","res":"fail","message":{"error":"%s"}}}' % (str(hex_data))
+			send_data = '{"type":"frida","data":{"service":"frida_error","res":"fail","message":{"error":"%s"}}}' % proxy_info
 			proxy_sock.send(send_data)
 		else:
 			send_data = '{"type":"frida","data":{"service":"else","res":"success","message":{"data":"%s"}}}' % (str(hex_data))

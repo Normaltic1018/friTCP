@@ -3,7 +3,7 @@ var module_list = Process.enumerateModules();
 var hook_diction = {};
 var input_func_name = "%s";
 var mode = "%s";
-var intercept_flag ="on";
+var intercept_flag;
 for(var idx in module_list){
 	// Find Function
 	var select_module = Process.getModuleByName(module_list[idx].name);
@@ -63,15 +63,37 @@ for(var key in hook_diction){
 					user_write_data = value.payload;
 				});
 				op.wait();
+				
+				// GET MODE
+				send("[GET_MODE]");
+				op = recv('input',function(value){
+					mode = value.payload;
+				});
+				op.wait();
+				
 				var input_len;
 				input_len = user_write_data.length;
 				if(input_len != 0){
-					// If a particular character must end in the end
-					user_write_data = user_write_data + "\n";
+					if(mode == "hex"){
+						// Hex mode
+						user_write_data = user_write_data + " 0d 0a";
+						var list_user_data = user_write_data.split(" ");
+						var input_array = new Array();
+						
+						for(var i in list_user_data){
+							input_array[i] = parseInt(list_user_data[i],16);
+						}
+						Memory.writeByteArray(args[buf_index],input_array);
+						input_len = input_array.length;
+					}else{
+						// String mode
+						user_write_data = user_write_data + "\n";
 					
-					input_len = user_write_data.length;
+						input_len = user_write_data.length;
 					
-					Memory.writeAnsiString(args[buf_index], user_write_data);
+						Memory.writeAnsiString(args[buf_index], user_write_data);
+					}
+										
 					if(input_len < args[buf_index+1].toInt32()){
 						var null_array = new Array();
 						for(var i = 0; i<(args[buf_index+1].toInt32()-input_len); i++){null_array[i] = 0;}
@@ -82,9 +104,9 @@ for(var key in hook_diction){
 						args[buf_index+1] = args[buf_index+1].add(input_len);
 						buf_ptr = args[buf_index];
 					}
-					send('Modified buf:');
+					//send('Modified buf:');
 					var res = hexdump(buf_address,{offset:0,length:64,header:false,ansi:false});
-					send("[HEXDUMP]" + res);
+					//send("[HEXDUMP]" + res);
 					//console.log(Memory.readByteArray(args[buf_index],64));
 				}
 			}

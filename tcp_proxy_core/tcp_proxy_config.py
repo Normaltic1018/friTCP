@@ -13,7 +13,7 @@ settings_validation = {"mode":["hex", "string"],
 "intercept":["on","off"]
 }
 
-settings = {"mode":"string",
+settings = {"mode":"hex",
 "capture_list":["send"],
-"intercept":"off"
+"intercept":"on"
 }
