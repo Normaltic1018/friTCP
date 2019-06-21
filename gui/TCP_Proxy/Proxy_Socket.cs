@@ -61,6 +61,9 @@ namespace TCP_Proxy
 
         public void thread_control(bool flag)
         {
+            ns.Close();
+            server.Stop();
+            client.Close();
             isRunning = flag;
         }
 
@@ -172,17 +175,20 @@ namespace TCP_Proxy
                 
                 try
                 {
-                    byte_read = 0;
-                    byte_read = ns.Read(buffer, 0, buffer.Length);
-                    if (byte_read > 0)
+                    if (ns.DataAvailable)
                     {
-                        ASCIIEncoding encoder = new ASCIIEncoding();
-                        msg = encoder.GetString(buffer, 0, byte_read);
-                        //msg = Encoding.ASCII.GetString(buffer);
+                        byte_read = 0;
+                        byte_read = ns.Read(buffer, 0, buffer.Length);
+                        if (byte_read > 0)
+                        {
+                            ASCIIEncoding encoder = new ASCIIEncoding();
+                            msg = encoder.GetString(buffer, 0, byte_read);
+                            //msg = Encoding.ASCII.GetString(buffer);
 
-                        send_gui(history_listview, msg);
+                            send_gui(history_listview, msg);
 
-                        //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
+                            //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
+                        }
                     }
                 }
                 catch (Exception ex)

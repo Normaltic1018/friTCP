@@ -33,6 +33,9 @@ namespace TCP_Proxy
 
         public void thread_control(bool flag)
         {
+            ns.Close();
+            server.Stop();
+            client.Close();
             isRunning = flag;
         }
 
@@ -58,15 +61,22 @@ namespace TCP_Proxy
 
         public void socket_handler()
         {
-            server.Start();
+            try
+            {
+                server.Start();
 
-            client = server.AcceptTcpClient();
-            isRunning = true;
+                client = server.AcceptTcpClient();
+                isRunning = true;
 
-            ns = client.GetStream();
+                ns = client.GetStream();
 
-            Thread recvThread = new Thread(new ThreadStart(RecvThread));
-            recvThread.Start();
+                Thread recvThread = new Thread(new ThreadStart(RecvThread));
+                recvThread.Start();
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("서버와의 연결에 실패했습니다.");
+            }
         }
 
 
@@ -106,6 +116,7 @@ namespace TCP_Proxy
             string msg = "";
             try
             {
+
                 ns.Read(buffer, 0, buffer.Length);
                 msg = Encoding.ASCII.GetString(buffer);
             }
@@ -145,17 +156,19 @@ namespace TCP_Proxy
                 
                 try
                 {
-                    byte_read = 0;
-                    byte_read = ns.Read(buffer, 0, buffer.Length);
-                    if (byte_read > 0)
+                    if (ns.DataAvailable)
                     {
-                        ASCIIEncoding encoder = new ASCIIEncoding();
-                        msg = encoder.GetString(buffer, 0, byte_read);
-                        //msg = Encoding.ASCII.GetString(buffer);
+                        byte_read = ns.Read(buffer, 0, buffer.Length);
+                        if (byte_read > 0)
+                        {
+                            ASCIIEncoding encoder = new ASCIIEncoding();
+                            msg = encoder.GetString(buffer, 0, byte_read);
+                            //msg = Encoding.ASCII.GetString(buffer);
 
-                        send_gui(log_console, msg);
+                            send_gui(log_console, msg);
 
-                        //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
+                            //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
+                        }
                     }
                 }
                 catch (Exception ex)
