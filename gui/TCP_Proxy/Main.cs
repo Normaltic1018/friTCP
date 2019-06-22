@@ -87,7 +87,7 @@ namespace TCP_Proxy
             pro = new Process();
 
             // process information settings
-            proinfo.FileName = @"python3";
+            proinfo.FileName = @"python";
             proinfo.CreateNoWindow = true;
             proinfo.UseShellExecute = false;
             proinfo.RedirectStandardOutput = false;
@@ -322,6 +322,8 @@ namespace TCP_Proxy
         {
             int value = Convert.ToInt32(my_byte, 16);
             string stringValue = Char.ConvertFromUtf32(value);
+            System.Diagnostics.Debug.WriteLine("Byte_To_Ascii input: " + my_byte);
+            System.Diagnostics.Debug.WriteLine("Byte_To_Ascii output: " + stringValue);
             return stringValue;
         }
 
@@ -329,7 +331,11 @@ namespace TCP_Proxy
         {
             StringBuilder hexNumbers = new StringBuilder();
             byte[] byteArray = ASCIIEncoding.ASCII.GetBytes(ascii);
-            return byteArray[0].ToString("x");
+            string hex_value = byteArray[0].ToString("x");
+            string res = string.Format("{0:D2}", hex_value);
+            System.Diagnostics.Debug.WriteLine("Ascii_To_Byte input: " + ascii);
+            System.Diagnostics.Debug.WriteLine("Ascii_To_Byte output: " + res);
+            return res;
         }
         public void Refresh_HexBox(int i)
         {
@@ -350,7 +356,7 @@ namespace TCP_Proxy
                     int idx = string_list[i].SelectionStart; // 현재 textbox의 커서 인덱스 값
 
                     string tmp_text = string_list[i].Text;
-                    System.Diagnostics.Debug.WriteLine("tmp_text: " + tmp_text);
+                    System.Diagnostics.Debug.WriteLine("stringbox 기존 문자열: " + tmp_text);
 
 
                     string old_text = tmp_text;
@@ -367,7 +373,7 @@ namespace TCP_Proxy
                     string new_text = strbuilder1.ToString();
 
                     string_list[i].Text = new_text;
-                    
+                    System.Diagnostics.Debug.WriteLine("stringbox 새 문자열: " + new_text);
 
                     // hex 값 변경 시 string 변경 수행
                     Refresh_HexBox(i);

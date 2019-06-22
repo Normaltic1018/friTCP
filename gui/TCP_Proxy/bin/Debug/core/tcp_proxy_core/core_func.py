@@ -72,27 +72,34 @@ def on_input_message(message, data):
 	if message['type'] == 'send':
 		if(message['payload'] == "interactive"):
 			user_input = gui.input_data()
+			if(settings["mode"] == "hex"):
+				if(validate_hex_input(user_input) == False):
+					gui.print_js_response("[frida_error]","NOT HEX VALUE",[])
+					user_input = ""
 			script.post({'type':'input','payload':user_input})
 		elif(message['payload'] == "[intercept_on/off]"):
 			script.post({'type':'intercept','payload':settings["intercept"]})
 		elif(message['payload'].startswith("[HOOK_INFO]")):
 			hook_info = parsing_hook_info(message['payload'])
 			gui.print_js_response("[HOOK_INFO]", hook_info, [])
+		elif(message['payload'].startswith("[GET_MODE]")):
+			script.post({'type':'input','payload':settings["mode"]})
 		elif(message['payload'].startswith("[HEXDUMP]")):
 			#print("Parsing Process")
 			parsing_data = parsing_hexdata(message['payload'])
-			gui.print_js_response("[HEXDUMP]",parsing_data)
+			gui.print_js_response("[HEXDUMP]",parsing_data,[])
 		elif(message['payload'].startswith("[PROXY]")):
 			parsing_info_data = parsing_info(message['payload'])
 			parsing_hex_data = parsing_hex(message['payload'])
 			gui.print_js_response("[PROXY]", parsing_info_data, parsing_hex_data)
 		else:
-			gui.print_js_response("[frida_response]",message['payload'])
+			gui.print_js_response("[frida_response]",message['payload'],[])
 	elif message['type'] == 'error':
 		gui.print_js_response("[frida_error]",message['stack'],[])
 		#print(message['stack'])
 
 def parsing_hex(hexdump):
+	print ("parsing_hex: "+hexdump)
 	hexdata = hexdump.split("[HEXDUMP]")[1].split()
 
 	hex_len = int(hexdata[0])
@@ -121,3 +128,15 @@ def parsing_hook_info(data):
 	hook_address = data.split("[ADDRESS]")[1].split()[0]
 	
 	return hook_pid, hook_module, hook_function, hook_address
+	
+def validate_hex_input(hex_data):
+	hex_data = hex_data.split()
+	
+	for hex in hex_data:
+		try:
+			res = int(hex,16)
+		except:
+			return False
+			
+	return True
+		

@@ -169,6 +169,14 @@ namespace TCP_Proxy
 
                             //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
                         }
+
+                        else
+                        {
+                            MessageBox.Show("Cmd_Socket: Data 0 recv");
+                            ns.Close();
+                            server.Stop();
+                            client.Close();
+                        }
                     }
                 }
                 catch (Exception ex)
