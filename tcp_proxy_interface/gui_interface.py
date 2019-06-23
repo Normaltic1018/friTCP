@@ -3,7 +3,7 @@
 from tcp_proxy_core.tcp_proxy_config import *
 from tcp_socket import *
 
-console_mode = True
+console_mode = False
 
 if(console_mode == False):
 	cmd_sock = TCP_SOCKET(12345)
@@ -69,7 +69,7 @@ def input_data():
 		res = input("Data : ")
 	else:
 		# recv 로 바꿔주세요!
-		res = input("Data : ")
+		res = proxy_sock.recv()
 		
 	return res
 	
