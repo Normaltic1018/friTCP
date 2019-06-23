@@ -29,6 +29,7 @@ namespace TCP_Proxy
         TextBox[] hex_list = null;
         TextBox[] string_list = null;
 
+        int line_limits = 16;
         
 
         public Main()
@@ -38,6 +39,9 @@ namespace TCP_Proxy
             //init_screen();
             //sort 관리자 생성
             sorter = new Sorting(listView1);
+
+            // hexeditor title 세팅
+            Create_HexEditor_Title(16);
 
             // process exit event => clean all!
             // AppDomain.CurrentDomain.ProcessExit += ProcessExitHanlder;
@@ -70,6 +74,7 @@ namespace TCP_Proxy
             this.Location = new Point(fullScrenn_bounds.Left, fullScrenn_bounds.Top);
 
         }
+
 
         public void set_text_gui(string msg)
         {
@@ -174,11 +179,23 @@ namespace TCP_Proxy
             cmd_sock.send2(msg);
         }
 
-        private void Create_HexEditor_Contents(string[] hexdump_list, int line_limits)
+        private void Create_HexEditor(string[] hexdump_list, int line_limits)
         {
+            /*
+            foreach (Control c in panel2.Controls)
+            {
+                if(c.Name.Equals("offset_panel"))
+                {
+                    panel2.Controls.Clear;
+                }
+            }*/
+
+
+
             int counts = hexdump_list.Length;
             hex_list = new TextBox[counts];
             string_list = new TextBox[counts];
+
 
 
             int column_index = 0;
@@ -191,14 +208,13 @@ namespace TCP_Proxy
                     row_index += 1;
                 }
 
-
                 hex_list[i] = new TextBox();
                 hex_list[i].Location = new Point(11 + (22 * column_index), 5 + (22 * row_index + 1));
                 hex_list[i].Size = new Size(18, 25);
                 hex_list[i].Text = hexdump_list[i];
                 hex_list[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
                 hex_list[i].KeyPress += hexbox_keypress_event;
-                panel1.Controls.Add(hex_list[i]);
+                //tmp_panel1.Controls.Add(hex_list[i]);
 
                 string_list[i] = new TextBox();
                 string_list[i].Location = new Point(5 + (14 * column_index), 5 + (22 * row_index + 1));
@@ -206,14 +222,35 @@ namespace TCP_Proxy
                 string_list[i].Text = Byte_To_Ascii(hexdump_list[i]);
                 string_list[i].BorderStyle = System.Windows.Forms.BorderStyle.None;
                 string_list[i].KeyPress += stringbox_keypress_event;
-                panel3.Controls.Add(string_list[i]);
+                //tmp_panel2.Controls.Add(string_list[i]);
 
                 column_index += 1;
 
             }
 
+            
+            Panel tmp_panel1 = new Panel();
+            tmp_panel1.Size = new System.Drawing.Size(366, 385);
+            
+            Panel tmp_panel2 = new Panel();
+            
+
+            for (int i = 0; i < hexdump_list.Length; i++)
+            {
+                tmp_panel1.Controls.Add(hex_list[i]);
+                tmp_panel2.Controls.Add(string_list[i]);
+            }
+
+            panel1.Controls.Clear();
+            panel1.Controls.Add(tmp_panel1);
+            panel3.Controls.Clear();
+            panel3.Controls.Add(tmp_panel2);
+
             Label[] offset_list = new Label[row_index + 1];
 
+            panel2.Controls.Clear();
+            Panel tmp_panel3 = new Panel();
+            panel2.Controls.Add(tmp_panel3);
             // OFFSET 찍기
             for (int i = 0; i < row_index + 1; i++)
             {
@@ -226,21 +263,20 @@ namespace TCP_Proxy
                 //offset_list[i].ReadOnly = true;
                 offset_list[i].BackColor = System.Drawing.SystemColors.Window;
                 //offset_list[i].Size = new Size(25, 300);
-                panel2.Controls.Add(offset_list[i]);
+                tmp_panel3.Controls.Add(offset_list[i]);
             }
 
         }
 
         private void Create_StringEditor(string[] hexdump_list)
         {
-            foreach (string hex in hexdump_list)
+            for (int i = 0; i < hexdump_list.Length; i++)
             {
-                int value = Convert.ToInt32(hex, 16);
+                int value = Convert.ToInt32(hexdump_list[i], 16);
                 string stringValue = Char.ConvertFromUtf32(value);
                 textBox3.Text += stringValue;
             }
         }
-
         private void Create_HexEditor_Title(int line_limits)
         {
             Label offset_title = new Label();
@@ -273,11 +309,6 @@ namespace TCP_Proxy
             }
 
         }
-        private void Create_HexEditor(string[] hexdump_list, int line_limits)
-        {
-            Create_HexEditor_Title(16);
-            Create_HexEditor_Contents(hexdump_list, 16);
-        }
         private void ListView1_MouseClick(object sender, MouseEventArgs e)
         {
             List<string[]> history_list = proxy_sock.get_history_list();
@@ -291,10 +322,12 @@ namespace TCP_Proxy
             //textBox3.Text += history[2]; // port
             //textBox3.Text += history[3]; // hexdump
 
-            string[] hexdump_list = history[3].Replace(" ", "").Replace("\'", "").Replace("[", "").Replace("]", "").Split(',');
-            //hexdump example : ['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21']
+            string hexdump = history[3];
+            string[] hexdump_list = hexdump.Split(' ');
 
-            
+            //hexdump example : "48 65 6c 6c 6f 20 53 65 72 76 65 72 21"
+
+
             // initialize request textbox
             textBox3.Text = "";
 
@@ -303,8 +336,9 @@ namespace TCP_Proxy
             textBox6.Text = "";
 
             
+            
+            Create_HexEditor(hexdump_list, line_limits);
             Create_StringEditor(hexdump_list);
-            Create_HexEditor(hexdump_list, 16);
 
 
             //byteviewer는 viewer기능밖에 없음..
@@ -331,11 +365,10 @@ namespace TCP_Proxy
         {
             StringBuilder hexNumbers = new StringBuilder();
             byte[] byteArray = ASCIIEncoding.ASCII.GetBytes(ascii);
-            string hex_value = byteArray[0].ToString("x");
-            string res = string.Format("{0:D2}", hex_value);
+            string hex_value = byteArray[0].ToString("x").PadLeft(2,'0');
             System.Diagnostics.Debug.WriteLine("Ascii_To_Byte input: " + ascii);
-            System.Diagnostics.Debug.WriteLine("Ascii_To_Byte output: " + res);
-            return res;
+            System.Diagnostics.Debug.WriteLine("Ascii_To_Byte output: " + hex_value);
+            return hex_value;
         }
         public void Refresh_HexBox(int i)
         {
@@ -460,5 +493,49 @@ namespace TCP_Proxy
             return true;
         }
 
+        private void intercept_button_clicked(object sender, EventArgs e)
+        {
+            if (button1.Text.Equals("intercept on"))
+            {
+                cmd_sock.send2("set intercept on");
+                button1.Text = "intercept off";
+            }
+            else
+            {
+                cmd_sock.send2("set intercept off");
+                button1.Text = "intercept on";
+            }
+
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            StringBuilder modified_hexdump_strbuilder = new StringBuilder();
+            foreach(TextBox tbox in hex_list)
+            {
+                modified_hexdump_strbuilder.Append(tbox.Text+" ");
+                
+            }
+            string modified_hexdump = modified_hexdump_strbuilder.ToString().Substring(0, modified_hexdump_strbuilder.Length - 1);
+
+            System.Diagnostics.Debug.WriteLine("strbuilder " + modified_hexdump);
+            proxy_sock.send2(modified_hexdump);
+
+
+
+            List<string[]> history_list = proxy_sock.get_history_list();
+
+            ListViewItem item = listView1.SelectedItems[0];
+            int idx = Convert.ToInt32(item.SubItems[0].Text);
+
+            string[] history = history_list[idx - 1];
+            //history[0]; // idx
+            //history[1]; // ip
+            //history[2]; // port
+            //history[3]; // hexdump
+
+
+            history[3] = modified_hexdump;
+        }
     }
 }

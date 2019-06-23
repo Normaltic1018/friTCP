@@ -69,7 +69,7 @@ def input_data():
 		res = input("Data : ")
 	else:
 		# recv 로 바꿔주세요!
-		res = input("Data : ")
+		res = proxy_sock.recv()
 		
 	return res
 	

@@ -15,5 +15,5 @@ settings_validation = {"mode":["hex", "string"],
 
 settings = {"mode":"hex",
 "capture_list":["send"],
-"intercept":"on"
+"intercept":"off"
 }

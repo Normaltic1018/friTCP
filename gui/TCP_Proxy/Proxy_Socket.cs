@@ -26,11 +26,11 @@ namespace TCP_Proxy
         public List<string[]> history_list = new List<string[]>();
         ListView history_listview;
 
-        public delegate void send_gui_Delegate(Control ctl, string msg);
-        public void send_gui(Control ctl, string json_msg)
+        public delegate void proxy_data_handler_Delegate(Control ctl, string msg);
+        public void proxy_data_handler(Control ctl, string json_msg)
         {
             if (ctl.InvokeRequired)
-                ctl.Invoke(new send_gui_Delegate(send_gui), ctl, json_msg);
+                ctl.Invoke(new proxy_data_handler_Delegate(proxy_data_handler), ctl, json_msg);
             else
             {
                 // json 형태로 수신
@@ -39,12 +39,14 @@ namespace TCP_Proxy
                 // service 명 parsing
                 string service = obj["data"]["service"].ToString();
 
-                if (service.Equals("proxy"))
+                if (service.Equals("proxy")) // add and display history_view to gui
                 {
                     // parsing data
                     string ip = obj["data"]["message"]["IP"].ToString();
                     string port = obj["data"]["message"]["PORT"].ToString();
-                    string hexdump = obj["data"]["message"]["hex_dump"].ToString();
+                    string hexdump = obj["data"]["message"]["hex_dump"].ToString().Replace(" ", "").Replace("\'", "").Replace("[", "").Replace("]", "").Replace(","," ");
+                    //hexdump example : ['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21']
+                    // => "48 65 6c 6c 6f 20 53 65 72 76 65 72 21"
 
                     // 내부 관리용 리스트에 등록
                     string[] tmp_list = { idx.ToString("G"), ip, port, hexdump };
@@ -185,7 +187,7 @@ namespace TCP_Proxy
                             msg = encoder.GetString(buffer, 0, byte_read);
                             //msg = Encoding.ASCII.GetString(buffer);
 
-                            send_gui(history_listview, msg);
+                            proxy_data_handler(history_listview, msg);
 
                             //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
                         }
