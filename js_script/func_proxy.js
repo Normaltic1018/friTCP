@@ -29,6 +29,13 @@ for(var key in hook_diction){
 	
 	Interceptor.attach(hookPtr,{
 		onEnter: function(args){
+			
+			send("[intercept_on/off]");
+			var op = recv('intercept',function(value){
+				intercept_flag = value.payload;
+			});
+			op.wait();
+			
 			//send("["+hook_module_name+":"+hook_function_name+"]"+' Caught');
 			var buf_index;
 			buf_index = 1;
@@ -46,20 +53,17 @@ for(var key in hook_diction){
 				//console.log('key : ' + key + ', value : ' + memory_arg[key]);
 			//}
 			var buf_length = args[buf_index+1].toInt32();
-			
+
 			// if buf_length is so large, it becomes very slow as it stop...
 			if(buf_length > 4096){buf_length = 4096;}
-			
+
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
+			
 			//var res = memory_arg.readByteArray(64);
-			send("[PROXY][IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
+			send("[PROXY][INTERCEPT]"+intercept_flag+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 			//send("[HEXDUMP]"+buf_length+" " + res);
 
-			send("[intercept_on/off]");
-			var op = recv('intercept',function(value){
-				intercept_flag = value.payload;
-			});
-			op.wait();
+
 			
 			if(intercept_flag == "on"){
 				send("interactive");

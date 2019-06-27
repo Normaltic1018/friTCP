@@ -36,5 +36,15 @@ namespace TCP_Proxy
         {
             sendPID(listBox1.SelectedItem.ToString().Split('[')[1].Split(']')[0]);
         }
+
+
+        private void ListBox1_EnterClick_1(object sender, KeyEventArgs e)
+        {
+            if(e.KeyValue == 13) // input enter!
+            {
+                //MessageBox.Show("enter input!");
+                sendPID(listBox1.SelectedItem.ToString().Split('[')[1].Split(']')[0]);
+            }
+        }
     }
 }

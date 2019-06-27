@@ -1,10 +1,23 @@
 import socket
 import os
 import threading
+import json
 
 def msg_recv(sock):
     while(True):
-        print(sock.recv(65535).decode())
+        data = sock.recv(65535).decode()
+        #print(data)
+        data = json.loads(data)
+        #print(data)
+        recv_handler(sock, data)
+
+def recv_handler(sock, data):
+    if(data["data"]["res"] == "success"):
+        msg = '{"type":"response","data":{"service":"response","res":"success","message":"response success"}}'
+        #print(msg)
+        sock.send(msg.encode())
+        print("SEND: "+msg)
+    
 
 #wait client
 
@@ -18,7 +31,10 @@ my_thread.start()
 
 while(True):
     msg = input(": ")
+    #msg = '{"type":"boot","data":{"service":"init","res":"success","message":"core init success"}'
+    print(client_socket.recv().decode())
     client_socket.send(msg.encode())
+
 
 
 client_socket.close()

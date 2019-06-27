@@ -18,7 +18,8 @@ namespace TCP_Proxy
         TcpClient client;
         NetworkStream ns;
 
-        bool isRunning = false;
+        public bool isRunning = false;
+
 
         TextBox log_console;
 
@@ -31,15 +32,18 @@ namespace TCP_Proxy
                 ctl.Text += msg;
         }
 
-        public void thread_control(bool flag)
+
+        public void Close()
         {
-            ns.Close();
-            server.Stop();
-            client.Close();
-            isRunning = flag;
+            isRunning = false; // 중요!! 안해주면 networkstream error 발생. RecvThread 종료 키워드
+
+            if (server != null)
+                server.Server.Close();
+
+            if (client != null)
+                client.Close();
+
         }
-
-
         public Cmd_Socket(TextBox textbox)
         {
             try
@@ -54,18 +58,31 @@ namespace TCP_Proxy
             }
             catch (SocketException)
             {
-                MessageBox.Show("서버와의 연결에 실패했습니다.");
+                // python 없을 시 에러 발생
+                //MessageBox.Show("서버와의 연결에 실패했습니다.");
             }
         }
 
 
         public void socket_handler()
         {
+            server.Server.ReceiveTimeout = 3000;
+            server.Server.SendTimeout = 3000;
+            server.Start();
+
             try
             {
-                server.Start();
+
 
                 client = server.AcceptTcpClient();
+                // linger 옵션 -> true,0 -> 버퍼에 있는 데이터를 버리고 소켓을 바로 닫아버려라.
+                // 버퍼에 데이터가 남아있는 상태로 연결 종료 시 버퍼 데이터를 다시 전송하기 위해 Block 상태가 되버림.
+                // 따라서 데이터를 버리고 block 해제를 위함
+                //LingerOption lingerOption = new LingerOption(true, 0);
+                //client.LingerState = lingerOption;
+                //
+
+                // 소켓이 붙었다 -> 프로그램이 정상적으로 실행되었다.
                 isRunning = true;
 
                 ns = client.GetStream();
@@ -73,9 +90,13 @@ namespace TCP_Proxy
                 Thread recvThread = new Thread(new ThreadStart(RecvThread));
                 recvThread.Start();
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                MessageBox.Show("서버와의 연결에 실패했습니다.");
+                // 클라이언트가 정상적으로 실행되지 않았을 시에 에러 발생
+                // 에러발생조건
+                // 1. python 명령어 찾을 수 없음
+                // 2. core 파일을 찾을 수 없음
+                //MessageBox.Show(e.ToString());
             }
         }
 
@@ -173,9 +194,6 @@ namespace TCP_Proxy
                         else
                         {
                             MessageBox.Show("Cmd_Socket: Data 0 recv");
-                            ns.Close();
-                            server.Stop();
-                            client.Close();
                         }
                     }
                 }
@@ -206,13 +224,6 @@ namespace TCP_Proxy
             }
 }
 */
-            private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            isRunning = false;
-            ns.Close();
-            client.Close();
-        }
-
         private string ByteToString(byte[] strByte) {
             string str = Encoding.Default.GetString(strByte);
             return str;

@@ -11,6 +11,9 @@ using System.Diagnostics;
 using System.Collections;
 using System.Windows.Forms.VisualStyles;
 using System.ComponentModel.Design;
+using System.Data.SqlClient;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace TCP_Proxy
 {
@@ -23,14 +26,16 @@ namespace TCP_Proxy
 
         Cmd_Socket cmd_sock = null;
         Proxy_Socket proxy_sock = null;
+        bool kill_flag = false;
+
         Process pro = null;
-        bool pro_flag = false;
 
         TextBox[] hex_list = null;
         TextBox[] string_list = null;
 
         int line_limits = 16;
-        
+
+        bool attach_flag = false;
 
         public Main()
         {
@@ -44,21 +49,32 @@ namespace TCP_Proxy
             Create_HexEditor_Title(16);
 
             // process exit event => clean all!
-            // AppDomain.CurrentDomain.ProcessExit += ProcessExitHanlder;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ProcessExitHanlder);
+            AppDomain.CurrentDomain.ProcessExit += ProcessExitHanlder;
+        }
+
+        private void clear_all()
+        {
+            if (pro!=null)
+            {
+                if(!pro.HasExited)
+                    pro.Kill();
+            }
+
+            if (proxy_sock != null)
+                proxy_sock.Close();
+            if(cmd_sock != null)
+                cmd_sock.Close();
+            
         }
 
         private void ProcessExitHanlder(object sender, EventArgs e)
         {
-            MessageBox.Show("process killed...");
-
-            if (pro_flag)
-            {
-                pro.Kill();
-            }
+            kill_flag = true;
+            clear_all();
         }
 
 
-    
 
         public void init_screen()
         {
@@ -81,8 +97,23 @@ namespace TCP_Proxy
             tabPage5.Text = msg;
         }
 
+        private void pro_alive_check()
+        {
+            while(!pro.HasExited)
+            {
+                
+            }
+
+            if(!kill_flag)
+                MessageBox.Show("[Core Process Killed]: 코어 프로세스가 비정상적으로 종료되었습니다.");
+            clear_all();
+        }
         public void python_start(String PID)
         {
+            
+
+            form2.Close();
+
             // server Start!
             cmd_sock = new Cmd_Socket(textBox1);
             proxy_sock = new Proxy_Socket(listView1);
@@ -95,45 +126,74 @@ namespace TCP_Proxy
             proinfo.FileName = @"python";
             proinfo.CreateNoWindow = true;
             proinfo.UseShellExecute = false;
-            proinfo.RedirectStandardOutput = false;
+            proinfo.RedirectStandardOutput = true;
             proinfo.RedirectStandardInput = false;
-            proinfo.RedirectStandardError = false;
+            proinfo.RedirectStandardError = true;
             //proinfo.Arguments = "C:\\Users\\A0502640\\source\\repos\\TCP_Proxy\\TCP_Proxy\\core\\tcp_proxy.py " + PID;
             proinfo.Arguments = "core\\tcp_proxy.py " + PID;
 
             // process settings
             pro.StartInfo = proinfo;
-            pro.EnableRaisingEvents = false;
+            //pro.EnableRaisingEvents = false;
 
             //pro.OutputDataReceived += new DataReceivedEventHandler(p_OutputDataReceived);
+            try
+            {
+                // python 없으면 예외발생
+                
+                pro.Start();
+                
 
-            pro.Start();
-            pro_flag = true;
+                // python 은 있으나 tcp_proxy.py 파일이 없으면 예외발생이 되지 않음.
+                // 알아낼 방법?
+                // 1. tcp_proxy.py(client) 가 proxy_server(server)에 10초이내에 연결되지 않으면
+                // 2. tcp_proxy.py(client) 가 error pipe로 에러메시지 전달하면
+                // 3. process가 유효한지 일정시간 기다려보기
+
+                // 3번 구현
+
+                // 1초 기다린 후 python 이 종료되면 core가 정상적으로 실행되지 않음을 알 수 있다.
+                // 정상적으로 실행되지 않는경우
+                // 1. core파일 자체의 에러
+                // 2. core파일 위치를 찾을 수 없음
+                // 3. pid 실수
+
+
+                Thread.Sleep(1000);
+
+                bool result = pro.HasExited;
+                if (result)
+                {
+                    string txt = pro.StandardError.ReadToEnd();
+                    MessageBox.Show("[core not started]: "+txt);
+                    clear_all();
+                }
+
+                else
+                {
+                    Thread pro_alive_checker = new Thread(new ThreadStart(pro_alive_check));
+                    pro_alive_checker.Start();
+                }
+
+            }
+            catch (Exception e)
+            {
+                //string txt = pro.StandardError.ReadToEnd();
+                MessageBox.Show("[python not founded]: "+e.Message.ToString());
+                clear_all();
+            }
+
+
+
+
+
+
             //pro.BeginOutputReadLine();
 
-            form2.Close();
+
 
 
         }
-        /*
-        public void p_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            String line = e.Data;
-            //SetText(line);
-
-            if (line.Contains("------------"))
-            {
-                pro.OutputDataReceived += new DataReceivedEventHandler(get_mlist);
-                pro.OutputDataReceived -= p_OutputDataReceived;
-                pro.StandardInput.Write("mlist" + Environment.NewLine);
-            }
-        }
-        public void get_mlist(object sender, DataReceivedEventArgs e)
-        {
-        }
-
- 
-        */
 
         private void Main_Load(object sender, EventArgs e)
         {
@@ -268,6 +328,7 @@ namespace TCP_Proxy
 
         }
 
+        /*
         private void Create_StringEditor(string[] hexdump_list)
         {
             for (int i = 0; i < hexdump_list.Length; i++)
@@ -276,7 +337,7 @@ namespace TCP_Proxy
                 string stringValue = Char.ConvertFromUtf32(value);
                 textBox3.Text += stringValue;
             }
-        }
+        }*/
         private void Create_HexEditor_Title(int line_limits)
         {
             Label offset_title = new Label();
@@ -315,12 +376,25 @@ namespace TCP_Proxy
 
             ListViewItem item = listView1.SelectedItems[0];
             int idx = Convert.ToInt32(item.SubItems[0].Text);
-
+ 
             string[] history = history_list[idx-1];
             //textBox3.Text = history[0]; // idx
             //textBox3.Text += history[1]; // ip
             //textBox3.Text += history[2]; // port
             //textBox3.Text += history[3]; // hexdump
+
+            //string[] tmp_list = { idx.ToString("G"), ip, port, hexdump, intercept_mode, complete };
+            string intercept_mode = history[4];
+            string complete = history[5];
+
+            if (intercept_mode.Equals("on") && complete.Equals("N"))
+            {
+                button2.Enabled = true;
+            }
+            else
+            {
+                button2.Enabled = false;
+            }
 
             string hexdump = history[3];
             string[] hexdump_list = hexdump.Split(' ');
@@ -328,17 +402,11 @@ namespace TCP_Proxy
             //hexdump example : "48 65 6c 6c 6f 20 53 65 72 76 65 72 21"
 
 
-            // initialize request textbox
-            textBox3.Text = "";
-
-            // initialize response textbox
-            textBox4.Text = "";
-            textBox6.Text = "";
 
             
             
             Create_HexEditor(hexdump_list, line_limits);
-            Create_StringEditor(hexdump_list);
+            //Create_StringEditor(hexdump_list);
 
 
             //byteviewer는 viewer기능밖에 없음..
@@ -495,17 +563,19 @@ namespace TCP_Proxy
 
         private void intercept_button_clicked(object sender, EventArgs e)
         {
-            if (button1.Text.Equals("intercept on"))
+            if (attach_flag)
             {
-                cmd_sock.send2("set intercept on");
-                button1.Text = "intercept off";
+                if (button1.Text.Equals("intercept on"))
+                {
+                    cmd_sock.send2("set intercept on");
+                    button1.Text = "intercept off";
+                }
+                else
+                {
+                    cmd_sock.send2("set intercept off");
+                    button1.Text = "intercept on";
+                }
             }
-            else
-            {
-                cmd_sock.send2("set intercept off");
-                button1.Text = "intercept on";
-            }
-
         }
 
         private void Button2_Click(object sender, EventArgs e)
@@ -521,7 +591,7 @@ namespace TCP_Proxy
             System.Diagnostics.Debug.WriteLine("strbuilder " + modified_hexdump);
             proxy_sock.send2(modified_hexdump);
 
-
+            //
 
             List<string[]> history_list = proxy_sock.get_history_list();
 
@@ -533,9 +603,69 @@ namespace TCP_Proxy
             //history[1]; // ip
             //history[2]; // port
             //history[3]; // hexdump
-
+            //history[4]; // intercept_mode
+            //history[5]; // complete
 
             history[3] = modified_hexdump;
+            history[5] = "Y";
+
+            button2.Enabled = false;
         }
+        private bool check_intercept_mode()
+        {
+            if(button1.Text.Equals("intercept off"))
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+
+        /*
+        private static void NetErrorDataHandler(object sendingProcess,
+            DataReceivedEventArgs errLine)
+        {
+            // Write the error text to the file if there is something
+            // to write and an error file has been specified.
+
+            if (!String.IsNullOrEmpty(errLine.Data))
+            {
+                if (!errorsWritten)
+                {
+                    if (streamError == null)
+                    {
+                        // Open the file.
+                        try
+                        {
+                            streamError = new StreamWriter(netErrorFile, true);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Could not open error file!");
+                            Console.WriteLine(e.Message.ToString());
+                        }
+                    }
+
+                    if (streamError != null)
+                    {
+                        // Write a header to the file if this is the first
+                        // call to the error output handler.
+                        streamError.WriteLine();
+                        streamError.WriteLine(DateTime.Now.ToString());
+                        streamError.WriteLine("Net View error output:");
+                    }
+                    errorsWritten = true;
+                }
+
+                if (streamError != null)
+                {
+                    // Write redirected errors to the file.
+                    streamError.WriteLine(errLine.Data);
+                    streamError.Flush();
+                }
+            }
+        }*/
     }
+
 }

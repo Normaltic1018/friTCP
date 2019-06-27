@@ -115,10 +115,11 @@ def parsing_hex(hexdump):
 	return hex_list
 
 def parsing_info(data):
+	intercept_mode = data.split("[INTERCEPT]")[1].split()[0]
 	ip_info = data.split("[IP]")[1].split()[0]
 	port_info = data.split("[PORT]")[1].split()[0]
 
-	return ip_info, port_info
+	return [intercept_mode, ip_info, port_info]
 
 def parsing_hook_info(data):
 	hook_pid = data.split("[PID]")[1].split()[0]
