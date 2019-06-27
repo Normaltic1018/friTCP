@@ -33,6 +33,7 @@
             this.tEST2ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.test2ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listView1 = new System.Windows.Forms.ListView();
+            this.Direction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.IDX = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.IP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.Port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -53,7 +54,6 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.Direction = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuStrip1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -114,6 +114,11 @@
             this.listView1.SelectedIndexChanged += new System.EventHandler(this.ListView1_SelectedIndexChanged);
             this.listView1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ListView1_MouseClick);
             // 
+            // Direction
+            // 
+            this.Direction.Text = "Direction";
+            this.Direction.Width = 73;
+            // 
             // IDX
             // 
             this.IDX.Text = "IDX";
@@ -137,7 +142,7 @@
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage2);
-            this.tabControl1.Location = new System.Drawing.Point(28, 389);
+            this.tabControl1.Location = new System.Drawing.Point(28, 347);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(750, 278);
@@ -199,7 +204,7 @@
             this.tabControl3.Location = new System.Drawing.Point(28, 684);
             this.tabControl3.Name = "tabControl3";
             this.tabControl3.SelectedIndex = 0;
-            this.tabControl3.Size = new System.Drawing.Size(746, 132);
+            this.tabControl3.Size = new System.Drawing.Size(474, 132);
             this.tabControl3.TabIndex = 41;
             // 
             // tabPage5
@@ -208,7 +213,7 @@
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage5.Size = new System.Drawing.Size(738, 106);
+            this.tabPage5.Size = new System.Drawing.Size(466, 106);
             this.tabPage5.TabIndex = 0;
             this.tabPage5.Text = "Log";
             this.tabPage5.UseVisualStyleBackColor = true;
@@ -219,14 +224,14 @@
             this.textBox1.Location = new System.Drawing.Point(6, 6);
             this.textBox1.Multiline = true;
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(726, 94);
+            this.textBox1.Size = new System.Drawing.Size(456, 94);
             this.textBox1.TabIndex = 0;
             this.textBox1.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
             // tabControl4
             // 
             this.tabControl4.Controls.Add(this.tabPage6);
-            this.tabControl4.Location = new System.Drawing.Point(482, 333);
+            this.tabControl4.Location = new System.Drawing.Point(522, 706);
             this.tabControl4.Name = "tabControl4";
             this.tabControl4.SelectedIndex = 0;
             this.tabControl4.Size = new System.Drawing.Size(181, 66);
@@ -253,7 +258,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(662, 372);
+            this.button3.Location = new System.Drawing.Point(702, 745);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(81, 23);
             this.button3.TabIndex = 43;
@@ -263,7 +268,8 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(97, 375);
+            this.button1.Enabled = false;
+            this.button1.Location = new System.Drawing.Point(230, 333);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(172, 23);
             this.button1.TabIndex = 44;
@@ -274,7 +280,7 @@
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(285, 375);
+            this.button2.Location = new System.Drawing.Point(418, 333);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(172, 23);
             this.button2.TabIndex = 45;
@@ -282,18 +288,13 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
-            // Direction
-            // 
-            this.Direction.Text = "Direction";
-            this.Direction.Width = 73;
-            // 
             // Main
             // 
             this.ClientSize = new System.Drawing.Size(809, 862);
+            this.Controls.Add(this.tabControl4);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.tabControl4);
             this.Controls.Add(this.tabControl3);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.listView1);

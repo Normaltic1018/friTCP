@@ -78,8 +78,8 @@ namespace TCP_Proxy
                 // linger 옵션 -> true,0 -> 버퍼에 있는 데이터를 버리고 소켓을 바로 닫아버려라.
                 // 버퍼에 데이터가 남아있는 상태로 연결 종료 시 버퍼 데이터를 다시 전송하기 위해 Block 상태가 되버림.
                 // 따라서 데이터를 버리고 block 해제를 위함
-                //LingerOption lingerOption = new LingerOption(true, 0);
-                //client.LingerState = lingerOption;
+                LingerOption lingerOption = new LingerOption(true, 0);
+                client.LingerState = lingerOption;
                 //
 
                 // 소켓이 붙었다 -> 프로그램이 정상적으로 실행되었다.

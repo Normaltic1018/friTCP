@@ -35,8 +35,6 @@ namespace TCP_Proxy
 
         int line_limits = 16;
 
-        bool attach_flag = false;
-
         public Main()
         {
             InitializeComponent();
@@ -108,11 +106,23 @@ namespace TCP_Proxy
                 MessageBox.Show("[Core Process Killed]: 코어 프로세스가 비정상적으로 종료되었습니다.");
             clear_all();
         }
-        public void python_start(String PID)
+        public void core_start(String PID)
         {
-            
+            // 기존 form clear
+            listView1.Items.Clear();
+            panel2.Controls.Clear();
+            panel1.Controls.Clear();
 
+            // attach form close
             form2.Close();
+
+            // 기존 core 프로세스 강제종료
+            kill_flag = true; // 정상 종료하는 것이다
+            clear_all();
+
+            // core 프로세스 실행
+            kill_flag = false;
+            
 
             // server Start!
             cmd_sock = new Cmd_Socket(textBox1);
@@ -159,11 +169,12 @@ namespace TCP_Proxy
                 // 3. pid 실수
 
 
-                Thread.Sleep(1000);
+                Thread.Sleep(3000);
 
                 bool result = pro.HasExited;
                 if (result)
                 {
+                    // attach failed !!
                     string txt = pro.StandardError.ReadToEnd();
                     MessageBox.Show("[core not started]: "+txt);
                     clear_all();
@@ -171,6 +182,9 @@ namespace TCP_Proxy
 
                 else
                 {
+                    // attach success !!
+                    cmd_sock.send2("proxy");
+                    button1.Enabled = true;
                     Thread pro_alive_checker = new Thread(new ThreadStart(pro_alive_check));
                     pro_alive_checker.Start();
                 }
@@ -183,16 +197,6 @@ namespace TCP_Proxy
                 clear_all();
             }
 
-
-
-
-
-
-            //pro.BeginOutputReadLine();
-
-
-
-
         }
 
         private void Main_Load(object sender, EventArgs e)
@@ -203,7 +207,7 @@ namespace TCP_Proxy
         private void TEST2ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             form2 = new Attach();
-            form2.sendPID += new Attach.sendPID_Delegate(python_start);
+            form2.sendPID += new Attach.sendPID_Delegate(core_start);
             form2.Show();
         }
 
@@ -563,18 +567,16 @@ namespace TCP_Proxy
 
         private void intercept_button_clicked(object sender, EventArgs e)
         {
-            if (attach_flag)
+            if (button1.Text.Equals("intercept on"))
             {
-                if (button1.Text.Equals("intercept on"))
-                {
                     cmd_sock.send2("set intercept on");
                     button1.Text = "intercept off";
-                }
-                else
-                {
+            }
+            else
+            {
                     cmd_sock.send2("set intercept off");
                     button1.Text = "intercept on";
-                }
+            
             }
         }
 

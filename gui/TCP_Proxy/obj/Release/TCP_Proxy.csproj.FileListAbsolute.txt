@@ -1,0 +1,14 @@
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\bin\Release\TCP_Proxy.exe.config
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\bin\Release\TCP_Proxy.exe
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\bin\Release\TCP_Proxy.pdb
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\bin\Release\Newtonsoft.Json.dll
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\bin\Release\Newtonsoft.Json.xml
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.csprojAssemblyReference.cache
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.Attach.resources
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.Main.resources
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.Properties.Resources.resources
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.csproj.GenerateResource.cache
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.csproj.CoreCompileInputs.cache
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.csproj.CopyComplete
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.exe
+C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Release\TCP_Proxy.pdb
