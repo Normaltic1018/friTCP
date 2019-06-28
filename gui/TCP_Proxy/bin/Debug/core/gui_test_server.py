@@ -7,9 +7,9 @@ def msg_recv(sock):
     while(True):
         data = sock.recv(65535).decode()
         #print(data)
-        data = json.loads(data)
+        #data = json.loads(data)
         #print(data)
-        recv_handler(sock, data)
+        #recv_handler(sock, data)
 
 def recv_handler(sock, data):
     if(data["data"]["res"] == "success"):
@@ -32,7 +32,7 @@ my_thread.start()
 while(True):
     msg = input(": ")
     #msg = '{"type":"boot","data":{"service":"init","res":"success","message":"core init success"}'
-    print(client_socket.recv().decode())
+    #print(client_socket.recv(65535).decode())
     client_socket.send(msg.encode())
 
 

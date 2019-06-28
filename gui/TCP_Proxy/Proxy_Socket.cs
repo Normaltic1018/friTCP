@@ -19,9 +19,12 @@ namespace TCP_Proxy
         TcpClient client;
         NetworkStream ns;
 
+        int count = 0;
+
         int idx = 1;
 
         bool isRunning = false;
+        Thread recvThread;
 
         public List<string[]> history_list = new List<string[]>();
         ListView history_listview;
@@ -77,8 +80,9 @@ namespace TCP_Proxy
                         ListViewItem tmp_item = new ListViewItem(tmp_list);
                         history_listview.Items.Add(tmp_item);
 
-
+                        
                     }
+                    send2("ACK");
                 }
                 catch(Exception e)
                 {
@@ -109,6 +113,7 @@ namespace TCP_Proxy
         public void Close()
         {
             isRunning = false; // 중요!! 안해주면 networkstream error 발생. RecvThread 종료 키워드
+            //recvThread.Abort();
 
             if (server != null)
                 server.Server.Close();
@@ -119,8 +124,8 @@ namespace TCP_Proxy
 
         public void socket_handler()
         {
-            server.Server.ReceiveTimeout = 3000;
-            server.Server.SendTimeout = 3000;
+            //server.Server.ReceiveTimeout = 3000;
+            //server.Server.SendTimeout = 3000;
             server.Start();
 
             try
@@ -137,7 +142,7 @@ namespace TCP_Proxy
 
                 ns = client.GetStream();
 
-                Thread recvThread = new Thread(new ThreadStart(RecvThread));
+                recvThread = new Thread(new ThreadStart(RecvThread));
                 recvThread.Start();
             }
             catch(SocketException e)
@@ -227,18 +232,22 @@ namespace TCP_Proxy
                 
                 try
                 {
-                    if (ns.DataAvailable)
-                    {
+                    //if (ns.DataAvailable)
+                    //{
+
                         byte_read = 0;
                         byte_read = ns.Read(buffer, 0, buffer.Length);
                         if (byte_read > 0)
                         {
                             ASCIIEncoding encoder = new ASCIIEncoding();
                             msg = encoder.GetString(buffer, 0, byte_read);
-                            //msg = Encoding.ASCII.GetString(buffer);
+                        //msg = Encoding.ASCII.GetString(buffer);
+                        count = count + 1;
+                            System.Diagnostics.Debug.WriteLine("$$recv"+count.ToString()+": " + msg);
 
-                            proxy_data_handler(history_listview, msg);
+                            //proxy_data_handler(history_listview, msg);
 
+                            
                             //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
                         }
 
@@ -246,11 +255,14 @@ namespace TCP_Proxy
                         {
                             MessageBox.Show("Proxy_Socket: Data 0 recv");
                         }
-                    }
+                    //}
                 }
-                catch (Exception ex)
+                catch (SocketException e)
                 {
-                    MessageBox.Show(ex.Message);
+                    if(e.ErrorCode==10035)
+                    {
+                        System.Diagnostics.Debug.WriteLine("socket error 10035: " + e.ToString());
+                    }
                 }
             }
         }

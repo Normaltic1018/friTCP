@@ -19,7 +19,7 @@ namespace TCP_Proxy
         NetworkStream ns;
 
         public bool isRunning = false;
-
+        Thread recvThread;
 
         TextBox log_console;
 
@@ -36,6 +36,7 @@ namespace TCP_Proxy
         public void Close()
         {
             isRunning = false; // 중요!! 안해주면 networkstream error 발생. RecvThread 종료 키워드
+            //recvThread.Abort();
 
             if (server != null)
                 server.Server.Close();
@@ -66,8 +67,8 @@ namespace TCP_Proxy
 
         public void socket_handler()
         {
-            server.Server.ReceiveTimeout = 3000;
-            server.Server.SendTimeout = 3000;
+            //server.Server.ReceiveTimeout = 3000;
+            //server.Server.SendTimeout = 3000;
             server.Start();
 
             try
@@ -87,7 +88,7 @@ namespace TCP_Proxy
 
                 ns = client.GetStream();
 
-                Thread recvThread = new Thread(new ThreadStart(RecvThread));
+                recvThread = new Thread(new ThreadStart(RecvThread));
                 recvThread.Start();
             }
             catch(Exception e)
@@ -177,8 +178,8 @@ namespace TCP_Proxy
                 
                 try
                 {
-                    if (ns.DataAvailable)
-                    {
+                    //if (ns.DataAvailable)
+                    //{
                         byte_read = ns.Read(buffer, 0, buffer.Length);
                         if (byte_read > 0)
                         {
@@ -186,7 +187,7 @@ namespace TCP_Proxy
                             msg = encoder.GetString(buffer, 0, byte_read);
                             //msg = Encoding.ASCII.GetString(buffer);
 
-                            send_gui(log_console, msg);
+                            //send_gui(log_console, msg);
 
                             //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
                         }
@@ -195,11 +196,14 @@ namespace TCP_Proxy
                         {
                             MessageBox.Show("Cmd_Socket: Data 0 recv");
                         }
-                    }
+                    //}
                 }
-                catch (Exception ex)
+                catch (SocketException e)
                 {
-                    MessageBox.Show(ex.Message);
+                    if (e.ErrorCode == 10035)
+                    {
+                        System.Diagnostics.Debug.WriteLine("socket error 10035: " + e.ToString());
+                    }
                 }
             }
         }

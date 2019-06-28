@@ -140,7 +140,8 @@ namespace TCP_Proxy
             proinfo.RedirectStandardInput = false;
             proinfo.RedirectStandardError = true;
             //proinfo.Arguments = "C:\\Users\\A0502640\\source\\repos\\TCP_Proxy\\TCP_Proxy\\core\\tcp_proxy.py " + PID;
-            proinfo.Arguments = "core\\tcp_proxy.py " + PID;
+            //proinfo.Arguments = "core\\tcp_proxy.py " + PID;
+            proinfo.Arguments = "core\\test_proxy.py";
 
             // process settings
             pro.StartInfo = proinfo;

@@ -113,7 +113,7 @@ for(var key in hook_diction){
 						buf_ptr = args[buf_index];
 					}
 					//send('Modified buf:');
-					var res = hexdump(buf_address,{offset:0,length:64,header:false,ansi:false});
+					//var res = hexdump(buf_address,{offset:0,length:64,header:false,ansi:false});
 					//send("[HEXDUMP]" + res);
 					//console.log(Memory.readByteArray(args[buf_index],64));
 				}

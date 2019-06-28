@@ -4,11 +4,13 @@ from tcp_proxy_core.tcp_proxy_config import *
 import os
 
 def get_script(script_name):
+	print("get_script called")
 	with open(js_path+script_name, 'r') as f:
 		script = f.read()
 	return script
 
 def validate_setting(mode, value):
+	print("validate_setting called")
 	if value in settings_validation[mode]:
                 return True
 

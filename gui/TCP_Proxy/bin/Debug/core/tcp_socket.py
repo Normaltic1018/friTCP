@@ -13,7 +13,7 @@ class TCP_SOCKET:
             self.sock.send(data.encode())
             
             # sleep 안주면 한번에 두번 보내는 경우가 생김.. 동기화를 위해 필수!
-            time.sleep(0.2)
+            time.sleep(1)
 			
 			
         except Exception as e:
