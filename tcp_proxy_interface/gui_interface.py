@@ -40,21 +40,17 @@ def print_error(message):
 	
 	send_message_channel("init_process",data,cmd_channel)
 
-def print_response(message):
-	send_data = '{"type":"cmd","data":{"res":"success","message":"%s"}}' % message
-	if(console_mode):
-		print("print_response: "+send_data)
+def cmd_response(process,res,message):
+	#send_data = '{"type":"cmd","data":{"service":"init","res":"success","message":"core init success"}}'
+	data = {}
+	data["process"] = process
+	data["res"] = res
+	if(res == "fail"):
+		data["err"] = message
 	else:
-		cmd_sock.send(send_data)
-
-
-def print_current_settings():
-	send_data = '{"type":"cmd","data":{"res":"success","message":"%s"}}' % ("[SETTING]:"+str(settings))
-
-	if(console_mode):
-		print("print_current_settings: "+send_data)
-	else:
-		cmd_sock.send(send_data)
+		data["res_data"] = message
+	
+	send_message_channel("cmd",data,cmd_channel)
 
 def print_command():
 	send_data = '{"type":"cmd","data":{"res":"success","message":%s}}' % ("[COMMAND]:"+str(settings))

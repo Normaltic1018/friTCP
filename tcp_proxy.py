@@ -10,12 +10,12 @@ def main(target_process):
 	
 	try:
 		session = frida.attach(target_process)
-   
+		gui.print_info()
 		#dev.show_banner()
-	except Exception, msg:
-		gui.print_error(str(msg))
+	except Exception as e:
+		gui.print_error(str(e))
 		
-	gui.print_info()
+	
 	
 	while True:
 		#cmd = dev.shell_loop()
@@ -27,6 +27,11 @@ def main(target_process):
 					hook_api(session,capture_api)
 			else:
 				gui.print_error("Empty capture_list")
+		elif cmd =="GET_SETTING":
+			try:
+				gui.cmd_response("get_setting","success",settings)
+			except Exception as e:
+				gui.cmd_response("get_setting","fail",str(e))
 		elif cmd == 'clear' or cmd == 'cls':
 			os.system('cls')
 		elif cmd.startswith("set"):
