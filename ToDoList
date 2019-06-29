@@ -1,0 +1,6 @@
+
+ikeeby
+1. TCPClient 함수에서 socket 하수로 변경하여 진행해보기
+
+normaltic
+1. recv 후킹 구현 (onLeave 에서 구현해야함.)
