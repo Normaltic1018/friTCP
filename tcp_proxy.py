@@ -8,11 +8,15 @@ from tcp_proxy_core.core_func import *
 
 def main(target_process):
 	
-	
-	session = frida.attach(target_process)
+	try:
+		session = frida.attach(target_process)
    
-	#dev.show_banner()
+		#dev.show_banner()
+	except Exception, msg:
+		gui.print_error(str(msg))
+		
 	gui.print_info()
+	
 	while True:
 		#cmd = dev.shell_loop()
 		cmd = gui.get_cmd()

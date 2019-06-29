@@ -15,10 +15,12 @@ if(console_mode == False):
 
 def print_info():
 	send_data = '{"type":"boot","data":{"service":"init","res":"success","message":"core init success"}}'
-	cmd_send_out(send_data)
+	data = {}
+	data["process"] = "core_boot"
+	data["res"] = "success"
 	
-	#print('{"type":"boot","data":{"version":"%s","settings":"%s","commands":"%s"}}' % (version, str(settings), str(commands)))
-                
+	send_message_channel("init_process",data,cmd_channel)
+	
 def get_cmd():
 	if(console_mode):
 		print("[GET_CMD]")
@@ -30,11 +32,13 @@ def get_cmd():
 	return cmd
 
 def print_error(message):
-	send_data = '{"type":"cmd","data":{"res":"fail","message":"%s"}}' % message
-	if(console_mode):
-		print("print_error: "+send_data)
-	else:
-		cmd_sock.send(send_data)
+	send_data = '{"type":"boot","data":{"service":"init","res":"success","message":"core init success"}}'
+	data = {}
+	data["process"] = "core_boot"
+	data["res"] = "fail"
+	data["err"] = message
+	
+	send_message_channel("init_process",data,cmd_channel)
 
 def print_response(message):
 	send_data = '{"type":"cmd","data":{"res":"success","message":"%s"}}' % message

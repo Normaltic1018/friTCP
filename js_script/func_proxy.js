@@ -34,7 +34,7 @@ for(var key in hook_diction){
 			var op = recv('intercept',function(value){
 				intercept_flag = value.payload;
 			});
-			op.wait();
+			//op.wait();
 			
 			//send("["+hook_module_name+":"+hook_function_name+"]"+' Caught');
 			var buf_index;

@@ -79,6 +79,7 @@ def on_input_message(message, data):
 			script.post({'type':'input','payload':user_input})
 		elif(message['payload'] == "[intercept_on/off]"):
 			script.post({'type':'intercept','payload':settings["intercept"]})
+			#print("Intercept Check!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		elif(message['payload'].startswith("[HOOK_INFO]")):
 			hook_info = parsing_hook_info(message['payload'])
 			gui.print_js_response("[HOOK_INFO]", hook_info, [])
@@ -88,6 +89,7 @@ def on_input_message(message, data):
 			#print("Parsing Process")
 			parsing_data = parsing_hexdata(message['payload'])
 			gui.print_js_response("[HEXDUMP]",parsing_data,[])
+			#print("HexDump GOGO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 		elif(message['payload'].startswith("[PROXY]")):
 			parsing_info_data = parsing_info(message['payload'])
 			parsing_hex_data = parsing_hex(message['payload'])
