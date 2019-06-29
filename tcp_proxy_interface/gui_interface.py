@@ -2,8 +2,12 @@
 # tcp socket 으로 print, input 들 다 바꿀꺼
 from tcp_proxy_core.tcp_proxy_config import *
 from tcp_socket import *
+import json
 
 console_mode = True
+
+cmd_channel =1
+proxy_channel = 2
 
 if(console_mode == False):
 	cmd_sock = TCP_SOCKET(12345)
@@ -66,14 +70,36 @@ def input_data():
 	return res
 	
 def print_js_response(message,proxy_info,hex_data):
-
-	// cmd_send_out과 buf_send_out은 추후 프로토콜 정하면서 구분할 것.
+	
+	# cmd_send_out과 buf_send_out은 추후 프로토콜 정하면서 구분할 것.
 	if(message.startswith("[PROXY]")):
-		send_data = '{"type":"frida","data":{"service":"proxy","res":"success","message":{"INTERCEPT":"%s","IP":"%s","PORT":"%s","hex_dump":"%s"}}}' % (proxy_info[0],proxy_info[1],proxy_info[2],str(hex_data))
-		buff_send_out(send_data)
+		data = {}
+		data["service"] = "proxy"
+		data["res"] = "success"
+		message = {}
+		message["INTERCEPT"] = proxy_info[0]
+		message["IP"] = proxy_info[1]
+		message["PORT"] = proxy_info[2]
+		message["hex_dump"] = str(hex_data)
+		data["message"] = message
+		
+		send_message_channel("frida",data,proxy_channel)
+		#send_data = '{"type":"frida","data":{"service":"proxy","res":"success","message":{"INTERCEPT":"%s","IP":"%s","PORT":"%s","hex_dump":"%s"}}}' % (proxy_info[0],proxy_info[1],proxy_info[2],str(hex_data))
+		#buff_send_out(send_data)
 	elif(message.startswith("[HOOK_INFO]")):
-		send_data = '{"type":"frida","data":{"service":"hook_info","res":"success","message":{"PID":"%s","MODULE":"%s","FUNCTION":"%s","ADDRESS":"%s"}}}' % (proxy_info[0],proxy_info[1],proxy_info[2],proxy_info[3])
-		buff_send_out(send_data)		
+		data = {}
+		data["service"] = "hook_info"
+		data["res"] = "success"
+		message = {}
+		message["PID"] = proxy_info[0]
+		message["MODULE"] = proxy_info[1]
+		message["FUNCTION"] = proxy_info[2]
+		message["ADDRESS"] = proxy_info[3]
+		data["message"] = message
+		
+		send_message_channel("frida",data,proxy_channel)
+		#send_data = '{"type":"frida","data":{"service":"hook_info","res":"success","message":{"PID":"%s","MODULE":"%s","FUNCTION":"%s","ADDRESS":"%s"}}}' % (proxy_info[0],proxy_info[1],proxy_info[2],proxy_info[3])
+		#buff_send_out(send_data)		
 	elif(message.startswith("[frida_error]")):
 		send_data = '{"type":"frida","data":{"service":"frida_error","res":"fail","message":{"error":"%s"}}}' % proxy_info
 		buff_send_out(send_data)
@@ -84,6 +110,17 @@ def print_js_response(message,proxy_info,hex_data):
 		send_data = '{"type":"frida","data":{"service":"else","res":"success","message":{"data":"%s"}}}' % (str(hex_data))
 		buff_send_out(send_data)
 
+def send_message_channel(type,data,channel):
+	send_data = {}
+	send_data["type"] = type
+	send_data["data"] = data
+	
+	send_data = json.dumps(send_data)
+	
+	if(channel == cmd_channel):
+		cmd_send_out(send_data)
+	else:
+		buf_send_out(send_data)
 
 def cmd_send_out(send_data):
 	if(console_mode):
