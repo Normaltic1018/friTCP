@@ -120,7 +120,7 @@ def send_message_channel(type,data,channel):
 	if(channel == cmd_channel):
 		cmd_send_out(send_data)
 	else:
-		buf_send_out(send_data)
+		buff_send_out(send_data)
 
 def cmd_send_out(send_data):
 	if(console_mode):
