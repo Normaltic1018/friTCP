@@ -24,11 +24,11 @@ namespace TCP_Proxy
         Attach form2 = null;
         Sorting sorter = null;
 
-        Cmd_Socket cmd_sock = null;
-        Proxy_Socket proxy_sock = null;
+        static Cmd_Socket cmd_sock = null;
+        static Proxy_Socket proxy_sock = null;
         bool kill_flag = false;
 
-        Process pro = null;
+        static Process pro = null;
 
         TextBox[] hex_list = null;
         TextBox[] string_list = null;
@@ -51,7 +51,7 @@ namespace TCP_Proxy
             AppDomain.CurrentDomain.ProcessExit += ProcessExitHanlder;
         }
 
-        private void clear_all()
+        public static void clear_all()
         {
             if (pro!=null)
             {
@@ -140,8 +140,8 @@ namespace TCP_Proxy
             proinfo.RedirectStandardInput = false;
             proinfo.RedirectStandardError = true;
             //proinfo.Arguments = "C:\\Users\\A0502640\\source\\repos\\TCP_Proxy\\TCP_Proxy\\core\\tcp_proxy.py " + PID;
-            //proinfo.Arguments = "core\\tcp_proxy.py " + PID;
-            proinfo.Arguments = "core\\test_proxy.py";
+            proinfo.Arguments = "..\\..\\..\\..\\tcp_proxy.py " + PID;
+            //proinfo.Arguments = "..\\..\\..\\..\\test_proxy.py";
 
             // process settings
             pro.StartInfo = proinfo;
@@ -184,6 +184,8 @@ namespace TCP_Proxy
                 else
                 {
                     // attach success !!
+                    cmd_sock.send2("GET_SETTING");
+                    Thread.Sleep(1000);
                     cmd_sock.send2("proxy");
                     button1.Enabled = true;
                     Thread pro_alive_checker = new Thread(new ThreadStart(pro_alive_check));

@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Net;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace TCP_Proxy
 {
@@ -23,13 +24,70 @@ namespace TCP_Proxy
 
         TextBox log_console;
 
+
         public delegate void send_gui_Delegate(Control ctl, string msg);
         public void send_gui(Control ctl, string msg)
         {
             if (ctl.InvokeRequired)
                 ctl.Invoke(new send_gui_Delegate(send_gui), ctl, msg);
             else
-                ctl.Text += msg;
+            {
+                try
+                {
+
+                    // json 형태로 수신
+                    JObject obj = JObject.Parse(msg);
+                    string type = obj["type"].ToString();
+                    string process = obj["data"]["process"].ToString();
+                    string res = obj["data"]["res"].ToString();
+
+                    string draw_text = "";
+
+                    if(type.Equals("init_process"))
+                    {
+                        if (process.Equals("core_boot"))
+                        {
+                            if (res.Equals("success"))
+                            {
+                                draw_text = "init success~";//OK!
+                            }
+                            else
+                            {
+                                string err = obj["data"]["err"].ToString();
+                                MessageBox.Show(err);
+                                Main.clear_all();
+                            }
+                        }
+                    }
+
+                    else if(type.Equals("cmd"))
+                    {
+                        if(process.Equals("get_setting"))
+                        {
+                            if(res.Equals("success"))
+                            {
+                                string res_data = obj["data"]["res_data"].ToString();
+                                draw_text = "get_setting success~";
+                                draw_text += res_data;
+                            }
+                            else
+                            {
+                                string err = obj["data"]["err"].ToString();
+                                MessageBox.Show(err);
+                                Main.clear_all();
+                            }
+                        }
+                    }
+
+
+                    ctl.Text += draw_text;
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+            }
+
         }
 
 
@@ -173,7 +231,7 @@ namespace TCP_Proxy
             int byte_read;
 
 
-            while (isRunning)
+            while (true)
             {
                 
                 try
@@ -185,9 +243,9 @@ namespace TCP_Proxy
                         {
                             ASCIIEncoding encoder = new ASCIIEncoding();
                             msg = encoder.GetString(buffer, 0, byte_read);
-                            //msg = Encoding.ASCII.GetString(buffer);
-
-                            //send_gui(log_console, msg);
+                        //msg = Encoding.ASCII.GetString(buffer);
+                        System.Diagnostics.Debug.WriteLine("$$recv: "+ msg);
+                        send_gui(log_console, msg);
 
                             //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
                         }
@@ -198,12 +256,14 @@ namespace TCP_Proxy
                         }
                     //}
                 }
-                catch (SocketException e)
+                catch (Exception e)
                 {
+                    System.Diagnostics.Debug.WriteLine("Cmd_Socket recvThread: " + e.ToString());
+                    /*
                     if (e.ErrorCode == 10035)
                     {
                         System.Diagnostics.Debug.WriteLine("socket error 10035: " + e.ToString());
-                    }
+                    }*/
                 }
             }
         }

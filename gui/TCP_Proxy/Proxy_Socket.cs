@@ -30,66 +30,7 @@ namespace TCP_Proxy
         ListView history_listview;
 
 
-
         public delegate void proxy_data_handler_Delegate(Control ctl, string msg);
-        public void proxy_data_handler(Control ctl, string json_msg)
-        {
-            if (ctl.InvokeRequired)
-                ctl.Invoke(new proxy_data_handler_Delegate(proxy_data_handler), ctl, json_msg);
-            else
-            {
-                try
-                {
-                    
-                    // json 형태로 수신
-                    JObject obj = JObject.Parse(json_msg);
-
-                    //System.Diagnostics.Debug.WriteLine("$$recv: " + obj.ToString());
-
-                    // service 명 parsing
-                    string service = obj["data"]["service"].ToString();
-
-                    if (service.Equals("proxy")) // add and display history_view to gui
-                    {
-                        // parsing data
-                        string intercept_mode = obj["data"]["message"]["INTERCEPT"].ToString();
-
-                        // 구현하고자 하는 명세
-                        /////////////////////////////////////////////////////////////////////////////////////
-                        // read하고, intercept 모드를 파싱하기 전까지 intercept 버튼이 클릭되어서는 안된다.
-                        // 클릭된다면 꼬이게 됨.
-                        // 예:) intercept on를 read함. 실제 해당 패킷이 intercept on 이라는 것을 확인하는 절차중에 intercept 버튼을 클릭해서 off 가 된다면
-                        // intercept off 패킷을 read한 것으로 착각함.
-                        // 그래서 send 버튼이 활성화 되지 않음. 이럴 경우 멈춘 상황에서 gui상 send를 보내지 못하는 상황이 발생
-                        // 따라서 read_data -> intercept 모드 파싱 사이에서는 intercept 버튼을 비활성화 시켜준다.
-
-                        string ip = obj["data"]["message"]["IP"].ToString();
-                        string port = obj["data"]["message"]["PORT"].ToString();
-                        string hexdump = obj["data"]["message"]["hex_dump"].ToString().Replace(" ", "").Replace("\'", "").Replace("[", "").Replace("]", "").Replace(",", " ");
-                        //hexdump example : ['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21']
-                        // => "48 65 6c 6c 6f 20 53 65 72 76 65 72 21"
-
-                        string complete = "N"; //처리되었는지 여부 변수
-
-                        // 내부 관리용 리스트에 등록
-                        string[] tmp_list = { idx.ToString("G"), ip, port, hexdump, intercept_mode, complete };
-                        history_list.Add(tmp_list);
-                        idx = idx + 1;
-
-                        // gui 에 등록
-                        ListViewItem tmp_item = new ListViewItem(tmp_list);
-                        history_listview.Items.Add(tmp_item);
-
-                        
-                    }
-                    send2("ACK");
-                }
-                catch(Exception e)
-                {
-                    MessageBox.Show(e.ToString());
-                }
-            }
-        }
 
 
         public Proxy_Socket(ListView listview)
@@ -109,6 +50,90 @@ namespace TCP_Proxy
                 MessageBox.Show("서버와의 연결에 실패했습니다.");
             }
         }
+
+        public void proxy_data_handler(Control ctl, string json_msg)
+        {
+            if (ctl.InvokeRequired)
+            {
+                ctl.Invoke(new proxy_data_handler_Delegate(proxy_data_handler), ctl, json_msg);
+            }
+
+            else
+            {
+                try
+                {
+                    JObject obj = JObject.Parse(json_msg);
+
+
+                    string type = obj["type"].ToString();
+                    string process = obj["data"]["process"].ToString();
+                    string res = obj["data"]["res"].ToString();
+
+                    if (type.Equals("tcp_proxy")) // add and display history_view to gui
+                    {
+                        if (process.Equals("proxy"))
+                        {
+                            if (res.Equals("success"))
+                            {
+
+
+                                string hexdump_structure = obj["data"]["message"].ToString();
+                                // parsing data
+                                string intercept_mode = obj["data"]["message"]["INTERCEPT"].ToString();
+
+                                // 구현하고자 하는 명세
+                                /////////////////////////////////////////////////////////////////////////////////////
+                                // read하고, intercept 모드를 파싱하기 전까지 intercept 버튼이 클릭되어서는 안된다.
+                                // 클릭된다면 꼬이게 됨.
+                                // 예:) intercept on를 read함. 실제 해당 패킷이 intercept on 이라는 것을 확인하는 절차중에 intercept 버튼을 클릭해서 off 가 된다면
+                                // intercept off 패킷을 read한 것으로 착각함.
+                                // 그래서 send 버튼이 활성화 되지 않음. 이럴 경우 멈춘 상황에서 gui상 send를 보내지 못하는 상황이 발생
+                                // 따라서 read_data -> intercept 모드 파싱 사이에서는 intercept 버튼을 비활성화 시켜준다.
+
+                                string ip = obj["data"]["message"]["IP"].ToString();
+                                string port = obj["data"]["message"]["PORT"].ToString();
+                                string hexdump = obj["data"]["message"]["hex_dump"].ToString().Replace(" ", "").Replace("\'", "").Replace("[", "").Replace("]", "").Replace(",", " ");
+                                //hexdump example : ['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21']
+                                // => "48 65 6c 6c 6f 20 53 65 72 76 65 72 21"
+
+                                string complete = "N"; //처리되었는지 여부 변수
+
+                                // 내부 관리용 리스트에 등록
+                                string[] tmp_list = { idx.ToString("G"), ip, port, hexdump, intercept_mode, complete };
+                                history_list.Add(tmp_list);
+                                idx = idx + 1;
+
+                                // gui 에 등록
+                                ListViewItem tmp_item = new ListViewItem(tmp_list);
+                                history_listview.Items.Add(tmp_item);
+
+                                send2("[ACK]");
+                            }
+                            else
+                            {
+                                string err = obj["data"]["err"].ToString();
+                                MessageBox.Show(err);
+                                Main.clear_all();
+                                send2("[ACK]");
+                            }
+                        }
+                    }
+                    else if (type.Equals("exception")) // add and display history_view to gui
+                    {
+                        string err = obj["data"]["err"].ToString();
+                        MessageBox.Show(err);
+                        Main.clear_all();
+                        send2("[ACK]");
+                    }
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.ToString());
+                }
+            }
+        }
+
+
 
         public void Close()
         {
@@ -227,7 +252,7 @@ namespace TCP_Proxy
             int byte_read;
 
 
-            while (isRunning)
+            while (true)
             {
                 
                 try
@@ -245,7 +270,7 @@ namespace TCP_Proxy
                         count = count + 1;
                             System.Diagnostics.Debug.WriteLine("$$recv"+count.ToString()+": " + msg);
 
-                            //proxy_data_handler(history_listview, msg);
+                            proxy_data_handler(history_listview, msg);
 
                             
                             //serverMessage.Invoke(new LogToForm(Log), new object[] { msg });
@@ -257,12 +282,10 @@ namespace TCP_Proxy
                         }
                     //}
                 }
-                catch (SocketException e)
+                catch (Exception e)
                 {
-                    if(e.ErrorCode==10035)
-                    {
-                        System.Diagnostics.Debug.WriteLine("socket error 10035: " + e.ToString());
-                    }
+                    System.Diagnostics.Debug.WriteLine("Cmd_Socket recvThread: " + e.ToString());
+                    
                 }
             }
         }

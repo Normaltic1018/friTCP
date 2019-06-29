@@ -40,3 +40,16 @@ C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Debug\TCP_Proxy.csproj.Cop
 C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Debug\TCP_Proxy.exe
 C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Debug\TCP_Proxy.pdb
 C:\Users\1\source\repos\test\friTCP\gui\TCP_Proxy\obj\Debug\TCP_Proxy.csprojAssemblyReference.cache
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.Attach.resources
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.Main.resources
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.Properties.Resources.resources
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.csproj.GenerateResource.cache
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.csproj.CoreCompileInputs.cache
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\bin\Debug\TCP_Proxy.exe.config
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\bin\Debug\TCP_Proxy.exe
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\bin\Debug\TCP_Proxy.pdb
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\bin\Debug\Newtonsoft.Json.dll
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\bin\Debug\Newtonsoft.Json.xml
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.csproj.CopyComplete
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.exe
+C:\Users\A0502640\source\repos\TCP_Proxy\TCP_Proxy\gui\TCP_Proxy\obj\Debug\TCP_Proxy.pdb
