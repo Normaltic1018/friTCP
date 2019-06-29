@@ -88,7 +88,7 @@ def on_input_message(message, data):
 		elif(message['payload'].startswith("[PROXY]")):
 			parsing_info_data = parsing_info(message['payload'])
 			parsing_hex_data = parsing_hex(message['payload'])
-			gui.print_js_response("[PROXY]", parsing_info_data, parsing_hex_data)\
+			gui.print_js_response("[PROXY]", parsing_info_data, parsing_hex_data)
 	elif message['type'] == 'error':
 		gui.print_js_response("[frida_error]",['proxy'],message['stack'])
 		#print(message['stack'])

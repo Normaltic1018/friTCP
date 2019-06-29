@@ -86,7 +86,7 @@ def print_js_response(message,proxy_info,hex_data):
 		message["hex_dump"] = str(hex_data)
 		data["message"] = message
 		
-		send_message_channel("frida",data,proxy_channel)
+		send_message_channel("tcp_proxy",data,proxy_channel)
 	
 	elif(message.startswith("[frida_error]")):
 		data = {}
