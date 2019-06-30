@@ -5,12 +5,10 @@ from tcp_socket import *
 import json
 import time
 
-console_mode = True
+console_mode = False
 
 cmd_channel =1
 proxy_channel = 2
-
-sendable = True
 
 if(console_mode == False):
 	cmd_sock = TCP_SOCKET(12345)
