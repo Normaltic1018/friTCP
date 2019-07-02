@@ -32,7 +32,7 @@ my_thread.start()
 while(True):
     msg = input(": ")
     #msg = '{"type":"boot","data":{"service":"init","res":"success","message":"core init success"}'
-    print(client_socket.recv().decode())
+    #print(client_socket.recv().decode())
     client_socket.send(msg.encode())
 
 

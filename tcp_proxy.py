@@ -16,7 +16,6 @@ def main(target_process):
 		gui.print_error(str(e))
 		
 	
-	
 	while True:
 		#cmd = dev.shell_loop()
 		cmd = gui.get_cmd()
@@ -52,5 +51,4 @@ if __name__ == '__main__':
 	except:
 		target_process = sys.argv[1]
          
-   
 	main(target_process)

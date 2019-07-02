@@ -10,7 +10,7 @@ def get_script(script_name):
 
 def validate_setting(mode, value):
 	if value in settings_validation[mode]:
-                return True
+		return True
 
 	return False
 
@@ -28,23 +28,20 @@ def set_cmd(cmd):
 						gui.print_error("\"{}\" is not API Name".format(cmd[2+i]))
 
 				if len(new_api_list) != 0:
-                                        settings[cmd[1]] = new_api_list
-                                        gui.print_response("NOT_CHANGED")
-                                        gui.print_current_settings()
-                                        #dev.show_current_settings()
+					settings[cmd[1]] = new_api_list
+					gui.print_response("NOT_CHANGED")
+					gui.print_current_settings()
 				else:
-                                        gui.print_response("#>Not Changed...")
+					gui.print_response("#>Not Changed...")
 			else:
 				if(validate_setting(cmd[1],cmd[2])):
 					settings[cmd[1]] = cmd[2]
 					gui.print_response("CHANGE")
 					gui.print_current_settings()
-					#dev.show_current_settings()
 				else:
 					gui.print_error("WRONG_VALUE")
 		else:
 			gui.print_error("WRONG_SET_CMD")
-			#dev.show_settings()
 	else:
 		gui.print_error("WRONG_CMD_ARG")
 	
@@ -52,11 +49,10 @@ def set_cmd(cmd):
 		intercept = True
 	else:
 		intercept = False
-	#gui.print_current_settings()
 
 def hook_api(session,capture_api):
 	global script
-	script = session.create_script(get_script('func_proxy.js') % (capture_api, settings["mode"]))
+	script = session.create_script(get_script('send_proxy.js'))
 	script.on('message', on_input_message)
 	script.load()
 
@@ -110,11 +106,11 @@ def parsing_hex(hexdump):
 	return hex_list
 
 def parsing_info(data):
-	intercept_mode = data.split("[INTERCEPT]")[1].split()[0]
+	func_name = data.split("[FUNC_NAME]")[1].split()[0]
 	ip_info = data.split("[IP]")[1].split()[0]
 	port_info = data.split("[PORT]")[1].split()[0]
 
-	return [intercept_mode, ip_info, port_info]
+	return [func_name, ip_info, port_info]
 
 def parsing_hook_info(data):
 	hook_pid = data.split("[PID]")[1].split()[0]
@@ -134,4 +130,11 @@ def validate_hex_input(hex_data):
 			return False
 			
 	return True
-		
+
+def post_ack_data(ack_data):
+	if(validate_hex_input(ack_data) == False):
+		gui.print_js_response("[frida_error]",["NOT HEX VALUE"],"")
+		ack_data = ""
+	
+	script.post({'type':'input','payload':ack_data})
+	

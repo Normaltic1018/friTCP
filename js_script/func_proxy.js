@@ -23,7 +23,7 @@ for(var key in hook_diction){
 	var hook_function_name = hook_diction[key];
 	
 	var hookPtr = Module.findExportByName(hook_module_name, hook_function_name);
-	send("[HOOK_INFO][PID]"+Process.id+" [MODULE]"+hook_module_name+" [FUNCTION]"+hook_function_name+" [ADDRESS]"+ hookPtr.toString());
+	//send("[HOOK_INFO][PID]"+Process.id+" [MODULE]"+hook_module_name+" [FUNCTION]"+hook_function_name+" [ADDRESS]"+ hookPtr.toString());
 	
 	var buf_ptr;
 	
