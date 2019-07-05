@@ -1,0 +1,4 @@
+## Python Install List
+PyQt5
+psutil
+frida

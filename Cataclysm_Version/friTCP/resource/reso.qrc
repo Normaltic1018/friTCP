@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>mew.ico</file>
+    <file>normaltic.jpg</file>
+  </qresource>
+</RCC>
