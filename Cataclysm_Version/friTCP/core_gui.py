@@ -208,6 +208,10 @@ class MyWindow(QMainWindow):
 	def toggle_intercept_on(self):
 		self.frida_agent.intercept_on = self.ui.pushButton_interceptToggle.isChecked()
 		
+		if(self.frida_agent.current_isIntercept):
+			# 현재 인터셉트 중인지 확인, 인터셉트 중이라면 intercept_go 버튼 클릭
+			self.intercept_go_button()
+		
 		if(self.frida_agent.intercept_on):
 			self.ui.pushButton_interceptToggle.setText("Intercept ON")
 		else:
