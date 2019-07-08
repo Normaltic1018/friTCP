@@ -74,63 +74,6 @@ QGroupBox::indicator
     margin-left: 2px;
 }
 
-QCheckBox::indicator:unchecked
-{
-    image: url(:/qss_icons/rc/checkbox_unchecked.png);
-}
-
-QCheckBox::indicator:unchecked:hover,
-QCheckBox::indicator:unchecked:focus,
-QCheckBox::indicator:unchecked:pressed,
-QGroupBox::indicator:unchecked:hover,
-QGroupBox::indicator:unchecked:focus,
-QGroupBox::indicator:unchecked:pressed
-{
-  border: none;
-    image: url(:/qss_icons/rc/checkbox_unchecked_focus.png);
-}
-
-QCheckBox::indicator:checked
-{
-    image: url(:/qss_icons/rc/checkbox_checked.png);
-}
-
-QCheckBox::indicator:checked:hover,
-QCheckBox::indicator:checked:focus,
-QCheckBox::indicator:checked:pressed,
-QGroupBox::indicator:checked:hover,
-QGroupBox::indicator:checked:focus,
-QGroupBox::indicator:checked:pressed
-{
-  border: none;
-    image: url(:/qss_icons/rc/checkbox_checked_focus.png);
-}
-
-
-QCheckBox::indicator:indeterminate
-{
-    image: url(:/qss_icons/rc/checkbox_indeterminate.png);
-}
-
-QCheckBox::indicator:indeterminate:focus,
-QCheckBox::indicator:indeterminate:hover,
-QCheckBox::indicator:indeterminate:pressed
-{
-    image: url(:/qss_icons/rc/checkbox_indeterminate_focus.png);
-}
-
-QCheckBox::indicator:checked:disabled,
-QGroupBox::indicator:checked:disabled
-{
-    image: url(:/qss_icons/rc/checkbox_checked_disabled.png);
-}
-
-QCheckBox::indicator:unchecked:disabled,
-QGroupBox::indicator:unchecked:disabled
-{
-    image: url(:/qss_icons/rc/checkbox_unchecked_disabled.png);
-}
-
 QRadioButton
 {
     spacing: 5px;
@@ -1464,7 +1407,7 @@ QDateEdit::down-arrow:focus
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -1846,8 +1789,44 @@ QDateEdit::down-arrow:focus
            <attribute name="title">
             <string>Options</string>
            </attribute>
+           <widget class="QCheckBox" name="checkBox">
+            <property name="geometry">
+             <rect>
+              <x>60</x>
+              <y>80</y>
+              <width>181</width>
+              <height>71</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Auto Scroll</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="checkBox_2">
+            <property name="geometry">
+             <rect>
+              <x>50</x>
+              <y>260</y>
+              <width>191</width>
+              <height>51</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>send</string>
+            </property>
+           </widget>
           </widget>
          </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_5">
+       <attribute name="title">
+        <string>Log</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_6">
+        <item row="0" column="0">
+         <widget class="QTextBrowser" name="textBrowser"/>
         </item>
        </layout>
       </widget>

@@ -152,22 +152,13 @@ class MyWindow(QMainWindow):
 		#self.ui.tableWidget_proxyHistory.selectRow(numRows)
 		
 	def history_detail(self,row, col):
-		"""
-		hex_list = ast.literal_eval(self.ui.tableWidget_proxyHistory.item(row, 4).text())
-		
-		hex_text =""
-		str_text = ""
-		for hex in hex_list:
-			hex_text += hex + " "
-			str_text += chr(int(hex,16)) + " "
-		"""
 		hex_text = self.frida_agent.proxy_history[row]['hex_text']
 		str_text = self.frida_agent.proxy_history[row]['str_text']
 		self.ui.textBrowser_hexData.setText(hex_text)
 		self.ui.textBrowser_stringData.setText(str_text)
 		
 		# test용
-		self.ui.statusbar.showMessage("row : {}".format(row))
+		self.ui.statusbar.showMessage("PID : {} / Process Name : {}".format(self.frida_agent.proxy_history[row]['pid'],self.frida_agent.proxy_history[row]['proc_name']))
 		
 	#"[PROXY][FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res
 	
@@ -179,8 +170,6 @@ class MyWindow(QMainWindow):
 		#self.ui.tableWidget_hexTable.clearContents()
 		
 		for row in range(need_row_num+1):
-			# 거꾸로 입력하기.
-			#row = need_row_num - row
 			numRows = self.ui.tableWidget_hexTable.rowCount()
 		
 			self.ui.tableWidget_hexTable.insertRow(numRows)

@@ -124,7 +124,8 @@ class FridaAgent(QObject):
 				strHex += hex + " "
 		
 		self.script_list[intercept_pid]['send'].post({'type':'input','payload':strHex})
-		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것. 
+		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
+		
 		self.current_isIntercept = False
 		
 	
