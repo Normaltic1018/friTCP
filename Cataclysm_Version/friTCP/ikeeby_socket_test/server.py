@@ -1,14 +1,24 @@
 import socket
+import threading
 
+def msg_recv(sock):
+   while(True):
+      msg = "Welcome Client!".encode()
+      sock.send(msg)
+      data = sock.recv(65535).decode()
+      print(data)
+      
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print(server_socket)
+server_socket2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+print(server_socket2)
 server_socket.bind(('127.0.0.1', 12346))
-server_socket.listen(0)
-client_socket, addr = server_socket.accept()
+server_socket.listen(10)
 while(True):
-    data = client_socket.recv(65535)
-    print(data.decode())
-    msg = "Welcome Client!".encode()
-    client_socket.send(msg)
+   client_socket, addr = server_socket.accept()
+   print(client_socket)
+   my_thread = threading.Thread(target=msg_recv, args=(client_socket,))
+   my_thread.start()
     
     
 client_socket.close()
