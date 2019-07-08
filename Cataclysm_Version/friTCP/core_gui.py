@@ -1,6 +1,6 @@
 # core_gui.py
 import sys
-from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QHeaderView,QTableWidget, QMessageBox,QLineEdit
+from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QHeaderView,QTableWidget, QMessageBox,QLineEdit,QAbstractItemView
 from PyQt5.QtGui import QStandardItemModel,QStandardItem, QPixmap,QIcon, QRegExpValidator
 from PyQt5 import uic
 from PyQt5.QtCore import Qt, QRegExp, QThread, pyqtSignal, pyqtSlot
@@ -123,6 +123,10 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_proxyHistory.setItem(numRows, 4, QTableWidgetItem(str(hex_list)))
 		
 		self.ui.tableWidget_proxyHistory.cellClicked.connect(self.history_detail)
+		
+		current_item = self.ui.tableWidget_proxyHistory.item(numRows, 0)
+		self.ui.tableWidget_proxyHistory.scrollToItem(current_item, QAbstractItemView.PositionAtTop)
+		self.ui.tableWidget_proxyHistory.selectRow(numRows)
 		
 	def history_detail(self,row, col):
 		hex_list = ast.literal_eval(self.ui.tableWidget_proxyHistory.item(row, 4).text())

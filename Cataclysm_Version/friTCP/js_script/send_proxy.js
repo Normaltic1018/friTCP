@@ -28,6 +28,10 @@ for(var key in hook_diction){
 	
 	Interceptor.attach(hookPtr,{
 		onEnter: function(args){
+			var op = recv('input',function(value){
+				user_write_data = value.payload;
+			});
+			
 			var buf_index;
 			buf_index = 1;
 			
@@ -50,9 +54,8 @@ for(var key in hook_diction){
 			send("[PROXY][FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 		
 			//send("[INTERCEPT]");
-			var op = recv('input',function(value){
-				user_write_data = value.payload;
-			});
+			
+			// Receive User Data
 			op.wait();
 								
 			var input_len;

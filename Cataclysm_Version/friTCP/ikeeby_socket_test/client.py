@@ -11,6 +11,6 @@ while(True):
     sock.send(msg)
     data = sock.recv(65535)
     print(data.decode())
-    time.sleep(1)
+    time.sleep(0.1)
 
 sock.close()

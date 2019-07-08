@@ -58,13 +58,11 @@ class FridaAgent(QObject):
 		self.intercept_on = True
 		self.script_list = {}
 		self.current_isIntercept = False
-		
-		
+			
 		for func in self.hook_list:
 			self.inject_script(func)
 		
 	def inject_script(self,function_name):
-		global script
 		script_name = "{}_proxy.js".format(function_name)
 	
 		script = get_script(script_name)
@@ -77,7 +75,13 @@ class FridaAgent(QObject):
 		script.on('message', self.on_message)
 		script.load()
 		self.script_list[function_name] = script
-				
+	
+	def reload_script(self, function_name):
+		#unload_script
+		self.script_list[function_name].unload()
+		
+		self.inject_script(function_name)
+	
 	def send_spoofData(self, hexList):
 		
 		strHex = ""
