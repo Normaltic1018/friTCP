@@ -1464,7 +1464,7 @@ QDateEdit::down-arrow:focus
            </font>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -1779,6 +1779,9 @@ QDateEdit::down-arrow:focus
                 </property>
                </widget>
               </item>
+              <item row="3" column="0" colspan="3">
+               <widget class="QLineEdit" name="lineEdit_intercept_info"/>
+              </item>
              </layout>
             </item>
            </layout>
@@ -1799,7 +1802,12 @@ QDateEdit::down-arrow:focus
                </property>
                <column>
                 <property name="text">
-                 <string>Time</string>
+                 <string>PID</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Process Name</string>
                 </property>
                </column>
                <column>
@@ -1819,7 +1827,7 @@ QDateEdit::down-arrow:focus
                </column>
                <column>
                 <property name="text">
-                 <string>Data</string>
+                 <string>Data (ASCII)</string>
                 </property>
                </column>
               </widget>

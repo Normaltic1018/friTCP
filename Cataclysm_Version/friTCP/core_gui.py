@@ -31,6 +31,13 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_stringTable.cellChanged.connect(self.intercept_strTable_changed)
 		self.ui.tableWidget_stringTable.itemSelectionChanged.connect(self.strTable_itemSelected)
 	
+		# Core Frida Agent 클래스 생성
+		self.frida_agent = FridaAgent(self)
+		
+		# Core Frida Agent로 부터 넘어오는 시그널 연결
+		self.make_connection(self.frida_agent)
+		self.make_connection_err(self.frida_agent)
+		
 	def process_list_set(self):
 		header = self.ui.tableWidget_procList.horizontalHeader()       
 		header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
@@ -73,8 +80,10 @@ class MyWindow(QMainWindow):
 		self.alert_ui.setupUi(self.alert_window)
 		self.alert_window.setWindowFlags(Qt.FramelessWindowHint)
 		self.alert_window.show()
-		self.frida_agent = FridaAgent(self.hook_pid, self)
-		self.make_connection(self.frida_agent)
+		
+		self.frida_agent.inject_frida_agent(pid)
+		self.frida_agent.inject_script(pid)
+		
 		self.alert_ui.pushButton_gogo.clicked.connect(self.close_alertwindow)
 		
 	def close_alertwindow(self):
@@ -85,6 +94,9 @@ class MyWindow(QMainWindow):
 	
 	def make_connection(self, class_object):
 		class_object.from_agent_data.connect(self.from_fridaJS)
+		
+	def make_connection_err(self, class_object):
+		class_object.error_signal.connect(self.error_message_box)
 	
 	@pyqtSlot(str)	
 	def from_fridaJS(self,data):
@@ -93,6 +105,7 @@ class MyWindow(QMainWindow):
 			
 		if(data.startswith("[PROXY]")):
 			func_name, ip_info, port_info = parsing_info(data)
+			pid = parsing_pid(data)
 			
 			# 히스토리에 기록
 			self.history_addRow(data)
@@ -100,35 +113,46 @@ class MyWindow(QMainWindow):
 			# 인터셉트 모드일 경우
 			if(self.frida_agent.intercept_on):
 				self.frida_agent.current_isIntercept = True
-				hex_data = parsing_hex(data)
-				self.intercept_view(hex_data)
+				hex_data = parsing_hex(data)	
+				self.intercept_view(pid,func_name,ip_info,port_info,hex_data)
 				self.ui.tabWidget_proxyTab.setCurrentIndex(0)
 				# 클릭을 연결해두기. (go button)
 			else:
-				user_input = ""
-				script = self.frida_agent.script_list[func_name]
-				script.post({'type':'input','payload':user_input})
+				# 빈 문자 전송
+				self.frida_agent.send_spoofData(pid,[])
 	
 	def history_addRow(self,history_item):
+		pid = parsing_pid(history_item)
+		proc_name = get_process_name(pid)
 		func_name, ip_info, port_info = parsing_info(history_item)
 		hex_list = parsing_hex(history_item)
-				
+		hex_text, str_text = hexDump2Str(hex_list)
+		
+		append_data = {"pid":pid,"proc_name":proc_name,"func_name":func_name,"ip":ip_info,"port":port_info,"hex_list":hex_list,"hex_text":hex_text,"str_text":str_text}
+		# History 기록
+		self.frida_agent.proxy_history.append(append_data)
+		
 		numRows = self.ui.tableWidget_proxyHistory.rowCount()
 		
 		self.ui.tableWidget_proxyHistory.insertRow(numRows)
+
+		add_item = self.frida_agent.proxy_history[-1]
 		
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 1, QTableWidgetItem(func_name))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 2, QTableWidgetItem(ip_info))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 3, QTableWidgetItem(port_info))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 4, QTableWidgetItem(str(hex_list)))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 0, QTableWidgetItem(add_item['pid']))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 1, QTableWidgetItem(add_item["proc_name"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 2, QTableWidgetItem(add_item["func_name"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 3, QTableWidgetItem(add_item["ip"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 4, QTableWidgetItem(add_item["port"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 5, QTableWidgetItem(add_item["str_text"]))
 		
 		self.ui.tableWidget_proxyHistory.cellClicked.connect(self.history_detail)
 		
 		current_item = self.ui.tableWidget_proxyHistory.item(numRows, 0)
-		self.ui.tableWidget_proxyHistory.scrollToItem(current_item, QAbstractItemView.PositionAtTop)
-		self.ui.tableWidget_proxyHistory.selectRow(numRows)
+		self.ui.tableWidget_proxyHistory.scrollToItem(current_item, QAbstractItemView.PositionAtBottom)
+		#self.ui.tableWidget_proxyHistory.selectRow(numRows)
 		
 	def history_detail(self,row, col):
+		"""
 		hex_list = ast.literal_eval(self.ui.tableWidget_proxyHistory.item(row, 4).text())
 		
 		hex_text =""
@@ -136,13 +160,20 @@ class MyWindow(QMainWindow):
 		for hex in hex_list:
 			hex_text += hex + " "
 			str_text += chr(int(hex,16)) + " "
-		
+		"""
+		hex_text = self.frida_agent.proxy_history[row]['hex_text']
+		str_text = self.frida_agent.proxy_history[row]['str_text']
 		self.ui.textBrowser_hexData.setText(hex_text)
 		self.ui.textBrowser_stringData.setText(str_text)
 		
+		# test용
+		self.ui.statusbar.showMessage("row : {}".format(row))
+		
 	#"[PROXY][FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res
 	
-	def intercept_view(self,hex_data):
+	def intercept_view(self,pid,func_name,ip_info,port_info,hex_data):
+		proc_name = get_process_name(pid)
+		self.ui.lineEdit_intercept_info.setText("PID : {} / Process Name : {} / FUNCTION : {} / ADDRESS : {}:{}".format(pid,proc_name,func_name,ip_info,port_info))
 		need_row_num = int(len(hex_data) / 16)
 				
 		#self.ui.tableWidget_hexTable.clearContents()
@@ -191,16 +222,20 @@ class MyWindow(QMainWindow):
 	def intercept_go_button(self):
 		
 		#self.ui.textBrowser_hexData.setText(str(hexList))
+		intercept_info = self.ui.lineEdit_intercept_info.text()
+		intercept_pid = intercept_info.split()[2]
 		
 		if(self.frida_agent.current_isIntercept):
 			hexList = self.hexTableToList()
-			self.frida_agent.send_spoofData(hexList)
+			self.frida_agent.send_spoofData(intercept_pid, hexList)
 			
 			for i in reversed(range(self.ui.tableWidget_hexTable.rowCount())):
 				self.ui.tableWidget_hexTable.removeRow(i)
 				
 			for i in reversed(range(self.ui.tableWidget_stringTable.rowCount())):
 				self.ui.tableWidget_stringTable.removeRow(i)
+				
+			self.ui.lineEdit_intercept_info.setText("")
 		
 		self.ui.tableWidget_hexTable.setRowCount(0)
 		self.ui.tableWidget_stringTable.setRowCount(0)
@@ -255,3 +290,11 @@ class MyWindow(QMainWindow):
 			col = sel_item.column()
 			
 			self.ui.tableWidget_hexTable.setCurrentCell(row,col)
+			
+	@pyqtSlot(str)	
+	def error_message_box(self,data):
+		# 에러 메시지 박스 오픈
+		# 임시로 아래 상태바에 출력
+		self.ui.statusbar.showMessage(data)
+		#self.ui.textBrowser_hexData.setText(data)
+		#self.ui.textBrowser_hexData.append(str(message))
