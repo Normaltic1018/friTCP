@@ -33,6 +33,7 @@ class MyWindow(QMainWindow):
 	
 		# Core Frida Agent 클래스 생성
 		self.frida_agent = FridaAgent(self)
+		self.ui.textBrowser_log.append("[#] Create Frdia Agent")
 		
 		# Core Frida Agent로 부터 넘어오는 시그널 연결
 		self.make_connection(self.frida_agent)
@@ -285,5 +286,6 @@ class MyWindow(QMainWindow):
 		# 에러 메시지 박스 오픈
 		# 임시로 아래 상태바에 출력
 		self.ui.statusbar.showMessage(data)
+		self.ui.textBrowser_log.append("[*] Error : "+str(data))
 		#self.ui.textBrowser_hexData.setText(data)
 		#self.ui.textBrowser_hexData.append(str(message))

@@ -132,6 +132,10 @@ class FridaAgent(QObject):
 	def on_message(self,message, data):
 		while self.current_isIntercept == True:
 			pass
-			
-		self.from_agent_data.emit(message['payload'])
+		
+		if message['type'] == 'send':
+			self.from_agent_data.emit(message['payload'])
+		elif message['type'] == 'error':
+			self.error_signal.emit(message['stack'])
+		
 	
