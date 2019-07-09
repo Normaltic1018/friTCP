@@ -3,10 +3,11 @@ import threading
 
 def msg_recv(sock):
    while(True):
-      msg = "Welcome Client!".encode()
-      sock.send(msg)
+
       data = sock.recv(65535).decode()
       print(data)
+      #msg = "Welcome Client!".encode()
+      #sock.send(msg)
       
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print(server_socket)
