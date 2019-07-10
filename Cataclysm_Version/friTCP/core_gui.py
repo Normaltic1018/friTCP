@@ -34,17 +34,23 @@ class MyWindow(QMainWindow):
 	
 		# ikeeby
 		# Repeater HEX, String VIEW
-		# REQUEST 만 바꾸기 이벤트
-		self.ui.tableWidget_hexTable_2.cellChanged.connect(self.intercept_hexTable_changed_2)
-		self.ui.tableWidget_hexTable_2.itemSelectionChanged.connect(self.hexTable_itemSelected_2)
+		# Repeater REQUEST 만 바꾸기 이벤트
+		self.ui.tableWidget_hexTable_3.cellChanged.connect(self.intercept_hexTable_changed_3)
+		self.ui.tableWidget_hexTable_3.itemSelectionChanged.connect(self.hexTable_itemSelected_3)
 		
-		self.ui.tableWidget_stringTable_2.cellChanged.connect(self.intercept_strTable_changed_2)
-		self.ui.tableWidget_stringTable_2.itemSelectionChanged.connect(self.strTable_itemSelected_2)
-		# RESPONSE 는 바꿀 필요가 없음
+		self.ui.tableWidget_stringTable_3.cellChanged.connect(self.intercept_strTable_changed_3)
+		self.ui.tableWidget_stringTable_3.itemSelectionChanged.connect(self.strTable_itemSelected_3)
+		
+		# Repeater RESPONSE 는 바꾸지 못하도록
+		
+		self.ui.tableWidget_hexTable_2.setEditTriggers(QAbstractItemView.NoEditTriggers)
+		self.ui.tableWidget_stringTable_2.setEditTriggers(QAbstractItemView.NoEditTriggers)
 		
 		# Repeater go button
 		self.ui.pushButton_go_2.clicked.connect(self.repeater_go_button)
 		
+		# custom mouse right click event init
+		self.tableWidget_proxyHistory_right_click()
 		######## ikeeby
 
 	
@@ -57,6 +63,28 @@ class MyWindow(QMainWindow):
 		self.make_connection_err(self.frida_agent)
 
 	
+	# customs context menu	
+	def tableWidget_proxyHistory_right_click(self):
+	
+		self.ui.tableWidget_proxyHistory.setContextMenuPolicy(Qt.ActionsContextMenu)
+		send_repeater = QAction("Send to Repeater", self.ui.tableWidget_proxyHistory)
+		self.ui.tableWidget_proxyHistory.addAction(send_repeater)
+		
+		send_repeater.triggered.connect(self.tableWidget_proxyHistory_right_click_event)
+		
+	def tableWidget_proxyHistory_right_click_event(self):
+		# get mouse pos
+		pos = QCursor.pos() # PyQt5.QtCore.QPoint(262, 215)
+		
+		# get proxyHistory row 
+		row = self.ui.tableWidget_proxyHistory.rowAt(self.ui.tableWidget_proxyHistory.viewport().mapFromGlobal(pos).y())
+		print(row)
+		
+		if(row>-1):
+			
+			self.send_packet_to_Repeater(row)		
+		
+	'''
 	#ikeeby
 	# default context menu (mouse right click) event listener
 	def contextMenuEvent(self, event):
@@ -72,6 +100,7 @@ class MyWindow(QMainWindow):
 			
 			if action == sendRepeater:
 				self.send_packet_to_Repeater(row)
+	'''
 	
 	############ikeeby
 	
@@ -205,8 +234,8 @@ class MyWindow(QMainWindow):
 	#ikeeby
 	def send_packet_to_Repeater(self,row):
 		# 기존 데이터 초기화
-		self.ui.tableWidget_hexTable_2.setRowCount(0)
-		self.ui.tableWidget_stringTable_2.setRowCount(0)
+		self.ui.tableWidget_hexTable_3.setRowCount(0)
+		self.ui.tableWidget_stringTable_3.setRowCount(0)
 		#
 		
 		# Destination IP, PORT Setting
@@ -220,54 +249,6 @@ class MyWindow(QMainWindow):
 		hex_text = self.frida_agent.proxy_history[row]['hex_text']
 		str_text = self.frida_agent.proxy_history[row]['str_text']
 		hex_data = hex_text.split(' ')[:-1] # 
-		#print(hex_data)
-		''' 마지막 지우기!
-		['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21', '
-		31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34
-		', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34', '35', '36', '37',
-		 '38', '39', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '']
-		'''
-
-		# 기존 intercept_view function pid 부분 빼고 복붙
-		need_row_num = int(len(hex_data) / 16)
-				
-		#self.ui.tableWidget_hexTable.clearContents()
-		
-		for row in range(need_row_num+1):
-			numRows = self.ui.tableWidget_hexTable_2.rowCount()
-		
-			self.ui.tableWidget_hexTable_2.insertRow(numRows)
-			self.ui.tableWidget_stringTable_2.insertRow(numRows)
-			
-			if(row< need_row_num):
-				# 16번 반복
-				for i in range(16):
-					self.ui.tableWidget_hexTable_2.setItem(row, i, QTableWidgetItem(hex_data[(16*row)+i]))
-					self.ui.tableWidget_hexTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-					
-					self.ui.tableWidget_stringTable_2.setItem(row, i, QTableWidgetItem(chr(int(hex_data[(16*row)+i],16))))
-					self.ui.tableWidget_stringTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-					
-			else:
-				# total_length - (need_row_num * 16)
-				for i in range((len(hex_data)-(need_row_num * 16))):
-					self.ui.tableWidget_hexTable_2.setItem(row, i, QTableWidgetItem(hex_data[(16*row)+i]))
-					self.ui.tableWidget_hexTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-					
-					self.ui.tableWidget_stringTable_2.setItem(row, i, QTableWidgetItem(chr(int(hex_data[(16*row)+i],16))))
-					self.ui.tableWidget_stringTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-
-
-	def recv_packet_to_Repeater(self, packet):
-		# 기존 데이터 초기화
-		self.ui.tableWidget_hexTable_3.setRowCount(0)
-		self.ui.tableWidget_stringTable_3.setRowCount(0)
-		#
-		
-
-		# Hex, String View Setting
-		#hex_text = packet
-		hex_data = packet
 		#print(hex_data)
 		''' 마지막 지우기!
 		['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21', '
@@ -304,6 +285,54 @@ class MyWindow(QMainWindow):
 					
 					self.ui.tableWidget_stringTable_3.setItem(row, i, QTableWidgetItem(chr(int(hex_data[(16*row)+i],16))))
 					self.ui.tableWidget_stringTable_3.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+
+
+	def recv_packet_to_Repeater(self, packet):
+		# 기존 데이터 초기화
+		self.ui.tableWidget_hexTable_2.setRowCount(0)
+		self.ui.tableWidget_stringTable_2.setRowCount(0)
+		#
+		
+
+		# Hex, String View Setting
+		#hex_text = packet
+		hex_data = packet
+		#print(hex_data)
+		''' 마지막 지우기!
+		['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21', '
+		31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34
+		', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34', '35', '36', '37',
+		 '38', '39', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '']
+		'''
+
+		# 기존 intercept_view function pid 부분 빼고 복붙
+		need_row_num = int(len(hex_data) / 16)
+				
+		#self.ui.tableWidget_hexTable.clearContents()
+		
+		for row in range(need_row_num+1):
+			numRows = self.ui.tableWidget_hexTable_2.rowCount()
+		
+			self.ui.tableWidget_hexTable_2.insertRow(numRows)
+			self.ui.tableWidget_stringTable_2.insertRow(numRows)
+			
+			if(row< need_row_num):
+				# 16번 반복
+				for i in range(16):
+					self.ui.tableWidget_hexTable_2.setItem(row, i, QTableWidgetItem(hex_data[(16*row)+i]))
+					self.ui.tableWidget_hexTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+					
+					self.ui.tableWidget_stringTable_2.setItem(row, i, QTableWidgetItem(chr(int(hex_data[(16*row)+i],16))))
+					self.ui.tableWidget_stringTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+					
+			else:
+				# total_length - (need_row_num * 16)
+				for i in range((len(hex_data)-(need_row_num * 16))):
+					self.ui.tableWidget_hexTable_2.setItem(row, i, QTableWidgetItem(hex_data[(16*row)+i]))
+					self.ui.tableWidget_hexTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
+					
+					self.ui.tableWidget_stringTable_2.setItem(row, i, QTableWidgetItem(chr(int(hex_data[(16*row)+i],16))))
+					self.ui.tableWidget_stringTable_2.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
 
 	
 	
@@ -381,7 +410,7 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_stringTable.setRowCount(0)
 
 	def repeater_hexTableToList(self):
-		hexTable = self.ui.tableWidget_hexTable_2
+		hexTable = self.ui.tableWidget_hexTable_3
 		hexList = []
 		
 		numRows = hexTable.rowCount()
@@ -482,8 +511,8 @@ class MyWindow(QMainWindow):
 			self.ui.tableWidget_hexTable.setCurrentCell(row,col)
 
 	# ikeeby
-	def intercept_hexTable_changed_2(self, row, col):
-		changed_data = self.ui.tableWidget_hexTable_2.item(row, col).text()
+	def intercept_hexTable_changed_3(self, row, col):
+		changed_data = self.ui.tableWidget_hexTable_3.item(row, col).text()
 		
 		try:
 			tmp = int(changed_data,16)
@@ -493,33 +522,33 @@ class MyWindow(QMainWindow):
 		if(len(changed_data) != 2):
 			changed_data = "00"
 		
-		if(self.ui.tableWidget_hexTable_2.item(row, col) != None):
-			self.ui.tableWidget_hexTable_2.item(row, col).setText(changed_data)
-		if(self.ui.tableWidget_stringTable_2.item(row, col) != None):
-			self.ui.tableWidget_stringTable_2.item(row, col).setText(chr(int(changed_data,16)))
+		if(self.ui.tableWidget_hexTable_3.item(row, col) != None):
+			self.ui.tableWidget_hexTable_3.item(row, col).setText(changed_data)
+		if(self.ui.tableWidget_stringTable_3.item(row, col) != None):
+			self.ui.tableWidget_stringTable_3.item(row, col).setText(chr(int(changed_data,16)))
 	# ikeeby	
-	def hexTable_itemSelected_2(self):
-		for sel_item in self.ui.tableWidget_hexTable_2.selectedItems():
+	def hexTable_itemSelected_3(self):
+		for sel_item in self.ui.tableWidget_hexTable_3.selectedItems():
 			row = sel_item.row()
 			col = sel_item.column()
 			
-			self.ui.tableWidget_stringTable_2.setCurrentCell(row,col)
+			self.ui.tableWidget_stringTable_3.setCurrentCell(row,col)
 	# ikeeby
-	def intercept_strTable_changed_2(self,row, col):
-		changed_data = self.ui.tableWidget_stringTable_2.item(row, col).text()
+	def intercept_strTable_changed_3(self,row, col):
+		changed_data = self.ui.tableWidget_stringTable_3.item(row, col).text()
 			
 		if(len(changed_data) != 1):
 			changed_data = " "
 			
-		self.ui.tableWidget_hexTable_2.item(row, col).setText(hex(ord(changed_data))[2:])
-		self.ui.tableWidget_stringTable_2.item(row, col).setText(changed_data)
+		self.ui.tableWidget_hexTable_3.item(row, col).setText(hex(ord(changed_data))[2:])
+		self.ui.tableWidget_stringTable_3.item(row, col).setText(changed_data)
 	# ikeeby
-	def strTable_itemSelected_2(self):
-		for sel_item in self.ui.tableWidget_stringTable_2.selectedItems():
+	def strTable_itemSelected_3(self):
+		for sel_item in self.ui.tableWidget_stringTable_3.selectedItems():
 			row = sel_item.row()
 			col = sel_item.column()
 			
-			self.ui.tableWidget_hexTable_2.setCurrentCell(row,col)
+			self.ui.tableWidget_hexTable_3.setCurrentCell(row,col)
 
 			
 	@pyqtSlot(str)	

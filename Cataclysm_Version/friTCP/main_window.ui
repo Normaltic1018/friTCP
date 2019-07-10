@@ -1916,7 +1916,7 @@ QDateEdit::down-arrow:focus
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>6</pointsize>
+                   <pointsize>10</pointsize>
                   </font>
                  </property>
                  <property name="lineWidth">
@@ -2173,7 +2173,7 @@ QDateEdit::down-arrow:focus
                 <widget class="QTableWidget" name="tableWidget_stringTable_3">
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>10</pointsize>
                   </font>
                  </property>
                  <property name="showGrid">
@@ -2310,8 +2310,10 @@ QDateEdit::down-arrow:focus
                  </property>
                  <property name="font">
                   <font>
-                   <family>D2Coding</family>
+                   <family>맑은 고딕</family>
                    <pointsize>10</pointsize>
+                   <weight>50</weight>
+                   <bold>false</bold>
                   </font>
                  </property>
                  <property name="lineWidth">
@@ -2574,7 +2576,7 @@ QDateEdit::down-arrow:focus
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>8</pointsize>
+                   <pointsize>10</pointsize>
                   </font>
                  </property>
                  <property name="showGrid">
