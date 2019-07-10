@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1056</width>
-    <height>781</height>
+    <height>821</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1249,7 +1249,7 @@ QDateEdit::down-arrow:focus
        </font>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_1">
        <attribute name="title">
@@ -1824,875 +1824,870 @@ QDateEdit::down-arrow:focus
        <attribute name="title">
         <string>Repeater</string>
        </attribute>
-       <widget class="QWidget" name="layoutWidget_2">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>90</y>
-          <width>514</width>
-          <height>611</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_7">
-         <item row="1" column="1">
-          <widget class="QSplitter" name="splitter_4">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="handleWidth">
-            <number>3</number>
-           </property>
-           <widget class="QTableWidget" name="tableWidget_hexTable_2">
-            <property name="minimumSize">
-             <size>
-              <width>350</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="baseSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>6</pointsize>
-             </font>
-            </property>
-            <property name="lineWidth">
-             <number>0</number>
-            </property>
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOff</enum>
-            </property>
-            <property name="gridStyle">
-             <enum>Qt::NoPen</enum>
-            </property>
-            <property name="cornerButtonEnabled">
-             <bool>false</bool>
-            </property>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>22</number>
-            </attribute>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>22</number>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>00</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>01</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>02</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>03</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>04</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>05</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>06</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>07</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>08</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>09</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0A</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0B</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0C</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0D</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0E</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0F</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-           </widget>
-           <widget class="QTableWidget" name="tableWidget_stringTable_2">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
-            <property name="showGrid">
-             <bool>false</bool>
-            </property>
-            <property name="gridStyle">
-             <enum>Qt::NoPen</enum>
-            </property>
-            <property name="cornerButtonEnabled">
-             <bool>false</bool>
-            </property>
-            <attribute name="horizontalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>9</number>
-            </attribute>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>9</number>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-           </widget>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QPushButton" name="pushButton_go_2">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>200</width>
-          <height>50</height>
-         </rect>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>200</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>GO</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="layoutWidget_3">
-        <property name="geometry">
-         <rect>
-          <x>520</x>
-          <y>90</y>
-          <width>501</width>
-          <height>611</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_8">
-         <item row="0" column="1">
-          <widget class="QSplitter" name="splitter_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="handleWidth">
-            <number>3</number>
-           </property>
-           <widget class="QTableWidget" name="tableWidget_hexTable_3">
-            <property name="minimumSize">
-             <size>
-              <width>350</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="baseSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>6</pointsize>
-             </font>
-            </property>
-            <property name="lineWidth">
-             <number>0</number>
-            </property>
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarAlwaysOff</enum>
-            </property>
-            <property name="gridStyle">
-             <enum>Qt::NoPen</enum>
-            </property>
-            <property name="cornerButtonEnabled">
-             <bool>false</bool>
-            </property>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>22</number>
-            </attribute>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>22</number>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>00</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-               <weight>50</weight>
-               <bold>false</bold>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>01</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>02</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>03</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>04</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>05</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>06</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>07</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>08</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>09</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0A</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0B</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0C</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0D</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0E</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>0F</string>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>6</pointsize>
-              </font>
-             </property>
-             <property name="textAlignment">
-              <set>AlignCenter</set>
-             </property>
-            </column>
-           </widget>
-           <widget class="QTableWidget" name="tableWidget_stringTable_3">
-            <property name="font">
-             <font>
-              <pointsize>8</pointsize>
-             </font>
-            </property>
-            <property name="showGrid">
-             <bool>false</bool>
-            </property>
-            <property name="gridStyle">
-             <enum>Qt::NoPen</enum>
-            </property>
-            <property name="cornerButtonEnabled">
-             <bool>false</bool>
-            </property>
-            <attribute name="horizontalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>9</number>
-            </attribute>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>9</number>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderDefaultSectionSize">
-             <number>30</number>
-            </attribute>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-           </widget>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QLineEdit" name="repeater_ip_box">
-        <property name="geometry">
-         <rect>
-          <x>370</x>
-          <y>10</y>
-          <width>111</width>
-          <height>31</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="Request">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>70</y>
-          <width>56</width>
-          <height>12</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Request</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="Response">
-        <property name="geometry">
-         <rect>
-          <x>530</x>
-          <y>70</y>
-          <width>56</width>
-          <height>12</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Response</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="repeater_port_box">
-        <property name="geometry">
-         <rect>
-          <x>640</x>
-          <y>10</y>
-          <width>111</width>
-          <height>31</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QLabel" name="repeater_ip">
-        <property name="geometry">
-         <rect>
-          <x>280</x>
-          <y>20</y>
-          <width>81</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Destination IP</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="repeater_port">
-        <property name="geometry">
-         <rect>
-          <x>520</x>
-          <y>20</y>
-          <width>111</width>
-          <height>20</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Destination PORT</string>
-        </property>
-       </widget>
+       <layout class="QGridLayout" name="gridLayout_10">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_9">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_8">
+            <item row="0" column="0" rowspan="2">
+             <widget class="QPushButton" name="pushButton_go_2">
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>50</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>GO</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="repeater_ip">
+              <property name="text">
+               <string>Destination IP</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="repeater_port">
+              <property name="text">
+               <string>Destination PORT</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="repeater_ip_box">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="repeater_port_box">
+              <property name="maximumSize">
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0">
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="0" column="0">
+             <widget class="QLabel" name="Request">
+              <property name="text">
+               <string>Request</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="Response">
+              <property name="text">
+               <string>Response</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QSplitter" name="splitter_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <widget class="QTableWidget" name="tableWidget_hexTable_3">
+                 <property name="minimumSize">
+                  <size>
+                   <width>351</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="baseSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>6</pointsize>
+                  </font>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="gridStyle">
+                  <enum>Qt::NoPen</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="horizontalHeaderCascadingSectionResizes">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string>00</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                    <weight>50</weight>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>01</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>02</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>03</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>04</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>05</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>06</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>07</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>08</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>09</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0A</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0B</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0C</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0D</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0E</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0F</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                </widget>
+                <widget class="QTableWidget" name="tableWidget_stringTable_3">
+                 <property name="font">
+                  <font>
+                   <pointsize>8</pointsize>
+                  </font>
+                 </property>
+                 <property name="showGrid">
+                  <bool>false</bool>
+                 </property>
+                 <property name="gridStyle">
+                  <enum>Qt::NoPen</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="horizontalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <attribute name="verticalHeaderDefaultSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                </widget>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSplitter" name="splitter_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <widget class="QTableWidget" name="tableWidget_hexTable_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>351</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="baseSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>D2Coding</family>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="lineWidth">
+                  <number>0</number>
+                 </property>
+                 <property name="horizontalScrollBarPolicy">
+                  <enum>Qt::ScrollBarAlwaysOff</enum>
+                 </property>
+                 <property name="gridStyle">
+                  <enum>Qt::NoPen</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderHighlightSections">
+                  <bool>true</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string>00</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                    <weight>50</weight>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>01</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>02</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>03</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>04</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>05</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>06</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>07</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>08</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>09</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0A</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0B</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0C</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0D</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0E</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string>0F</string>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>D2Coding</family>
+                    <pointsize>9</pointsize>
+                   </font>
+                  </property>
+                  <property name="textAlignment">
+                   <set>AlignCenter</set>
+                  </property>
+                 </column>
+                </widget>
+                <widget class="QTableWidget" name="tableWidget_stringTable_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <pointsize>8</pointsize>
+                  </font>
+                 </property>
+                 <property name="showGrid">
+                  <bool>false</bool>
+                 </property>
+                 <property name="gridStyle">
+                  <enum>Qt::NoPen</enum>
+                 </property>
+                 <property name="cornerButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                 <attribute name="horizontalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="horizontalHeaderMinimumSectionSize">
+                  <number>30</number>
+                 </attribute>
+                 <attribute name="verticalHeaderVisible">
+                  <bool>false</bool>
+                 </attribute>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                 <column>
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </column>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
       <widget class="QWidget" name="tab_5">
        <attribute name="title">

@@ -398,23 +398,8 @@ class MyWindow(QMainWindow):
 
 		hexList = self.repeater_hexTableToList()		
 		
-		'''hexList
-		['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21', '
-		31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34
-		', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34', '35', '36', '37',
-		 '38', '39', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '30']
-		'''
-		
 		# change hexlist to byte array
 		data = bytes([int(x,16) for x in hexList])
-		#print("send data")
-		#print(data)
-		
-		
-		
-		#print("received!")
-
-		
 
 		try:
 			sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
