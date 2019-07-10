@@ -10,9 +10,6 @@ class Repeater(QObject):
 		super(FridaAgent, self).__init__(parent)
 		
 		self.socket_list = []
-		
-		
-		self.session_list = {}
 		self.gui_window = gui_window
 		self.hook_list = ["send"]
 		self.intercept_on = True

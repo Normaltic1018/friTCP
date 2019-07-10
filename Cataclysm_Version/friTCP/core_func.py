@@ -72,7 +72,7 @@ class FridaAgent(QObject):
 		
 		self.session_list = {}
 		self.gui_window = gui_window
-		self.hook_list = ["send"]
+		self.hook_list = ["send","recv"]
 		self.intercept_on = True
 		self.script_list = {}
 		self.current_isIntercept = False
@@ -83,6 +83,7 @@ class FridaAgent(QObject):
 		
 		try:
 			self.session_list[pid] = frida.attach(int_pid)
+			self.script_list[pid] = {}
 			#session = frida.attach(int_pid)
 		except Exception:
 			self.error_signal.emit("Can not Inject frida agent dll")
@@ -97,17 +98,19 @@ class FridaAgent(QObject):
 		session = self.session_list[pid]
 
 		script_name = "{}_proxy.js".format(function_name)
-	
+		
 		script = get_script(script_name)
 		
 		if(script == ""):
 			return False
 		
 		script = session.create_script(script)
+		self.script_list[pid].update({function_name:script})
+		
 		#script.on('message', self.gui_window.from_fridaJS)
 		script.on('message', self.on_message)
 		script.load()
-		self.script_list[pid] = {function_name:script}
+		
 	
 	def reload_script(self, function_name):
 		#unload_script
@@ -115,7 +118,7 @@ class FridaAgent(QObject):
 		
 		self.inject_script(function_name)
 	
-	def send_spoofData(self, intercept_pid,hexList):
+	def send_spoofData(self, intercept_pid,func_name,hexList):
 		
 		strHex = ""
 		if(len(hexList)>0):
@@ -123,7 +126,8 @@ class FridaAgent(QObject):
 			for hex in hexList:
 				strHex += hex + " "
 		
-		self.script_list[intercept_pid]['send'].post({'type':'input','payload':strHex})
+		print(self.script_list)
+		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
 		
 		self.current_isIntercept = False

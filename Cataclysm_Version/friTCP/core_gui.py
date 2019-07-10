@@ -185,7 +185,7 @@ class MyWindow(QMainWindow):
 				# 클릭을 연결해두기. (go button)
 			else:
 				# 빈 문자 전송
-				self.frida_agent.send_spoofData(pid,[])
+				self.frida_agent.send_spoofData(pid,func_name,[])
 	
 	def history_addRow(self,history_item):
 		pid = parsing_pid(history_item)
@@ -393,10 +393,11 @@ class MyWindow(QMainWindow):
 		#self.ui.textBrowser_hexData.setText(str(hexList))
 		intercept_info = self.ui.lineEdit_intercept_info.text()
 		intercept_pid = intercept_info.split()[2]
+		func_name = intercept_info.split()[11]
 		
 		if(self.frida_agent.current_isIntercept):
 			hexList = self.hexTableToList()
-			self.frida_agent.send_spoofData(intercept_pid, hexList)
+			self.frida_agent.send_spoofData(intercept_pid, func_name, hexList)
 			
 			for i in reversed(range(self.ui.tableWidget_hexTable.rowCount())):
 				self.ui.tableWidget_hexTable.removeRow(i)
