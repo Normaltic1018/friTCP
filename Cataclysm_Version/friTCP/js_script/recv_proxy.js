@@ -51,7 +51,7 @@ for(var key in hook_diction){
 			
 			// Buffer Information
 			var buf_address = ptr(this.buf);
-			var buf_length = this.buf_len.toInt32();
+			var buf_length = retVal.toInt32();
 
 			// if buf_length is so large, it becomes very slow as it stop...
 			if(buf_length > 4096){buf_length = 4096;}
