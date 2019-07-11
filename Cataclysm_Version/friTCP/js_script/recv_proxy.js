@@ -81,7 +81,7 @@ for(var key in hook_diction){
 				input_len = input_array.length;
 					
 				// fill zero if input_length is longer than origin length
-				if(input_len < this.args_list[buf_index+1].toInt32()){
+				if(input_len < retVal.toInt32()){
 					var null_array = new Array();
 					for(var i = 0; i<(this.buf.toInt32()-input_len); i++){null_array[i] = 0;}
 						
