@@ -77,7 +77,25 @@ class FridaAgent(QObject):
 		self.script_list = {}
 		self.current_isIntercept = False
 		self.proxy_history = []
+	
+	# 프로세스를 실행시키고 frida를 inject한 후 resume 그리고 pid를 return 함.
+	def start_process(self,cmd, args):
+		cmd = "C:\\Users\\A0502571\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe"	# using sysnative to force x64 process
+		args = [ cmd, "C:\\Users\\A0502571\\Desktop\\private\\2019.07.12\\friTCP\\Cataclysm_Version\\friTCP\\ikeeby_socket_test\\client.py" ]
+
+		int_pid = frida.spawn(args)
+		pid = str(int_pid)
+		self.session_list[pid] = frida.attach(int_pid)
 		
+		self.script_list[pid] = {}
+		self.inject_script(pid)
+		frida.resume(int_pid)
+		
+		return pid
+	
+	def resume_process(self, pid):
+		frida.resume(pid)
+	
 	def inject_frida_agent(self, pid):
 		int_pid = int(pid)
 		
@@ -129,7 +147,10 @@ class FridaAgent(QObject):
 		print(self.script_list)
 		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
-		
+		print("Send to Frida Agent Complete; intercept_pid : {}, func_name : {}".format(intercept_pid,func_name))
+		print(self.script_list[intercept_pid][func_name])
+		print("HEX")
+		print(strHex)
 		self.current_isIntercept = False
 		
 	

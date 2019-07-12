@@ -17,8 +17,6 @@ for(var idx in module_list){
 	}
 }  
 
-console.log("EXECUTE!");
-
 for(var key in hook_diction){
 	var hook_module_name = key;
 	var hook_function_name = hook_diction[key];
@@ -30,13 +28,11 @@ for(var key in hook_diction){
 	
 	Interceptor.attach(hookPtr,{
 		onEnter: function(args){
-			console.log("onEnter Called!");
 			this.sock = args[0];
 			this.buf = args[1];
 			this.buf_len = args[2];
 		},
 		onLeave: function(retVal){
-			console.log("onLeave Called!");
 			
 			var op = recv('input',function(value){
 				user_write_data = value.payload;

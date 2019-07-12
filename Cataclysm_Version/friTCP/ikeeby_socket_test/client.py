@@ -10,6 +10,7 @@ while(True):
 	msg = "Hello Server!1234567890123456789012345678901234567890".encode()
 	sock.send(msg)
 	data = sock.recv(65535)
+	
 	print(os.getpid())
 	print(data.decode())
 	time.sleep(1)

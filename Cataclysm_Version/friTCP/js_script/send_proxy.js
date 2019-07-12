@@ -29,6 +29,7 @@ for(var key in hook_diction){
 	Interceptor.attach(hookPtr,{
 		onEnter: function(args){
 			var op = recv('input',function(value){
+				//console.log("GET POST DATA");
 				user_write_data = value.payload;
 			});
 			
@@ -54,10 +55,12 @@ for(var key in hook_diction){
 			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 		
 			//send("[INTERCEPT]");
-			
+			console.log("wait start");
 			// Receive User Data
 			op.wait();
-								
+			//user_write_data = "";
+			
+			console.log("wait end");
 			var input_len;
 			input_len = user_write_data.length;
 				

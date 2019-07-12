@@ -7,9 +7,11 @@ from PyQt5.QtCore import Qt, QRegExp, QThread, pyqtSignal, pyqtSlot
 from core_func import *
 import ast
 import socket
+import frida
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType("main_window.ui")
 hook_alert_Ui_MainWindow, hook_alert_QtBaseClass = uic.loadUiType("hook_alert_window.ui")
+open_process_Ui_MainWindow, open_process_QtBaseClass = uic.loadUiType("open_process.ui")
 			
 class MyWindow(QMainWindow):
 	def __init__(self, parent=None):
@@ -21,6 +23,9 @@ class MyWindow(QMainWindow):
 			
 		self.ui.pushButton_hook.clicked.connect(self.hook_btn_clicked)
 		self.ui.pushButton_refresh.clicked.connect(self.process_list_set)
+		
+		# Open Process
+		self.ui.pushButton_openProcess.clicked.connect(self.openProcess)
 		
 		self.ui.pushButton_go.clicked.connect(self.intercept_go_button)
 		self.ui.pushButton_interceptToggle.toggled.connect(self.toggle_intercept_on)
@@ -61,8 +66,42 @@ class MyWindow(QMainWindow):
 		# Core Frida Agent로 부터 넘어오는 시그널 연결
 		self.make_connection(self.frida_agent)
 		self.make_connection_err(self.frida_agent)
+		
+		# Process Open을 위한 [+] 버튼 누르면 나오는 창 만들기
+		self.open_process_window = QMainWindow()
+		self.open_process_ui = open_process_Ui_MainWindow()
+		self.open_process_ui.setupUi(self.open_process_window)
+		self.open_process_window.setWindowFlags(Qt.FramelessWindowHint)
+			
+		self.open_process_ui.pushButton_start.clicked.connect(self.gui_start_process)
 
+	# openProcess Click 하면 실행되는 함수
+	def openProcess(self):
+		self.open_proc_window()
+		# 아래 있는 코드들은 실제 실행 되는 코드
+		"""
+		pid = self.frida_agent.start_process("test","test")
 	
+		self.open_alert_window(pid,True)
+		"""
+		#self.frida_agent.inject_script(pid)
+		#self.frida_agent.resume_process(int(pid))
+
+	def open_proc_window(self):
+		#if(self.open_process_window == ""):
+			
+		self.open_process_window.show()
+		
+
+	def gui_start_process(self):
+		# 위에 openProcess 랑 연결할 것임. 지금은 윈도우 창 닫는걸로 테스트
+		self.open_process_window.close()
+	
+	def close_alertwindow(self):
+		self.alert_window.close()
+		
+		# 두번째 proxy 탭으로 이동
+		self.ui.tabWidget_tab.setCurrentIndex(1)
 	# customs context menu	
 	def tableWidget_proxyHistory_right_click(self):
 	
@@ -78,30 +117,11 @@ class MyWindow(QMainWindow):
 		
 		# get proxyHistory row 
 		row = self.ui.tableWidget_proxyHistory.rowAt(self.ui.tableWidget_proxyHistory.viewport().mapFromGlobal(pos).y())
-		print(row)
 		
 		if(row>-1):
 			
 			self.send_packet_to_Repeater(row)		
 		
-	'''
-	#ikeeby
-	# default context menu (mouse right click) event listener
-	def contextMenuEvent(self, event):
-
-		pos = event.globalPos()
-		row = self.ui.tableWidget_proxyHistory.rowAt(self.ui.tableWidget_proxyHistory.viewport().mapFromGlobal(pos).y())
-		
-		# proxyHistory table 에서 클릭할 시에만 메뉴 보이기
-		if(row > -1):
-			menu = QMenu()
-			sendRepeater = menu.addAction("Send To Repeater")
-			action = menu.exec_(pos)
-			
-			if action == sendRepeater:
-				self.send_packet_to_Repeater(row)
-	'''
-	
 	############ikeeby
 	
 	def process_list_set(self):
@@ -139,7 +159,7 @@ class MyWindow(QMainWindow):
 	
 		#hook_function(pid)
 	
-	def open_alert_window(self,pid):
+	def open_alert_window(self,pid,start_process_flag=False):
 		self.hook_pid = pid
 		self.alert_window = QMainWindow()
 		self.alert_ui = hook_alert_Ui_MainWindow()
@@ -147,8 +167,9 @@ class MyWindow(QMainWindow):
 		self.alert_window.setWindowFlags(Qt.FramelessWindowHint)
 		self.alert_window.show()
 		
-		self.frida_agent.inject_frida_agent(pid)
-		self.frida_agent.inject_script(pid)
+		if(start_process_flag == False):
+			self.frida_agent.inject_frida_agent(pid)
+			self.frida_agent.inject_script(pid)
 		
 		self.alert_ui.pushButton_gogo.clicked.connect(self.close_alertwindow)
 		
@@ -212,10 +233,6 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_proxyHistory.setItem(numRows, 5, QTableWidgetItem(add_item["str_text"]))
 		
 		self.ui.tableWidget_proxyHistory.cellClicked.connect(self.history_detail)
-	
-		
-
-		
 		
 		current_item = self.ui.tableWidget_proxyHistory.item(numRows, 0)
 		self.ui.tableWidget_proxyHistory.scrollToItem(current_item, QAbstractItemView.PositionAtBottom)
@@ -248,14 +265,7 @@ class MyWindow(QMainWindow):
 		# Hex, String View Setting
 		hex_text = self.frida_agent.proxy_history[row]['hex_text']
 		str_text = self.frida_agent.proxy_history[row]['str_text']
-		hex_data = hex_text.split(' ')[:-1] # 
-		#print(hex_data)
-		''' 마지막 지우기!
-		['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21', '
-		31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34
-		', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34', '35', '36', '37',
-		 '38', '39', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '']
-		'''
+		hex_data = hex_text.split(' ')[:-1] 
 
 		# 기존 intercept_view function pid 부분 빼고 복붙
 		need_row_num = int(len(hex_data) / 16)
@@ -291,19 +301,11 @@ class MyWindow(QMainWindow):
 		# 기존 데이터 초기화
 		self.ui.tableWidget_hexTable_2.setRowCount(0)
 		self.ui.tableWidget_stringTable_2.setRowCount(0)
-		#
-		
 
 		# Hex, String View Setting
 		#hex_text = packet
 		hex_data = packet
 		#print(hex_data)
-		''' 마지막 지우기!
-		['48', '65', '6c', '6c', '6f', '20', '53', '65', '72', '76', '65', '72', '21', '
-		31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34
-		', '35', '36', '37', '38', '39', '30', '31', '32', '33', '34', '35', '36', '37',
-		 '38', '39', '30', '31', '32', '33', '34', '35', '36', '37', '38', '39', '30', '']
-		'''
 
 		# 기존 intercept_view function pid 부분 빼고 복붙
 		need_row_num = int(len(hex_data) / 16)
