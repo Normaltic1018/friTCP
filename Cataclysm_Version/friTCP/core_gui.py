@@ -8,6 +8,7 @@ from core_func import *
 import ast
 import socket
 import frida
+from Match_and_Replace import *
 
 Ui_MainWindow, QtBaseClass = uic.loadUiType("main_window.ui")
 hook_alert_Ui_MainWindow, hook_alert_QtBaseClass = uic.loadUiType("hook_alert_window.ui")
@@ -63,6 +64,10 @@ class MyWindow(QMainWindow):
 		self.frida_agent = FridaAgent(self)
 		self.ui.textBrowser_log.append("[#] Create Frdia Agent")
 		
+		#################################################
+		self.match_and_replace = Match_and_Replace(self.ui.tableWidget_MatchAndReplace)
+		#################################################
+		
 		# Core Frida Agent로 부터 넘어오는 시그널 연결
 		self.make_connection(self.frida_agent)
 		self.make_connection_err(self.frida_agent)
@@ -77,6 +82,13 @@ class MyWindow(QMainWindow):
 		self.open_process_ui.pushButton_cancleProcOpen.clicked.connect(self.closeOpenProc)
 
 	# openProcess Click 하면 실행되는 함수
+	
+	#################################################
+	def resizeEvent(self, event):
+		print("resize")
+		self.match_and_replace.resize()
+	#################################################
+	
 	def openProcess(self):
 		self.open_process_window.show()
 		# 아래 있는 코드들은 실제 실행 되는 코드

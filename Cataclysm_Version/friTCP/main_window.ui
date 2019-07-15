@@ -1249,7 +1249,7 @@ QDateEdit::down-arrow:focus
        </font>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_1">
        <attribute name="title">
@@ -1414,7 +1414,7 @@ QDateEdit::down-arrow:focus
            </font>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -1788,6 +1788,55 @@ QDateEdit::down-arrow:focus
                <widget class="QTextBrowser" name="textBrowser_hexData"/>
                <widget class="QTextBrowser" name="textBrowser_stringData"/>
               </widget>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_7">
+           <attribute name="title">
+            <string>Match and Replace</string>
+           </attribute>
+           <layout class="QGridLayout" name="gridLayout_11">
+            <item row="0" column="0">
+             <widget class="QTableWidget" name="tableWidget_MatchAndReplace">
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <column>
+               <property name="text">
+                <string>Enabled</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Name</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Function</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>IP</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Port</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Match</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Replace</string>
+               </property>
+              </column>
              </widget>
             </item>
            </layout>
