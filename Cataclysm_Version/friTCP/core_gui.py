@@ -74,26 +74,27 @@ class MyWindow(QMainWindow):
 		self.open_process_window.setWindowFlags(Qt.FramelessWindowHint)
 			
 		self.open_process_ui.pushButton_start.clicked.connect(self.gui_start_process)
+		self.open_process_ui.pushButton_cancleProcOpen.clicked.connect(self.closeOpenProc)
 
 	# openProcess Click 하면 실행되는 함수
 	def openProcess(self):
-		self.open_proc_window()
+		self.open_process_window.show()
 		# 아래 있는 코드들은 실제 실행 되는 코드
-		"""
-		pid = self.frida_agent.start_process("test","test")
-	
-		self.open_alert_window(pid,True)
-		"""
+
 		#self.frida_agent.inject_script(pid)
 		#self.frida_agent.resume_process(int(pid))
 
-	def open_proc_window(self):
-		#if(self.open_process_window == ""):
-			
-		self.open_process_window.show()
-		
+	def closeOpenProc(self):
+		self.open_process_window.close()
 
 	def gui_start_process(self):
+		filePath = self.open_process_ui.lineEdit_filePath.text()
+		argument = self.open_process_ui.lineEdit_arg.text()
+		
+		pid = self.frida_agent.start_process(filePath,argument)
+	
+		self.open_alert_window(pid,True)
+		
 		# 위에 openProcess 랑 연결할 것임. 지금은 윈도우 창 닫는걸로 테스트
 		self.open_process_window.close()
 	

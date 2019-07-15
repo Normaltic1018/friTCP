@@ -1233,7 +1233,7 @@ QDateEdit::down-arrow:focus
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="lineEdit_filePath">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -1243,7 +1243,7 @@ QDateEdit::down-arrow:focus
      </rect>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit_2">
+   <widget class="QLineEdit" name="lineEdit_arg">
     <property name="geometry">
      <rect>
       <x>220</x>
@@ -1294,7 +1294,7 @@ QDateEdit::down-arrow:focus
    <widget class="QPushButton" name="pushButton_start">
     <property name="geometry">
      <rect>
-      <x>370</x>
+      <x>260</x>
       <y>280</y>
       <width>191</width>
       <height>51</height>
@@ -1302,6 +1302,19 @@ QDateEdit::down-arrow:focus
     </property>
     <property name="text">
      <string>Start</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_cancleProcOpen">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>280</y>
+      <width>191</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cancle</string>
     </property>
    </widget>
   </widget>

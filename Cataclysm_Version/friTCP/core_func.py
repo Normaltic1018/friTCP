@@ -80,10 +80,11 @@ class FridaAgent(QObject):
 	
 	# 프로세스를 실행시키고 frida를 inject한 후 resume 그리고 pid를 return 함.
 	def start_process(self,cmd, args):
-		cmd = "C:\\Users\\A0502571\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe"	# using sysnative to force x64 process
-		args = [ cmd, "C:\\Users\\A0502571\\Desktop\\private\\2019.07.12\\friTCP\\Cataclysm_Version\\friTCP\\ikeeby_socket_test\\client.py" ]
+		#cmd = "C:\\Users\\A0502571\\AppData\\Local\\Programs\\Python\\Python37-32\\python.exe"	# using sysnative to force x64 process
+		#args = [ cmd, "C:\\Users\A0502571\\Desktop\\private\\2019.07.15\\friTCP\\Cataclysm_Version\\friTCP\\ikeeby_socket_test\\client.py" ]
 
-		int_pid = frida.spawn(args)
+		cmd_args = [cmd, args]
+		int_pid = frida.spawn(cmd_args)
 		pid = str(int_pid)
 		self.session_list[pid] = frida.attach(int_pid)
 		
