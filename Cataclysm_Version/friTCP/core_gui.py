@@ -81,14 +81,87 @@ class MyWindow(QMainWindow):
 		self.open_process_ui.pushButton_start.clicked.connect(self.gui_start_process)
 		self.open_process_ui.pushButton_cancleProcOpen.clicked.connect(self.closeOpenProc)
 
-	# openProcess Click 하면 실행되는 함수
+		# Option - hook checkbox
+		self.ui.checkBox_send.stateChanged.connect(self.click_hook_send)
+		self.ui.checkBox_recv.stateChanged.connect(self.click_hook_recv)
+		self.ui.checkBox_sendto.stateChanged.connect(self.click_hook_sendto)
+		self.ui.checkBox_recvfrom.stateChanged.connect(self.click_hook_recvfrom)
+		self.ui.checkBox_wsasend.stateChanged.connect(self.click_hook_wsasend)
+		self.ui.checkBox_wsarecv.stateChanged.connect(self.click_hook_wsarecv)
+		self.ui.checkBox_encryptmessage.stateChanged.connect(self.click_hook_encryptmessage)
+		self.ui.checkBox_decryptmessage.stateChanged.connect(self.click_hook_decryptmessage)
+	
+	def click_hook_send(self, state):
+		if state == Qt.Checked:
+			#hook
+			self.frida_agent.hook_js("send")
+		else:
+			#unhook
+			self.frida_agent.unhook_js("send")
+
+	def click_hook_recv(self, state):
+		if state == Qt.Checked:
+			#hook
+			self.frida_agent.hook_js("recv")
+		else:
+			#unhook
+			self.frida_agent.unhook_js("recv")
+
+	def click_hook_sendto(self, state):
+		if state == Qt.Checked:
+			#hook
+			print('Checked')
+		else:
+			#unhook
+			print('Unchecked')
+
+	def click_hook_recvfrom(self, state):
+		if state == Qt.Checked:
+			#hook
+			print('Checked')
+		else:
+			#unhook
+			print('Unchecked')
+
+	def click_hook_wsasend(self, state):
+		if state == Qt.Checked:
+			#hook
+			print('Checked')
+		else:
+			#unhook
+			print('Unchecked')
+
+	def click_hook_wsarecv(self, state):
+		if state == Qt.Checked:
+			#hook
+			print('Checked')
+		else:
+			#unhook
+			print('Unchecked')
+	
+	def click_hook_encryptmessage(self, state):
+		if state == Qt.Checked:
+			#hook
+			print('Checked')
+		else:
+			#unhook
+			print('Unchecked')
+
+	def click_hook_decryptmessage(self, state):
+		if state == Qt.Checked:
+			#hook
+			print('Checked')
+		else:
+			#unhook
+			print('Unchecked')			
 	
 	#################################################
 	def resizeEvent(self, event):
-		print("resize")
+		#print("resize")
 		self.match_and_replace.resize()
 	#################################################
 	
+	# openProcess Click 하면 실행되는 함수
 	def openProcess(self):
 		self.open_process_window.show()
 		# 아래 있는 코드들은 실제 실행 되는 코드
@@ -247,9 +320,10 @@ class MyWindow(QMainWindow):
 		
 		self.ui.tableWidget_proxyHistory.cellClicked.connect(self.history_detail)
 		
-		current_item = self.ui.tableWidget_proxyHistory.item(numRows, 0)
-		self.ui.tableWidget_proxyHistory.scrollToItem(current_item, QAbstractItemView.PositionAtBottom)
-		#self.ui.tableWidget_proxyHistory.selectRow(numRows)
+		if(self.ui.checkBox_autoScroll.isChecked()):
+			current_item = self.ui.tableWidget_proxyHistory.item(numRows, 0)
+			self.ui.tableWidget_proxyHistory.scrollToItem(current_item, QAbstractItemView.PositionAtBottom)
+			#self.ui.tableWidget_proxyHistory.selectRow(numRows)
 
 	
 	def history_detail(self,row, col):

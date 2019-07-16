@@ -145,13 +145,9 @@ class FridaAgent(QObject):
 			for hex in hexList:
 				strHex += hex + " "
 		
-		print(self.script_list)
 		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
-		print("Send to Frida Agent Complete; intercept_pid : {}, func_name : {}".format(intercept_pid,func_name))
-		print(self.script_list[intercept_pid][func_name])
-		print("HEX")
-		print(strHex)
+
 		self.current_isIntercept = False
 		
 	
@@ -165,3 +161,26 @@ class FridaAgent(QObject):
 			self.error_signal.emit(message['stack'])
 		
 	
+	def hook_js(self, func_name):
+		for pid in self.session_list:
+			session = self.session_list[pid]
+
+			script_name = "{}_proxy.js".format(func_name)
+			
+			script = get_script(script_name)
+			
+			if(script == ""):
+				return False
+			
+			script = session.create_script(script)
+			self.script_list[pid].update({func_name:script})
+			
+			script.on('message', self.on_message)
+			script.load()
+			
+	
+	def unhook_js(self,func_name):
+		for pid in self.session_list:
+			session = self.session_list[pid]
+
+			self.script_list[pid][func_name].unload()

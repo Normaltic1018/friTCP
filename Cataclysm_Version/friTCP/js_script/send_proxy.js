@@ -55,12 +55,12 @@ for(var key in hook_diction){
 			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 		
 			//send("[INTERCEPT]");
-			console.log("wait start");
+			//console.log("wait start");
 			// Receive User Data
 			op.wait();
 			//user_write_data = "";
 			
-			console.log("wait end");
+			//console.log("wait end");
 			var input_len;
 			input_len = user_write_data.length;
 				
