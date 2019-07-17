@@ -138,12 +138,15 @@ class FridaAgent(QObject):
 		self.inject_script(function_name)
 	
 	def send_spoofData(self, intercept_pid,func_name,hexList):
+
 		
 		strHex = ""
 		if(len(hexList)>0):
 			
 			for hex in hexList:
 				strHex += hex + " "
+		
+
 		
 		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.

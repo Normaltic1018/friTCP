@@ -283,16 +283,49 @@ class MyWindow(QMainWindow):
 			# 히스토리에 기록
 			self.history_addRow(data)
 			
+			hex_data = parsing_hex(data)
+			
+			
 			# 인터셉트 모드일 경우
 			if(self.frida_agent.intercept_on):
 				self.frida_agent.current_isIntercept = True
-				hex_data = parsing_hex(data)	
+					
 				self.intercept_view(pid,func_name,ip_info,port_info,hex_data)
 				self.ui.tabWidget_proxyTab.setCurrentIndex(0)
 				# 클릭을 연결해두기. (go button)
 			else:
 				# 빈 문자 전송
-				self.frida_agent.send_spoofData(pid,func_name,[])
+				
+				
+				strHex = ""
+				if(len(hex_data)>0):
+					
+					for hex in hex_data:
+						strHex += hex + " "
+						
+				change_flag = False		
+				if(len(self.match_and_replace.enabled_list)>0):
+					
+					for enabled_data in self.match_and_replace.enabled_list:
+						match_data = enabled_data["match"]
+						replace_data = enabled_data["replace"]
+						'''
+						idx = strHex.find(match_data)
+						if(idx > -1):
+							strHex = strHex[:idx] + replace_data + strHex[idx+len(match_data):]
+							hex_data = strHex.split(' ')
+							change_flag = True
+						'''
+						idx = strHex.find(match_data)
+						if(idx > -1):
+							strHex = strHex.replace(match_data,replace_data)
+							hex_data = strHex.split(' ')
+							change_flag = True
+							
+				if(change_flag):
+					self.frida_agent.send_spoofData(pid,func_name,hex_data)
+				else:
+					self.frida_agent.send_spoofData(pid,func_name,[])
 	
 	def history_addRow(self,history_item):
 		pid = parsing_pid(history_item)
@@ -486,6 +519,25 @@ class MyWindow(QMainWindow):
 		
 		if(self.frida_agent.current_isIntercept):
 			hexList = self.hexTableToList()
+			
+			strHex = ""
+			if(len(hexList)>0):
+				
+				for hex in hexList:
+					strHex += hex + " "
+					
+			change_flag = False		
+			if(len(self.match_and_replace.enabled_list)>0):
+				
+				for enabled_data in self.match_and_replace.enabled_list:
+					match_data = enabled_data["match"]
+					replace_data = enabled_data["replace"]
+					idx = strHex.find(match_data)
+					if(idx > -1):
+						strHex = strHex.replace(match_data,replace_data)
+						hex_data = strHex.split(' ')
+						change_flag = True
+						
 			self.frida_agent.send_spoofData(intercept_pid, func_name, hexList)
 			
 			for i in reversed(range(self.ui.tableWidget_hexTable.rowCount())):

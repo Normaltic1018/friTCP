@@ -1,7 +1,7 @@
-from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QHeaderView,QTableWidget, QMessageBox,QLineEdit,QAbstractItemView, QAction, QMenu
+from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QHeaderView,QTableWidget, QMessageBox,QLineEdit,QAbstractItemView, QAction, QMenu, QCheckBox, QHBoxLayout, QWidget, QTableView
 from PyQt5.QtGui import QStandardItemModel,QStandardItem, QPixmap,QIcon, QRegExpValidator, QCursor, QResizeEvent
 from PyQt5 import uic
-from PyQt5.QtCore import Qt, QRegExp, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt, QRegExp, QThread, pyqtSignal, pyqtSlot, QPersistentModelIndex
 from core_func import *
 
 match_and_replace_add_Ui_MainWindow, match_and_replace_add_QtBaseClass = uic.loadUiType("match_and_replace_add.ui")
@@ -13,38 +13,70 @@ class Match_and_Replace():
 		# data init
 		self.tableWidget = tableWidget_MatchAndReplace
 		self.data_list = []
+		self.enabled_list = []
 		
 		# tablewidget event init
-		self.tableWidget_right_click()		
+		self.tableWidget_right_click()	
+	
+		# tablewidget cell click? then select row all -> get row index를 위함
+		self.tableWidget.setSelectionBehavior(QTableView.SelectRows)
+		
+		self.match_former_text=""
+		self.replace_former_text=""
+		
+
 		
 	def add(self, data_structure):
 		self.data_list.append(data_structure)
 				
-	def remove(self, idx):
-		del self.data_list[idx-1]
+	def remove(self, row):
+		del self.data_list[row]
 		
 	def get_list(self):
 		return self.data_list
 		
 		
 	#gui
+	
+		
+	
 	def add_btn_clicked(self):
 		print("add clicked!")
 		
-		my_list = []
-		my_list.append(self.ui.name.text())
-		my_list.append(self.ui.function.currentText())
-		my_list.append(self.ui.ip.text())
-		my_list.append(self.ui.port.text())
-		my_list.append(self.ui.match.text())
-		my_list.append(self.ui.replace.text())
-		self.add(my_list)
+		pCheckBox = QCheckBox()
+		
+		
+		my_dict = {}
+		#my_dict["use"] = "disabled"
+		my_dict["use"] = pCheckBox
+		my_dict["name"] = self.ui.name.text()
+		my_dict["function"] = self.ui.function.currentText()
+		my_dict["ip"] = self.ui.ip.text()
+		my_dict["port"] = self.ui.port.text()
+		my_dict["match"] = self.ui.match.text()
+		my_dict["replace"] = self.ui.replace.text()
+		
+		self.add(my_dict)
 		
 		#show list
 		numRows = self.tableWidget.rowCount()
 		self.tableWidget.insertRow(numRows)
 		
-		self.tableWidget.setItem(numRows, 0, QTableWidgetItem(str(self.ui.name.text())))
+		# checkbox with aligncenter
+		'''
+		pWidget = QWidget()
+		pCheckBox = QCheckBox()
+		pLayout = QHBoxLayout(pWidget)
+		pLayout.addWidget(pCheckBox)
+		pLayout.setAlignment(Qt.AlignCenter)
+		pLayout.setContentsMargins(0,0,0,0)
+		pWidget.setLayout(pLayout)
+		'''
+		self.tableWidget.setCellWidget(numRows, 0, pCheckBox)
+		
+		# checkbox click listener
+		pCheckBox.clicked.connect(self.enable_checkbox_clicked)
+		
 		self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.ui.name.text())))
 		self.tableWidget.setItem(numRows, 2, QTableWidgetItem(str(self.ui.function.currentText())))
 		self.tableWidget.setItem(numRows, 3, QTableWidgetItem(str(self.ui.ip.text())))
@@ -52,10 +84,28 @@ class Match_and_Replace():
 		self.tableWidget.setItem(numRows, 5, QTableWidgetItem(str(self.ui.match.text())))
 		self.tableWidget.setItem(numRows, 6, QTableWidgetItem(str(self.ui.replace.text())))
 		
-		print(numRows)
+		#print(numRows)
 		print(self.data_list)
 		self.main.close()
-
+	
+	# checkbox click listener
+	def enable_checkbox_clicked(self):
+		print("enable_checkbox_clicked")
+		index_list = []                                                          
+		for model_index in self.tableWidget.selectionModel().selectedRows():       
+			index = QPersistentModelIndex(model_index)         
+			index_list.append(index)                                             
+		
+		for index in index_list:
+			print(index.row())
+			print(self.data_list[index.row()]["use"].isChecked())
+			print(self.data_list[index.row()]["use"])
+			if(self.data_list[index.row()]["use"].isChecked()):
+				self.enabled_list.append(self.data_list[index.row()])
+			else:
+				self.enabled_list.remove(self.data_list[index.row()])
+		print(self.enabled_list)
+		
 	def cancel_btn_clicked(self):
 		print("cancel clicked!")
 		self.main.close()
@@ -72,8 +122,71 @@ class Match_and_Replace():
 		self.ui.add_btn.clicked.connect(self.add_btn_clicked)
 		self.ui.cancel_btn.clicked.connect(self.cancel_btn_clicked)
 		
+		#self.ui.match.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
+		self.ui.match.textEdited.connect(self.match_text_changed)
+		self.ui.replace.textEdited.connect(self.replace_text_changed)
+		#self.ui.match.textChanged.connect(self.text_changed)
+		#self.ui.match.setInputMask('HH-'*500)
+		#self.ui.replace.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
+		#self.ui.replace.setInputMask('HH '*500)
 		self.main.show()
 
+	def text_format(self, x):
+		if('0'<= x <= '9' or 'a' <= x <= 'f' or 'A' <= x <= 'Z'):
+			return x
+		else:
+			return None
+
+	def replace_text_changed(self, text):
+		print(text)
+
+		text = text.replace(' ','')
+		filtered_text = filter(self.text_format,text)
+		
+		'''
+		# filter 된 값이 있었던 것. 헥스 값이 아니므로 clear
+		if(len(list(filtered_text)) != len(text)):
+			self.ui.replace.setText("")
+		'''
+		filtered_text = "".join(filtered_text)
+		
+		tmp_text = ""
+		for i in range(0,len(filtered_text),2):
+			tmp_text = tmp_text + filtered_text[i:i+2]
+			if(len(filtered_text[i:i+2])%2==0):
+				tmp_text = tmp_text + " "
+				
+		if(tmp_text == self.replace_former_text and len(filtered_text) == len(text)):
+			tmp_text = tmp_text[:-2]
+		
+		self.ui.replace.setText(tmp_text)
+		self.replace_former_text = tmp_text
+			
+	def match_text_changed(self, text):
+		print(text)
+
+		text = text.replace(' ','')
+		filtered_text = filter(self.text_format,text)
+		
+		'''
+		# filter 된 값이 있었던 것. 헥스 값이 아니므로 clear
+		if(len(list(filtered_text)) != len(text)):
+			self.ui.match.setText("")
+		'''
+		filtered_text = "".join(filtered_text)
+		
+		tmp_text = ""
+		for i in range(0,len(filtered_text),2):
+			tmp_text = tmp_text + filtered_text[i:i+2]
+			if(len(filtered_text[i:i+2])%2==0):
+				tmp_text = tmp_text + " "
+				
+		if(tmp_text == self.match_former_text and len(filtered_text) == len(text)):
+			tmp_text = tmp_text[:-2]
+		
+		self.ui.match.setText(tmp_text)
+		self.match_former_text = tmp_text
+	
 	def tableWidget_right_click(self):
 		self.tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		add = QAction("add", self.tableWidget)
@@ -87,16 +200,35 @@ class Match_and_Replace():
 		self.open_window()
 	
 	def tableWidget_right_click_remove_event(self):
-		# get mouse pos
-		pos = QCursor.pos() # PyQt5.QtCore.QPoint(262, 215)
+		index_list = []                                                          
+		for model_index in self.tableWidget.selectionModel().selectedRows():       
+			index = QPersistentModelIndex(model_index)         
+			index_list.append(index)                                             
 		
-		row = self.tableWidget.rowAt(self.tableWidget.viewport().mapFromGlobal(pos).y())
-		print(row)
-		
-		if(row>-1):
+		for index in index_list:
 			
-			self.send_packet_to_Repeater(row)	
-	
+			# first, remove data if it is in enabled_list
+			if self.data_list[index.row()] in self.enabled_list:
+				self.enabled_list.remove(self.data_list[index.row()])
+				
+			self.remove(index.row()) #remove internal data in list
+			self.tableWidget.removeRow(index.row()) #remove gui
+
+		print(self.data_list)
+		# get mouse pos
+		#row = self.tableWidget.currentItem().row()
+		
+		#print(self.tableWidget.selectionModel().selectedRows())
+		#print(len(self.tableWidget.selectedIndexes()))
+		#pos = QCursor.pos() # PyQt5.QtCore.QPoint(262, 215)
+		#print(pos)
+		#row = self.tableWidget.rowAt(self.tableWidget.viewport().mapFromGlobal(pos).y())
+		#print(row)
+		
+		#if(row>-1):
+		#	self.tableWidget.removeRow(row)
+		#	self.remove(row)	
+			
 	'''		
 	def resize_proxyHistory(self):
 		#self.frida_agent.match_and_response_list
