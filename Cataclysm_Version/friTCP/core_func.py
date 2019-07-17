@@ -180,10 +180,11 @@ class FridaAgent(QObject):
 			
 			script.on('message', self.on_message)
 			script.load()
-			
+			self.gui_window.ui.textBrowser_log.append("[+] [PID:{}] Hook {} Function".format(pid,func_name))
 	
 	def unhook_js(self,func_name):
 		for pid in self.session_list:
 			session = self.session_list[pid]
 
 			self.script_list[pid][func_name].unload()
+			self.gui_window.ui.textBrowser_log.append("[-] [PID:{}] UnHook {} Function".format(pid,func_name))

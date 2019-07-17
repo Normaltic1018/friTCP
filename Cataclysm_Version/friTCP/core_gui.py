@@ -110,50 +110,50 @@ class MyWindow(QMainWindow):
 	def click_hook_sendto(self, state):
 		if state == Qt.Checked:
 			#hook
-			print('Checked')
+			self.frida_agent.hook_js("sendto")
 		else:
 			#unhook
-			print('Unchecked')
+			self.frida_agent.unhook_js("sendto")
 
 	def click_hook_recvfrom(self, state):
 		if state == Qt.Checked:
 			#hook
-			print('Checked')
+			self.frida_agent.hook_js("recvfrom")
 		else:
 			#unhook
-			print('Unchecked')
+			self.frida_agent.unhook_js("recvfrom")
 
 	def click_hook_wsasend(self, state):
 		if state == Qt.Checked:
 			#hook
-			print('Checked')
+			self.frida_agent.hook_js("wsasend")
 		else:
 			#unhook
-			print('Unchecked')
+			self.frida_agent.unhook_js("wsasend")
 
 	def click_hook_wsarecv(self, state):
 		if state == Qt.Checked:
 			#hook
-			print('Checked')
+			self.frida_agent.hook_js("wsarecv")
 		else:
 			#unhook
-			print('Unchecked')
+			self.frida_agent.unhook_js("wsarecv")
 	
 	def click_hook_encryptmessage(self, state):
 		if state == Qt.Checked:
 			#hook
-			print('Checked')
+			self.ui.textBrowser_log.append("[^] Encryptmessage is not supported yet...")
 		else:
 			#unhook
-			print('Unchecked')
+			self.ui.textBrowser_log.append("[^] Encryptmessage is not supported yet...")
 
 	def click_hook_decryptmessage(self, state):
 		if state == Qt.Checked:
 			#hook
-			print('Checked')
+			self.ui.textBrowser_log.append("[^] Decryptmessage is not supported yet...")
 		else:
 			#unhook
-			print('Unchecked')			
+			self.ui.textBrowser_log.append("[^] Decryptmessage is not supported yet...")	
 	
 	#################################################
 	def resizeEvent(self, event):

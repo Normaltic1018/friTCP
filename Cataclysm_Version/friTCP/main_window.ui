@@ -1887,7 +1887,7 @@ QDateEdit::down-arrow:focus
                      <string>sendto</string>
                     </property>
                     <property name="checkable">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -1897,7 +1897,7 @@ QDateEdit::down-arrow:focus
                      <string>wsasend</string>
                     </property>
                     <property name="checkable">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -1927,7 +1927,7 @@ QDateEdit::down-arrow:focus
                      <string>recvfrom</string>
                     </property>
                     <property name="checkable">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -1937,7 +1937,7 @@ QDateEdit::down-arrow:focus
                      <string>wsarecv</string>
                     </property>
                     <property name="checkable">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
