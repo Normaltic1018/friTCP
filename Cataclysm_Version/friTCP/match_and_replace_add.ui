@@ -717,17 +717,42 @@
      </property>
      <item>
       <property name="text">
-       <string>All</string>
+       <string>send</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Recv</string>
+       <string>recv</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Send</string>
+       <string>sendto</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>recvfrom</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>wsasend</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>wsarecv</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>encryptmessage</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>decryptmessage</string>
       </property>
      </item>
     </widget>

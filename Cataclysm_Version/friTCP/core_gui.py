@@ -206,7 +206,8 @@ class MyWindow(QMainWindow):
 		
 		if(row>-1):
 			
-			self.send_packet_to_Repeater(row)		
+			self.send_packet_to_Repeater(row)
+			self.ui.tabWidget_tab.setCurrentIndex(2)
 		
 	############ikeeby
 	
@@ -279,13 +280,15 @@ class MyWindow(QMainWindow):
 		if(data.startswith("[PROXY]")):
 			func_name, ip_info, port_info = parsing_info(data)
 			pid = parsing_pid(data)
-			
-			# 히스토리에 기록
-			self.history_addRow(data)
-			
 			hex_data = parsing_hex(data)
+
+			# packet이 들어오면 먼저 match_and_replace !
+			change_flag, hex_data = self.match_and_replace_func(pid, func_name, ip_info, port_info, hex_data)
 			
+
 			
+			#hex_data = parsing_hex(data)
+
 			# 인터셉트 모드일 경우
 			if(self.frida_agent.intercept_on):
 				self.frida_agent.current_isIntercept = True
@@ -295,46 +298,69 @@ class MyWindow(QMainWindow):
 				# 클릭을 연결해두기. (go button)
 			else:
 				# 빈 문자 전송
-				
-				
-				strHex = ""
-				if(len(hex_data)>0):
-					
-					for hex in hex_data:
-						strHex += hex + " "
-						
-				change_flag = False		
-				if(len(self.match_and_replace.enabled_list)>0):
-					
-					for enabled_data in self.match_and_replace.enabled_list:
-						match_data = enabled_data["match"]
-						replace_data = enabled_data["replace"]
-						'''
-						idx = strHex.find(match_data)
-						if(idx > -1):
-							strHex = strHex[:idx] + replace_data + strHex[idx+len(match_data):]
-							hex_data = strHex.split(' ')
-							change_flag = True
-						'''
-						idx = strHex.find(match_data)
-						if(idx > -1):
-							strHex = strHex.replace(match_data,replace_data)
-							hex_data = strHex.split(' ')
-							change_flag = True
 							
 				if(change_flag):
 					self.frida_agent.send_spoofData(pid,func_name,hex_data)
 				else:
 					self.frida_agent.send_spoofData(pid,func_name,[])
+					
+				self.history_addRow(pid, func_name, ip_info, port_info, hex_data)
+					
+			# 전송 후, 히스토리에 기록
+			
+			#self.history_addRow(pid, func_name, ip_info, port_info, hex_data)
+
+	def match_and_replace_func(self, pid, func_name, ip_info, port_info, hex_data):
 	
-	def history_addRow(self,history_item):
-		pid = parsing_pid(history_item)
-		proc_name = get_process_name(pid)
-		func_name, ip_info, port_info = parsing_info(history_item)
-		hex_list = parsing_hex(history_item)
-		hex_text, str_text = hexDump2Str(hex_list)
+		strHex = ""
+		change_flag = False
 		
-		append_data = {"pid":pid,"proc_name":proc_name,"func_name":func_name,"ip":ip_info,"port":port_info,"hex_list":hex_list,"hex_text":hex_text,"str_text":str_text}
+		if(len(hex_data)>0 and len(self.match_and_replace.enabled_list)>0):
+
+			for hex in hex_data:
+				strHex += hex + " "
+			strHex = strHex[:-1] # remove " "
+			
+			for enabled_data in self.match_and_replace.enabled_list:
+				filter_ip = enabled_data["ip"]
+				filter_port = enabled_data["port"]
+				filter_function = enabled_data["function"]
+				
+				print(filter_function)
+				print(func_name)
+
+				if(filter_ip == ip_info and filter_port == port_info and filter_function == func_name):
+					print("match and replace start")
+					# match and replace start!
+					
+					match_data = enabled_data["match"]
+					replace_data = enabled_data["replace"]
+					'''
+					idx = strHex.find(match_data)
+					if(idx > -1):
+						strHex = strHex[:idx] + replace_data + strHex[idx+len(match_data):]
+						hex_data = strHex.split(' ')
+						change_flag = True
+					'''
+					idx = strHex.find(match_data)
+					if(idx > -1):
+						print("match find! replace complete")
+						strHex = strHex.replace(match_data,replace_data)
+						hex_data = strHex.split(' ')
+						change_flag = True
+						#print(hex_data)
+					
+		return change_flag, hex_data
+					
+	#def history_addRow(self,history_item):
+	def history_addRow(self,pid, func_name, ip_info, port_info, hex_data):
+		#pid = parsing_pid(history_item)
+		proc_name = get_process_name(pid)
+		#func_name, ip_info, port_info = parsing_info(history_item)
+		#hex_data = parsing_hex(history_item)
+		hex_text, str_text = hexDump2Str(hex_data)
+		
+		append_data = {"pid":pid,"proc_name":proc_name,"func_name":func_name,"ip":ip_info,"port":port_info,"hex_data":hex_data,"hex_text":hex_text,"str_text":str_text}
 		# History 기록
 		self.frida_agent.proxy_history.append(append_data)
 		
@@ -513,32 +539,21 @@ class MyWindow(QMainWindow):
 	def intercept_go_button(self):
 		
 		#self.ui.textBrowser_hexData.setText(str(hexList))
-		intercept_info = self.ui.lineEdit_intercept_info.text()
-		intercept_pid = intercept_info.split()[2]
-		func_name = intercept_info.split()[11]
+		intercept_info = self.ui.lineEdit_intercept_info.text().split()
+		#print("intercept_info!")
+		#print(intercept_info)
+		
+		
+		pid = intercept_info[2]
+		func_name = intercept_info[11]
+		ip_info, port_info = intercept_info[-1].split(":")
 		
 		if(self.frida_agent.current_isIntercept):
-			hexList = self.hexTableToList()
+			hex_data = self.hexTableToList()
 			
-			strHex = ""
-			if(len(hexList)>0):
-				
-				for hex in hexList:
-					strHex += hex + " "
-					
-			change_flag = False		
-			if(len(self.match_and_replace.enabled_list)>0):
-				
-				for enabled_data in self.match_and_replace.enabled_list:
-					match_data = enabled_data["match"]
-					replace_data = enabled_data["replace"]
-					idx = strHex.find(match_data)
-					if(idx > -1):
-						strHex = strHex.replace(match_data,replace_data)
-						hex_data = strHex.split(' ')
-						change_flag = True
-						
-			self.frida_agent.send_spoofData(intercept_pid, func_name, hexList)
+			self.frida_agent.send_spoofData(pid, func_name, hex_data)
+			
+			self.history_addRow(pid, func_name, ip_info, port_info, hex_data)
 			
 			for i in reversed(range(self.ui.tableWidget_hexTable.rowCount())):
 				self.ui.tableWidget_hexTable.removeRow(i)

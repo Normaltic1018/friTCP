@@ -23,7 +23,7 @@ class Match_and_Replace():
 		
 		self.match_former_text=""
 		self.replace_former_text=""
-		
+		self.ip_former_text=""
 
 		
 	def add(self, data_structure):
@@ -122,24 +122,40 @@ class Match_and_Replace():
 		self.ui.add_btn.clicked.connect(self.add_btn_clicked)
 		self.ui.cancel_btn.clicked.connect(self.cancel_btn_clicked)
 		
-		#self.ui.match.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
+		self.ui.ip.textEdited.connect(self.ip_text_changed)
+		self.ui.port.textEdited.connect(self.port_text_changed)
+		#self.ui.ip.setInputMask('000.000.000.000;')
+
 		self.ui.match.textEdited.connect(self.match_text_changed)
 		self.ui.replace.textEdited.connect(self.replace_text_changed)
+		
 		#self.ui.match.textChanged.connect(self.text_changed)
 		#self.ui.match.setInputMask('HH-'*500)
-		#self.ui.replace.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
-		#self.ui.replace.setInputMask('HH '*500)
+		#self.ui.match.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
 		self.main.show()
 
+	#def ip_textEvent(self):
+		
+		
 	def text_format(self, x):
-		if('0'<= x <= '9' or 'a' <= x <= 'f' or 'A' <= x <= 'Z'):
+		if('0'<= x <= '9' or 'a' <= x <= 'f' or 'A' <= x <= 'F'):
 			return x
 		else:
 			return None
-
+	def ip_format(self, x):
+		if('0'<= x <= '9' or '.'==x):
+			return x
+		else:
+			return None
+	def port_format(self, x):
+		if('0'<= x <= '9'):
+			return x
+		else:
+			return None
+			
 	def replace_text_changed(self, text):
 		print(text)
-
+		text = text.lower()
 		text = text.replace(' ','')
 		filtered_text = filter(self.text_format,text)
 		
@@ -164,15 +180,9 @@ class Match_and_Replace():
 			
 	def match_text_changed(self, text):
 		print(text)
-
+		text = text.lower()
 		text = text.replace(' ','')
 		filtered_text = filter(self.text_format,text)
-		
-		'''
-		# filter 된 값이 있었던 것. 헥스 값이 아니므로 clear
-		if(len(list(filtered_text)) != len(text)):
-			self.ui.match.setText("")
-		'''
 		filtered_text = "".join(filtered_text)
 		
 		tmp_text = ""
@@ -186,7 +196,62 @@ class Match_and_Replace():
 		
 		self.ui.match.setText(tmp_text)
 		self.match_former_text = tmp_text
-	
+
+		
+	def port_text_changed(self, text):
+		print(text)
+		text = text.lower()
+		text = text.replace(' ','')
+		filtered_text = filter(self.port_format,text)
+		filtered_text = "".join(filtered_text)
+		if(filtered_text == ''):
+			pass
+		elif(int(filtered_text)<1 or int(filtered_text)>65535):
+			filtered_text = filtered_text[:-1]
+		self.ui.port.setText(filtered_text)		
+	def ip_text_changed(self, text):
+		print(text)
+		text = text.lower()
+		text = text.replace(' ','')
+		filtered_text = filter(self.ip_format,text)
+		
+		filtered_str = "".join(filtered_text)
+
+		filtered_list = filtered_str.split('.')
+		
+
+		
+		tmp_text = filtered_str
+
+		# wrong input logic
+		flag = True
+		if len(filtered_list)>4:
+			flag = False
+		for j in filtered_list:
+			if j == '':
+				break
+			print(j)
+			print(int(j))
+			if(int(j)<0 or int(j)>255):
+				flag = False
+			if(j.startswith("0") and len(j)!=1):
+				flag = False
+		# . add logic & . remove logic
+		if(flag):
+			if len(filtered_list[-1][0:3])%3==0 and len(filtered_list[-1][0:3])!=0 and len(filtered_list)<4:
+				tmp_text = tmp_text + "."
+			
+			if(tmp_text == self.ip_former_text and len(filtered_str) == len(text)):
+				tmp_text = tmp_text[:-2]
+
+		else:
+			tmp_text = tmp_text[:-1]
+
+
+				
+		self.ui.ip.setText(tmp_text)
+		self.ip_former_text = tmp_text
+		
 	def tableWidget_right_click(self):
 		self.tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
 		add = QAction("add", self.tableWidget)

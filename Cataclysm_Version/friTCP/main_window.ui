@@ -1239,7 +1239,7 @@ QDateEdit::down-arrow:focus
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget_about">
+     <widget class="QTabWidget" name="tabWidget_tab">
       <property name="font">
        <font>
         <family>D2Coding</family>
