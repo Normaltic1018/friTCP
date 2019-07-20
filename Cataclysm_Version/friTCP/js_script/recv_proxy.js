@@ -50,7 +50,7 @@ for(var key in hook_diction){
 			var buf_length = retVal.toInt32();
 
 			// if buf_length is so large, it becomes very slow as it stop...
-			if(buf_length > 4096){buf_length = 4096;}
+			//if(buf_length > 4096){buf_length = 4096;}
 
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 			

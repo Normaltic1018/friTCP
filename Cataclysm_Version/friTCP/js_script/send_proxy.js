@@ -48,7 +48,7 @@ for(var key in hook_diction){
 			var buf_length = args[buf_index+1].toInt32();
 
 			// if buf_length is so large, it becomes very slow as it stop...
-			if(buf_length > 4096){buf_length = 4096;}
+			//if(buf_length > 4096){buf_length = 1024;}
 
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 			
@@ -77,6 +77,7 @@ for(var key in hook_diction){
 				input_len = input_array.length;
 					
 				// fill zero if input_length is longer than origin length
+				/*
 				if(input_len < args[buf_index+1].toInt32()){
 					var null_array = new Array();
 					for(var i = 0; i<(args[buf_index+1].toInt32()-input_len); i++){null_array[i] = 0;}
@@ -86,7 +87,7 @@ for(var key in hook_diction){
 					args[buf_index+1] = args[buf_index+1].xor(args[buf_index+1].toInt32());
 					args[buf_index+1] = args[buf_index+1].add(input_len);
 					buf_ptr = args[buf_index];
-				}
+				}*/
 			}
 		}
 	});

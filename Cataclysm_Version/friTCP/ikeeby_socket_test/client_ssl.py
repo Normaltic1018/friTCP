@@ -5,7 +5,7 @@ import ssl
 
 print(os.getpid())
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-wrappedSocket = ssl.wrap_socket(sock, ssl_version=ssl.PROTOCOL_TLSv1)
+wrappedSocket = ssl.wrap_socket(sock)
 wrappedSocket.connect(('127.0.0.1', 12346))
 
 while(True):

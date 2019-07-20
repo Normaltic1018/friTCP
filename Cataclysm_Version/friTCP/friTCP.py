@@ -35,6 +35,8 @@ class ThreadProgress(QThread):
 	"""	
 			
 if __name__ == '__main__':
+	sys.setrecursionlimit(100)
+
 
 	app = QApplication(sys.argv)
 	splash_window = Splash()

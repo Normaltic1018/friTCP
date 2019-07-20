@@ -9,7 +9,8 @@ def msg_recv(sock):
       data = sock.recv(65535).decode()
       print(data)
 
-context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+context = ssl.SSLContext()
+#context = ssl.create_default_context()
 context.load_cert_chain('server.pem', 'server.key')
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM, 0) as sock:    

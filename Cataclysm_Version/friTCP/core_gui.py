@@ -16,6 +16,7 @@ open_process_Ui_MainWindow, open_process_QtBaseClass = uic.loadUiType("open_proc
 			
 class MyWindow(QMainWindow):
 	def __init__(self, parent=None):
+		print("MyWindow __init__ called!")
 		super(MyWindow, self).__init__(parent)
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
@@ -92,6 +93,7 @@ class MyWindow(QMainWindow):
 		self.ui.checkBox_decryptmessage.stateChanged.connect(self.click_hook_decryptmessage)
 	
 	def click_hook_send(self, state):
+		print("MyWindow click_hook_send called!")
 		if state == Qt.Checked:
 			#hook
 			self.frida_agent.hook_js("send")
@@ -100,6 +102,7 @@ class MyWindow(QMainWindow):
 			self.frida_agent.unhook_js("send")
 
 	def click_hook_recv(self, state):
+		print("MyWindow click_hook_recv called!")
 		if state == Qt.Checked:
 			#hook
 			self.frida_agent.hook_js("recv")
@@ -108,6 +111,7 @@ class MyWindow(QMainWindow):
 			self.frida_agent.unhook_js("recv")
 
 	def click_hook_sendto(self, state):
+		print("MyWindow click_hook_sendto called!")
 		if state == Qt.Checked:
 			#hook
 			self.frida_agent.hook_js("sendto")
@@ -116,6 +120,7 @@ class MyWindow(QMainWindow):
 			self.frida_agent.unhook_js("sendto")
 
 	def click_hook_recvfrom(self, state):
+		print("MyWindow click_hook_recvfrom called!")
 		if state == Qt.Checked:
 			#hook
 			self.frida_agent.hook_js("recvfrom")
@@ -124,6 +129,7 @@ class MyWindow(QMainWindow):
 			self.frida_agent.unhook_js("recvfrom")
 
 	def click_hook_wsasend(self, state):
+		print("MyWindow click_hook_wsasend called!")
 		if state == Qt.Checked:
 			#hook
 			self.frida_agent.hook_js("wsasend")
@@ -132,6 +138,7 @@ class MyWindow(QMainWindow):
 			self.frida_agent.unhook_js("wsasend")
 
 	def click_hook_wsarecv(self, state):
+		print("MyWindow click_hook_wsarecv called!")
 		if state == Qt.Checked:
 			#hook
 			self.frida_agent.hook_js("wsarecv")
@@ -140,6 +147,7 @@ class MyWindow(QMainWindow):
 			self.frida_agent.unhook_js("wsarecv")
 	
 	def click_hook_encryptmessage(self, state):
+		print("MyWindow click_hook_encryptmessage called!")
 		if state == Qt.Checked:
 			#hook
 			self.ui.textBrowser_log.append("[^] Encryptmessage is not supported yet...")
@@ -148,6 +156,7 @@ class MyWindow(QMainWindow):
 			self.ui.textBrowser_log.append("[^] Encryptmessage is not supported yet...")
 
 	def click_hook_decryptmessage(self, state):
+		print("MyWindow click_hook_decryptmessage called!")
 		if state == Qt.Checked:
 			#hook
 			self.ui.textBrowser_log.append("[^] Decryptmessage is not supported yet...")
@@ -157,12 +166,14 @@ class MyWindow(QMainWindow):
 	
 	#################################################
 	def resizeEvent(self, event):
+		print("MyWindow resizeEvent called!")
 		#print("resize")
 		self.match_and_replace.resize()
 	#################################################
 	
 	# openProcess Click 하면 실행되는 함수
 	def openProcess(self):
+		print("MyWindow openProcess called!")
 		self.open_process_window.show()
 		# 아래 있는 코드들은 실제 실행 되는 코드
 
@@ -170,9 +181,11 @@ class MyWindow(QMainWindow):
 		#self.frida_agent.resume_process(int(pid))
 
 	def closeOpenProc(self):
+		print("MyWindow closeOpenProc called!")
 		self.open_process_window.close()
 
 	def gui_start_process(self):
+		print("MyWindow gui_start_process called!")
 		filePath = self.open_process_ui.lineEdit_filePath.text()
 		argument = self.open_process_ui.lineEdit_arg.text()
 		
@@ -184,13 +197,15 @@ class MyWindow(QMainWindow):
 		self.open_process_window.close()
 	
 	def close_alertwindow(self):
+		print("MyWindow close_alertwindow called!")
 		self.alert_window.close()
 		
 		# 두번째 proxy 탭으로 이동
 		self.ui.tabWidget_tab.setCurrentIndex(1)
 	# customs context menu	
 	def tableWidget_proxyHistory_right_click(self):
-	
+		print("MyWindow tableWidget_proxyHistory_right_click called!")
+		
 		self.ui.tableWidget_proxyHistory.setContextMenuPolicy(Qt.ActionsContextMenu)
 		send_repeater = QAction("Send to Repeater", self.ui.tableWidget_proxyHistory)
 		self.ui.tableWidget_proxyHistory.addAction(send_repeater)
@@ -198,6 +213,8 @@ class MyWindow(QMainWindow):
 		send_repeater.triggered.connect(self.tableWidget_proxyHistory_right_click_event)
 		
 	def tableWidget_proxyHistory_right_click_event(self):
+		print("MyWindow tableWidget_proxyHistory_right_click_event called!")
+		
 		# get mouse pos
 		pos = QCursor.pos() # PyQt5.QtCore.QPoint(262, 215)
 		
@@ -212,6 +229,7 @@ class MyWindow(QMainWindow):
 	############ikeeby
 	
 	def process_list_set(self):
+		print("MyWindow process_list_set called!")
 		header = self.ui.tableWidget_procList.horizontalHeader()       
 		header.setSectionResizeMode(0, QHeaderView.ResizeToContents)
 		header.setSectionResizeMode(1, QHeaderView.Stretch)
@@ -230,6 +248,7 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_procList.cellDoubleClicked.connect(self.hook_btn_clicked)
 	
 	def process_clicked(self,row, col):
+		print("MyWindow process_clicked called!")
 		proc_pid = self.ui.tableWidget_procList.item(row, 0).text()
 		proc_name = self.ui.tableWidget_procList.item(row, 1).text()
 		
@@ -240,6 +259,7 @@ class MyWindow(QMainWindow):
 		self.ui.statusbar.showMessage(message)
 
 	def hook_btn_clicked(self):
+		print("MyWindow hook_btn_clicked called!")
 		user_input_pid = self.ui.lineEdit_pid_input.text()
 		
 		self.open_alert_window(user_input_pid)
@@ -247,6 +267,7 @@ class MyWindow(QMainWindow):
 		#hook_function(pid)
 	
 	def open_alert_window(self,pid,start_process_flag=False):
+		print("MyWindow open_alert_window called!")
 		self.hook_pid = pid
 		self.alert_window = QMainWindow()
 		self.alert_ui = hook_alert_Ui_MainWindow()
@@ -261,19 +282,23 @@ class MyWindow(QMainWindow):
 		self.alert_ui.pushButton_gogo.clicked.connect(self.close_alertwindow)
 		
 	def close_alertwindow(self):
+		print("MyWindow close_alertwindow called!")
 		self.alert_window.close()
 		
 		# 두번째 proxy 탭으로 이동
 		self.ui.tabWidget_tab.setCurrentIndex(1)
 	
 	def make_connection(self, class_object):
+		print("MyWindow make_connection called!")
 		class_object.from_agent_data.connect(self.from_fridaJS)
 		
 	def make_connection_err(self, class_object):
+		print("MyWindow make_connection_err called!")
 		class_object.error_signal.connect(self.error_message_box)
 	
 	@pyqtSlot(str)	
 	def from_fridaJS(self,data):
+		print("MyWindow from_fridaJS called!")
 		#self.ui.textBrowser_hexData.setText(data)
 		#self.ui.textBrowser_hexData.append(str(message))
 			
@@ -311,7 +336,7 @@ class MyWindow(QMainWindow):
 			#self.history_addRow(pid, func_name, ip_info, port_info, hex_data)
 
 	def match_and_replace_func(self, pid, func_name, ip_info, port_info, hex_data):
-	
+		print("MyWindow match_and_replace_func called!")	
 		strHex = ""
 		change_flag = False
 		
@@ -354,6 +379,7 @@ class MyWindow(QMainWindow):
 					
 	#def history_addRow(self,history_item):
 	def history_addRow(self,pid, func_name, ip_info, port_info, hex_data):
+		print("MyWindow history_addRow called!")	
 		#pid = parsing_pid(history_item)
 		proc_name = get_process_name(pid)
 		#func_name, ip_info, port_info = parsing_info(history_item)
@@ -386,6 +412,7 @@ class MyWindow(QMainWindow):
 
 	
 	def history_detail(self,row, col):
+		print("MyWindow history_detail called!")	
 		hex_text = self.frida_agent.proxy_history[row]['hex_text']
 		str_text = self.frida_agent.proxy_history[row]['str_text']
 		self.ui.textBrowser_hexData.setText(hex_text)
@@ -396,6 +423,7 @@ class MyWindow(QMainWindow):
 
 	#ikeeby
 	def send_packet_to_Repeater(self,row):
+		print("MyWindow send_packet_to_Repeater called!")	
 		# 기존 데이터 초기화
 		self.ui.tableWidget_hexTable_3.setRowCount(0)
 		self.ui.tableWidget_stringTable_3.setRowCount(0)
@@ -444,6 +472,7 @@ class MyWindow(QMainWindow):
 
 
 	def recv_packet_to_Repeater(self, packet):
+		print("MyWindow recv_packet_to_Repeater called!")	
 		# 기존 데이터 초기화
 		self.ui.tableWidget_hexTable_2.setRowCount(0)
 		self.ui.tableWidget_stringTable_2.setRowCount(0)
@@ -490,7 +519,7 @@ class MyWindow(QMainWindow):
 	#"[PROXY][FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res
 	
 	def intercept_view(self,pid,func_name,ip_info,port_info,hex_data):
-
+		print("MyWindow intercept_view called!")	
 		proc_name = get_process_name(pid)
 		self.ui.lineEdit_intercept_info.setText("PID : {} / Process Name : {} / FUNCTION : {} / ADDRESS : {}:{}".format(pid,proc_name,func_name,ip_info,port_info))
 		need_row_num = int(len(hex_data) / 16)
@@ -523,6 +552,7 @@ class MyWindow(QMainWindow):
 	
 	
 	def hexTableToList(self):
+		print("MyWindow hexTableToList called!")	
 		hexTable = self.ui.tableWidget_hexTable
 		hexList = []
 		
@@ -537,7 +567,7 @@ class MyWindow(QMainWindow):
 		return hexList
 		
 	def intercept_go_button(self):
-		
+		print("MyWindow intercept_go_button called!")			
 		#self.ui.textBrowser_hexData.setText(str(hexList))
 		intercept_info = self.ui.lineEdit_intercept_info.text().split()
 		#print("intercept_info!")
@@ -567,6 +597,7 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_stringTable.setRowCount(0)
 
 	def repeater_hexTableToList(self):
+		print("MyWindow repeater_hexTableToList called!")		
 		hexTable = self.ui.tableWidget_hexTable_3
 		hexList = []
 		
@@ -581,6 +612,7 @@ class MyWindow(QMainWindow):
 		return hexList
 				
 	def repeater_go_button(self):
+		print("MyWindow repeater_go_button called!")	
 
 		hexList = self.repeater_hexTableToList()		
 		
@@ -617,6 +649,7 @@ class MyWindow(QMainWindow):
 
 		
 	def toggle_intercept_on(self):
+		print("MyWindow toggle_intercept_on called!")	
 		self.frida_agent.intercept_on = self.ui.pushButton_interceptToggle.isChecked()
 		
 		if(self.frida_agent.current_isIntercept):
@@ -629,22 +662,28 @@ class MyWindow(QMainWindow):
 			self.ui.pushButton_interceptToggle.setText("Intercept OFF")
 			
 	def intercept_hexTable_changed(self, row, col):
+		print("MyWindow intercept_hexTable_changed called!")	
 		changed_data = self.ui.tableWidget_hexTable.item(row, col).text()
+		print(changed_data)
 		
 		try:
 			tmp = int(changed_data,16)
-		except Exception:
+		except Exception as e:
+			print("exception")
+			print(e)
 			changed_data = "00"
 			
 		if(len(changed_data) != 2):
-			changed_data = "00"
+			changed_data = "0" + changed_data
 		
 		if(self.ui.tableWidget_hexTable.item(row, col) != None):
 			self.ui.tableWidget_hexTable.item(row, col).setText(changed_data)
 		if(self.ui.tableWidget_stringTable.item(row, col) != None):
 			self.ui.tableWidget_stringTable.item(row, col).setText(chr(int(changed_data,16)))
 		
+		
 	def hexTable_itemSelected(self):
+		print("MyWindow hexTable_itemSelected called!")	
 		for sel_item in self.ui.tableWidget_hexTable.selectedItems():
 			row = sel_item.row()
 			col = sel_item.column()
@@ -652,8 +691,9 @@ class MyWindow(QMainWindow):
 			self.ui.tableWidget_stringTable.setCurrentCell(row,col)
 
 	def intercept_strTable_changed(self,row, col):
+		print("MyWindow intercept_strTable_changed called!")	
 		changed_data = self.ui.tableWidget_stringTable.item(row, col).text()
-			
+		print(changed_data)	
 		if(len(changed_data) != 1):
 			changed_data = " "
 			
@@ -661,6 +701,7 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_stringTable.item(row, col).setText(changed_data)
 		
 	def strTable_itemSelected(self):
+		print("MyWindow strTable_itemSelected called!")	
 		for sel_item in self.ui.tableWidget_stringTable.selectedItems():
 			row = sel_item.row()
 			col = sel_item.column()
@@ -669,6 +710,7 @@ class MyWindow(QMainWindow):
 
 	# ikeeby
 	def intercept_hexTable_changed_3(self, row, col):
+		print("MyWindow intercept_hexTable_changed_3 called!")	
 		changed_data = self.ui.tableWidget_hexTable_3.item(row, col).text()
 		
 		try:
@@ -677,7 +719,7 @@ class MyWindow(QMainWindow):
 			changed_data = "00"
 			
 		if(len(changed_data) != 2):
-			changed_data = "00"
+			changed_data = "0" + changed_data
 		
 		if(self.ui.tableWidget_hexTable_3.item(row, col) != None):
 			self.ui.tableWidget_hexTable_3.item(row, col).setText(changed_data)
@@ -685,6 +727,7 @@ class MyWindow(QMainWindow):
 			self.ui.tableWidget_stringTable_3.item(row, col).setText(chr(int(changed_data,16)))
 	# ikeeby	
 	def hexTable_itemSelected_3(self):
+		print("MyWindow hexTable_itemSelected_3 called!")	
 		for sel_item in self.ui.tableWidget_hexTable_3.selectedItems():
 			row = sel_item.row()
 			col = sel_item.column()
@@ -692,6 +735,7 @@ class MyWindow(QMainWindow):
 			self.ui.tableWidget_stringTable_3.setCurrentCell(row,col)
 	# ikeeby
 	def intercept_strTable_changed_3(self,row, col):
+		print("MyWindow intercept_strTable_changed_3 called!")	
 		changed_data = self.ui.tableWidget_stringTable_3.item(row, col).text()
 			
 		if(len(changed_data) != 1):
@@ -701,6 +745,7 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_stringTable_3.item(row, col).setText(changed_data)
 	# ikeeby
 	def strTable_itemSelected_3(self):
+		print("MyWindow strTable_itemSelected_3 called!")	
 		for sel_item in self.ui.tableWidget_stringTable_3.selectedItems():
 			row = sel_item.row()
 			col = sel_item.column()
@@ -710,6 +755,7 @@ class MyWindow(QMainWindow):
 			
 	@pyqtSlot(str)	
 	def error_message_box(self,data):
+		print("MyWindow error_message_box called!")	
 		# 에러 메시지 박스 오픈
 		# 임시로 아래 상태바에 출력
 		self.ui.statusbar.showMessage(data)
