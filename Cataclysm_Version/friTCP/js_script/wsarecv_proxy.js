@@ -1,7 +1,7 @@
 //Frida Script
 var module_list = Process.enumerateModules();
 var hook_diction = {};
-var input_func_name = "wsarecv";
+var input_func_name = "WSARecv";
 
 for(var idx in module_list){
 	// Find Function
@@ -30,7 +30,7 @@ for(var key in hook_diction){
 		onEnter: function(args){
 			this.sock = args[0];
 			this.buf = args[1];
-			this.buf_len = args[2];
+			this.buf_len = args[3];
 		},
 		onLeave: function(retVal){
 			
@@ -47,13 +47,14 @@ for(var key in hook_diction){
 			
 			// Buffer Information
 			var buf_address = ptr(this.buf);
-			var buf_length = retVal.toInt32();
+			var buf_length = this.buf_len.toInt32();
 
 			// if buf_length is so large, it becomes very slow as it stop...
-			if(buf_length > 4096){buf_length = 4096;}
+			//if(buf_length > 4096){buf_length = 4096;}
 
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 			
+			console.log("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 		
 			//send("[INTERCEPT]");
