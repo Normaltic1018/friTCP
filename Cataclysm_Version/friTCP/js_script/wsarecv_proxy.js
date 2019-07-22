@@ -29,10 +29,12 @@ for(var key in hook_diction){
 	Interceptor.attach(hookPtr,{
 		onEnter: function(args){
 			this.sock = args[0];
-			this.buf = args[1];
-			this.buf_len = args[3];
+			this.wsa_buffer_structure = ptr(args[1]);
+			this.wsa_buffer_address = Memory.readPointer(this.wsa_buffer_structure.add(4));
+			this.wsa_buffer_length = Memory.readULong(this.wsa_buffer_structure);
 		},
 		onLeave: function(retVal){
+			console.log("buf Length : " + this.wsa_buffer_length);
 			
 			var op = recv('input',function(value){
 				user_write_data = value.payload;
@@ -45,16 +47,14 @@ for(var key in hook_diction){
 			var socket_fd = this.sock.toInt32();
 			var socket_address = Socket.peerAddress(socket_fd);
 			
-			// Buffer Information
-			var buf_address = ptr(this.buf);
-			var buf_length = this.buf_len.toInt32();
-
 			// if buf_length is so large, it becomes very slow as it stop...
 			//if(buf_length > 4096){buf_length = 4096;}
 
+			var buf_address = this.wsa_buffer_address;
+			var buf_length = this.wsa_buffer_length;
+
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 			
-			console.log("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 		
 			//send("[INTERCEPT]");
@@ -78,14 +78,15 @@ for(var key in hook_diction){
 				input_len = input_array.length;
 					
 				// fill zero if input_length is longer than origin length
-				if(input_len < retVal.toInt32()){
+				if(input_len < buf_length){
 					var null_array = new Array();
-					for(var i = 0; i<(this.buf.toInt32()-input_len); i++){null_array[i] = 0;}
+					for(var i = 0; i<(buf_length-input_len); i++){null_array[i] = 0;}
 						
-					Memory.writeByteArray(this.buf.add(input_len),null_array);
+					Memory.writeByteArray(this.wsa_buffer_address.add(input_len),null_array);
 				}else{
-					this.buf_len = this.buf_len.xor(this.buf_len.toInt32());
-					this.buf_len = this.buf_len.add(input_len);
+					this.wsa_buffer_structure.writeU32(buf_length);
+					//this.wsa_buffer_structure = this.wsa_buffer_structure.xor(buf_length);
+					//this.wsa_buffer_structure = this.wsa_buffer_structure.add(input_len);
 				}
 			}	
 		}

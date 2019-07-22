@@ -310,8 +310,6 @@ class MyWindow(QMainWindow):
 			# packet이 들어오면 먼저 match_and_replace !
 			change_flag, hex_data = self.match_and_replace_func(pid, func_name, ip_info, port_info, hex_data)
 			
-
-			
 			#hex_data = parsing_hex(data)
 
 			# 인터셉트 모드일 경우

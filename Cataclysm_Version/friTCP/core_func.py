@@ -1,7 +1,7 @@
 #core.py
 import psutil
 import frida
-import sys, os
+import sys, os, time
 from core.tcp_proxy_config import *
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -81,7 +81,7 @@ class FridaAgent(QObject):
 		
 		self.session_list = {}
 		self.gui_window = gui_window
-		self.hook_list = ["send","recv"]
+		self.hook_list = ["WSASend"]
 		self.intercept_on = True
 		self.script_list = {}
 		self.current_isIntercept = False
@@ -161,9 +161,10 @@ class FridaAgent(QObject):
 				strHex += hex + " "
 		
 
-		print(strHex)
+		print("Send GOGO!")
 		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
+		print("Send Finished")
 
 		self.current_isIntercept = False
 		
@@ -171,10 +172,13 @@ class FridaAgent(QObject):
 	def on_message(self,message, data):
 		print("FridaAgent on_message called!")
 		while self.current_isIntercept == True:
+			time.sleep(3)
+			print("I am Wait~~~~~")
 			pass
 		
 		if message['type'] == 'send':
 			self.from_agent_data.emit(message['payload'])
+			#self.current_isIntercept = True
 		elif message['type'] == 'error':
 			self.error_signal.emit(message['stack'])
 		

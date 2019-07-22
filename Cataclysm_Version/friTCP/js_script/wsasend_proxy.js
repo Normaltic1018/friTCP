@@ -43,15 +43,25 @@ Interceptor.attach(hookPtr,{
 		var socket_fd = args[0].toInt32();
 		var socket_address = Socket.peerAddress(socket_fd);
 			
-			// Buffer Information
-		var buf_address = ptr(args[buf_index]);
-		var buf_length = args[buf_index+2].toInt32();
+		// Buffer Information
+		var WSA_buffer_structure = ptr(args[buf_index]);
+		var WSA_buffer_address = Memory.readPointer(WSA_buffer_structure.add(4));
+		var WSA_buffer_length = Memory.readULong(WSA_buffer_structure);
+
+		console.log("WSA_buffer_address : "+ WSA_buffer_address);
+		console.log("WSA_buffer_length : "+ WSA_buffer_length);
+
+		var buf_address = WSA_buffer_address;
+		var buf_length = WSA_buffer_length;
 
 		// if buf_length is so large, it becomes very slow as it stop...
 		//if(buf_length > 4096){buf_length = 4096;}
 
+		console.log(buf_address);
+		console.log(buf_length);
 		var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
-			
+		
+		
 		send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 		
 			//send("[INTERCEPT]");
@@ -77,15 +87,15 @@ Interceptor.attach(hookPtr,{
 			input_len = input_array.length;
 					
 			// fill zero if input_length is longer than origin length
-			if(input_len < args[buf_index+1].toInt32()){
+			if(input_len < WSA_buffer_length){
 				var null_array = new Array();
-				for(var i = 0; i<(args[buf_index+1].toInt32()-input_len); i++){null_array[i] = 0;}
+				for(var i = 0; i<(WSA_buffer_length-input_len); i++){null_array[i] = 0;}
 						
-				Memory.writeByteArray(args[buf_index].add(input_len),null_array);
+				Memory.writeByteArray(buf_address.add(input_len),null_array);
 			}else{
-				args[buf_index+1] = args[buf_index+1].xor(args[buf_index+1].toInt32());
-				args[buf_index+1] = args[buf_index+1].add(input_len);
-				buf_ptr = args[buf_index];
+				WSA_buffer_structure = WSA_buffer_structure.xor(args[buf_index+2].toInt32());
+				WSA_buffer_structure = WSA_buffer_structure.add(input_len);
+				buf_ptr = buf_address;
 			}
 		}
 	}
