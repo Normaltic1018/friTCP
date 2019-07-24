@@ -50,7 +50,7 @@ Interceptor.attach(hookPtr,{
 		console.log("================================= SCRIPT RESTART" + threadId);
 		console.log("GOGO START");
 		
-		if(retVal.toInt32() >=0 ){
+		if(retVal.toInt32() >0 ){
 			
 			var op = recv('input',function(value){
 				//console.log("GET POST DATA");
@@ -78,6 +78,7 @@ Interceptor.attach(hookPtr,{
 			
 			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);		
 			//send("[INTERCEPT]");
+			console.log("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 				
 			// Receive User Data
 			op.wait();
@@ -112,6 +113,8 @@ Interceptor.attach(hookPtr,{
 				}
 			}
 		}
+		console.log("================================= SCRIPT END" + threadId);
+		send("[END] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
 	}
 });
 

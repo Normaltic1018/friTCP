@@ -4,6 +4,7 @@ import frida
 import sys, os, time, queue
 from core.tcp_proxy_config import *
 from PyQt5.QtCore import QObject, pyqtSignal
+import threading
 
 def get_process_list():
 	print("get_process_list called!")
@@ -89,12 +90,14 @@ class FridaAgent(QObject):
 		
 		self.session_list = {}
 		self.gui_window = gui_window
-		self.hook_list = ["recv"]
+		self.hook_list = ["send","recv"]
 		self.intercept_on = True
 		self.script_list = {}
 		self.current_isIntercept = False
 		self.proxy_history = []
 		self.thread_queue = queue.Queue()
+		monitor_thread = threading.Thread(target=self.monitor_queue)
+		monitor_thread.start()
 	
 	# 프로세스를 실행시키고 frida를 inject한 후 resume 그리고 pid를 return 함.
 	def start_process(self,cmd, args):
@@ -171,9 +174,7 @@ class FridaAgent(QObject):
 			print("CONTINUE script")
 			self.current_isIntercept = True
 			self.script_list[intercept_pid][func_name].post({'type':thread_id,'payload':'continue'})
-		else:
-			print("self.current_isIntercept SET FALSE##################################################")
-			self.current_isIntercept = False
+
 		
 	def send_spoofData(self, intercept_pid,func_name,hexList):
 		print("send_spoofData called!")
@@ -188,7 +189,10 @@ class FridaAgent(QObject):
 		print("Send GOGO!")
 		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
-		self.continue_script()
+		
+		#self.current_isIntercept = False
+
+		#self.continue_script()
 		
 		"""
 		if(self.thread_queue.empty() == False):
@@ -197,8 +201,8 @@ class FridaAgent(QObject):
 			print("CLOSE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 			self.current_isIntercept = False
 		"""
-		print(self.thread_queue.empty())
-		self.continue_script()
+		#print(self.thread_queue.empty())
+		#self.continue_script()
 		#print("Send Finished")
 		
 	def on_message(self,message, data):
@@ -211,6 +215,9 @@ class FridaAgent(QObject):
 				knock_threadId = parsing_threadId(message['payload'])
 				
 				queue_data = {"pid":knock_pid,"func":knock_func,"thread_id":knock_threadId}
+				self.thread_queue.put_nowait(queue_data)
+				
+				"""
 				if(self.current_isIntercept == True):
 					# insert queue
 					print("Add Queue")
@@ -219,6 +226,10 @@ class FridaAgent(QObject):
 					# insert queue and call continue_script
 					self.thread_queue.put_nowait(queue_data)
 					self.continue_script()
+					"""
+			elif(message['payload'].startswith('[END]')):
+				knock_pid = parsing_pid(message['payload'])
+				self.current_isIntercept = False
 			else:
 				self.from_agent_data.emit(message['payload'])
 			#self.current_isIntercept = True
@@ -252,14 +263,10 @@ class FridaAgent(QObject):
 
 			self.script_list[pid][func_name].unload()
 			self.gui_window.ui.textBrowser_log.append("[-] [PID:{}] UnHook {} Function".format(pid,func_name))
-			"""
+			
 	def monitor_queue(self):
 		while(True):
-			if()
-			if(self.thread_queue.empty() == False):
-				# is QUEUE Data Exist
-				msg = "Welcome Client!".encode()
-				sock.send(msg)
-				data = sock.recv(65535).decode()
-				print(data)
-				"""
+			if(self.current_isIntercept == False):
+				if(self.thread_queue.empty() == False):
+					self.continue_script()
+				

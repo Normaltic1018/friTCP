@@ -8,7 +8,7 @@ sock.connect(('127.0.0.1', 12346))
 count = 1
 while(True):
 	#print(len("Hello Server!1234567890123456789012345678901234567890")*50)
-	msg = ("Hello Server!test").encode()
+	msg = ("Hello Server!1234567890123456789012345678901234567890").encode()
 	sock.send(msg)
 	data = sock.recv(65535)
 	#count = count * 2

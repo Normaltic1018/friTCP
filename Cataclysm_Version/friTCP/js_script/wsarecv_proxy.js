@@ -98,7 +98,9 @@ for(var key in hook_diction){
 					//this.wsa_buffer_structure = this.wsa_buffer_structure.xor(buf_length);
 					//this.wsa_buffer_structure = this.wsa_buffer_structure.add(input_len);
 				}
-			}	
+			}
+			console.log("================================= SCRIPT END" + threadId);
+			send("[END] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);			
 		}
 	});
 }

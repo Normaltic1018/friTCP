@@ -100,6 +100,8 @@ for(var key in hook_diction){
 					buf_ptr = args[buf_index];
 				}
 			}
+			console.log("================================= SCRIPT END" + threadId);
+			send("[END] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
 		}
 	});
 }
