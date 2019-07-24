@@ -28,10 +28,22 @@ for(var key in hook_diction){
 	
 	Interceptor.attach(hookPtr,{
 		onEnter: function(args){
-			var op = recv('input',function(value){
-				//console.log("GET POST DATA");
-				user_write_data = value.payload;
-			});
+		// wait for ready gui
+		var threadId = Process.getCurrentThreadId();
+		console.log("================================= SCRIPT START" + threadId);
+		send("[KNOCK] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
+		var gogo = recv(threadId,function(value){
+			//console.log("GET POST DATA");
+			console.log("GOGO Script");
+		});
+		
+		gogo.wait();
+		console.log("================================= SCRIPT RESTART" + threadId);
+		console.log("GOGO START");
+		var op = recv('input',function(value){
+			//console.log("GET POST DATA");
+			user_write_data = value.payload;
+		});
 			
 			var buf_index;
 			buf_index = 1;

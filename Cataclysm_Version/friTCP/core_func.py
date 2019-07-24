@@ -1,7 +1,7 @@
 #core.py
 import psutil
 import frida
-import sys, os, time
+import sys, os, time, queue
 from core.tcp_proxy_config import *
 from PyQt5.QtCore import QObject, pyqtSignal
 
@@ -34,10 +34,18 @@ def parsing_info(data):
 
 	return func_name, ip_info, port_info
 
+def parsing_func(data):
+	print("parsing_func called!")
+	return data.split("[FUNC_NAME]")[1].split()[0]
+
 def parsing_pid(data):
 	print("parsing_pid called!")
 	return data.split("[PID]")[1].split()[0]
 
+def parsing_threadId(data):
+	print("parsing_threadId called!")
+	return data.split("[THREAD_ID]")[1].split()[0]
+	
 def parsing_hex(hexdump):
 	print("parsing_hex called!")
 	hexdata = hexdump.split("[HEXDUMP]")[1].split()
@@ -81,11 +89,12 @@ class FridaAgent(QObject):
 		
 		self.session_list = {}
 		self.gui_window = gui_window
-		self.hook_list = ["WSASend"]
+		self.hook_list = ["recv"]
 		self.intercept_on = True
 		self.script_list = {}
 		self.current_isIntercept = False
 		self.proxy_history = []
+		self.thread_queue = queue.Queue()
 	
 	# 프로세스를 실행시키고 frida를 inject한 후 resume 그리고 pid를 return 함.
 	def start_process(self,cmd, args):
@@ -151,6 +160,21 @@ class FridaAgent(QObject):
 		
 		self.inject_script(function_name)
 	
+	def continue_script(self):
+		if(self.thread_queue.empty() == False):
+			data = self.thread_queue.get_nowait()
+		
+			intercept_pid = data["pid"]
+			func_name = data["func"]
+			thread_id = data["thread_id"]
+			
+			print("CONTINUE script")
+			self.current_isIntercept = True
+			self.script_list[intercept_pid][func_name].post({'type':thread_id,'payload':'continue'})
+		else:
+			print("self.current_isIntercept SET FALSE##################################################")
+			self.current_isIntercept = False
+		
 	def send_spoofData(self, intercept_pid,func_name,hexList):
 		print("send_spoofData called!")
 		
@@ -164,20 +188,39 @@ class FridaAgent(QObject):
 		print("Send GOGO!")
 		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
-		print("Send Finished")
-
-		self.current_isIntercept = False
+		self.continue_script()
 		
-	
+		"""
+		if(self.thread_queue.empty() == False):
+			self.continue_script()
+		else:
+			print("CLOSE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+			self.current_isIntercept = False
+		"""
+		print(self.thread_queue.empty())
+		self.continue_script()
+		#print("Send Finished")
+		
 	def on_message(self,message, data):
 		print("FridaAgent on_message called!")
-		while self.current_isIntercept == True:
-			time.sleep(3)
-			print("I am Wait~~~~~")
-			pass
 		
 		if message['type'] == 'send':
-			self.from_agent_data.emit(message['payload'])
+			if(message['payload'].startswith('[KNOCK]')):
+				knock_pid = parsing_pid(message['payload'])
+				knock_func = parsing_func(message['payload'])
+				knock_threadId = parsing_threadId(message['payload'])
+				
+				queue_data = {"pid":knock_pid,"func":knock_func,"thread_id":knock_threadId}
+				if(self.current_isIntercept == True):
+					# insert queue
+					print("Add Queue")
+					self.thread_queue.put_nowait(queue_data)
+				else:
+					# insert queue and call continue_script
+					self.thread_queue.put_nowait(queue_data)
+					self.continue_script()
+			else:
+				self.from_agent_data.emit(message['payload'])
 			#self.current_isIntercept = True
 		elif message['type'] == 'error':
 			self.error_signal.emit(message['stack'])
@@ -209,3 +252,14 @@ class FridaAgent(QObject):
 
 			self.script_list[pid][func_name].unload()
 			self.gui_window.ui.textBrowser_log.append("[-] [PID:{}] UnHook {} Function".format(pid,func_name))
+			"""
+	def monitor_queue(self):
+		while(True):
+			if()
+			if(self.thread_queue.empty() == False):
+				# is QUEUE Data Exist
+				msg = "Welcome Client!".encode()
+				sock.send(msg)
+				data = sock.recv(65535).decode()
+				print(data)
+				"""

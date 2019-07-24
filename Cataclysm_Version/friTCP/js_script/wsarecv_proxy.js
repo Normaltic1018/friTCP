@@ -34,19 +34,29 @@ for(var key in hook_diction){
 			this.wsa_buffer_length = Memory.readULong(this.wsa_buffer_structure);
 		},
 		onLeave: function(retVal){
-			console.log("buf Length : " + this.wsa_buffer_length);
-			
+			var threadId = Process.getCurrentThreadId();
+			console.log("================================= SCRIPT START" + threadId);
+			send("[KNOCK] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
+			var gogo = recv(threadId,function(value){
+			//console.log("GET POST DATA");
+				console.log("GOGO Script");
+			});
+		
+			gogo.wait();
+			console.log("================================= SCRIPT RESTART" + threadId);
+			console.log("GOGO START");
 			var op = recv('input',function(value){
+				//console.log("GET POST DATA");
 				user_write_data = value.payload;
 			});
-			
+						
 			// i is arg index
 			var user_write_data;
 			
 			// IP, PORT Information
 			var socket_fd = this.sock.toInt32();
 			var socket_address = Socket.peerAddress(socket_fd);
-			
+
 			// if buf_length is so large, it becomes very slow as it stop...
 			//if(buf_length > 4096){buf_length = 4096;}
 
@@ -55,7 +65,7 @@ for(var key in hook_diction){
 
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 			
-			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
+			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [THREAD_ID]"+threadId+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
 		
 			//send("[INTERCEPT]");
 			

@@ -132,19 +132,19 @@ class MyWindow(QMainWindow):
 		print("MyWindow click_hook_wsasend called!")
 		if state == Qt.Checked:
 			#hook
-			self.frida_agent.hook_js("wsasend")
+			self.frida_agent.hook_js("WSASend")
 		else:
 			#unhook
-			self.frida_agent.unhook_js("wsasend")
+			self.frida_agent.unhook_js("WSASend")
 
 	def click_hook_wsarecv(self, state):
 		print("MyWindow click_hook_wsarecv called!")
 		if state == Qt.Checked:
 			#hook
-			self.frida_agent.hook_js("wsarecv")
+			self.frida_agent.hook_js("WSARecv")
 		else:
 			#unhook
-			self.frida_agent.unhook_js("wsarecv")
+			self.frida_agent.unhook_js("WSARecv")
 	
 	def click_hook_encryptmessage(self, state):
 		print("MyWindow click_hook_encryptmessage called!")
@@ -299,29 +299,24 @@ class MyWindow(QMainWindow):
 	@pyqtSlot(str)	
 	def from_fridaJS(self,data):
 		print("MyWindow from_fridaJS called!")
-		#self.ui.textBrowser_hexData.setText(data)
-		#self.ui.textBrowser_hexData.append(str(message))
 			
 		if(data.startswith("[PROXY]")):
 			func_name, ip_info, port_info = parsing_info(data)
 			pid = parsing_pid(data)
-			hex_data = parsing_hex(data)
-
+			hex_data = parsing_hex(data) 
+			
 			# packet이 들어오면 먼저 match_and_replace !
 			change_flag, hex_data = self.match_and_replace_func(pid, func_name, ip_info, port_info, hex_data)
 			
-			#hex_data = parsing_hex(data)
-
 			# 인터셉트 모드일 경우
 			if(self.frida_agent.intercept_on):
-				self.frida_agent.current_isIntercept = True
+				#self.frida_agent.current_isIntercept = True
 					
 				self.intercept_view(pid,func_name,ip_info,port_info,hex_data)
 				self.ui.tabWidget_proxyTab.setCurrentIndex(0)
 				# 클릭을 연결해두기. (go button)
 			else:
-				# 빈 문자 전송
-							
+				# 빈 문자 전송					
 				if(change_flag):
 					self.frida_agent.send_spoofData(pid,func_name,hex_data)
 				else:

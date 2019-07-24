@@ -1,8 +1,9 @@
 //Frida Script
+/*
 var module_list = Process.enumerateModules();
 var hook_diction = {};
 var input_func_name = "recv";
-/*
+
 for(var idx in module_list){
 	// Find Function
 	var select_module = Process.getModuleByName(module_list[idx].name);
@@ -36,58 +37,81 @@ Interceptor.attach(hookPtr,{
 	},
 	onLeave: function(retVal){
 		
-	var op = recv('input',function(value){
-			user_write_data = value.payload;
+		// wait for ready gui
+		var threadId = Process.getCurrentThreadId();
+		console.log("================================= SCRIPT START" + threadId);
+		send("[KNOCK] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
+		var gogo = recv(threadId,function(value){
+			//console.log("GET POST DATA");
+			console.log("GOGO Script");
 		});
 		
-		// i is arg index
-		var user_write_data;
+		gogo.wait();
+		console.log("================================= SCRIPT RESTART" + threadId);
+		console.log("GOGO START");
 		
-		// IP, PORT Information
-		var socket_fd = this.sock.toInt32();
-		var socket_address = Socket.peerAddress(socket_fd);
-		
-		
-		console.log(retVal.toInt32());
-		// Buffer Information
-		var buf_address = ptr(this.buf);
-		var buf_length = retVal.toInt32();
-			// if buf_length is so large, it becomes very slow as it stop...
-		if(buf_length > 4096){buf_length = 4096;}
-			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
-		
-		send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.ort+" "+"[HEXDUMP]"+buf_length+" " + res);		
-		//send("[INTERCEPT]");
+		if(retVal.toInt32() >=0 ){
 			
-		// Receive User Data
-		op.wait();
-								
-		var input_len;
-		input_len = user_write_data.length;
+			var op = recv('input',function(value){
+				//console.log("GET POST DATA");
+				user_write_data = value.payload;
+			});
+			
+			// i is arg index
+			var user_write_data;
+			
+			// IP, PORT Information
+			var socket_fd = this.sock.toInt32();
+			var socket_address = Socket.peerAddress(socket_fd);
+			
+			
+			console.log(retVal.toInt32());
+			// Buffer Information
+			var buf_address = ptr(this.buf);
+			var buf_length = retVal.toInt32();
+				// if buf_length is so large, it becomes very slow as it stop...
+			
+			console.log("BUF Address : " + buf_address);
+			console.log("BUF Length : " + buf_length);
+			//if(buf_length > 4096){buf_length = 4096;}
+			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
+			
+			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);		
+			//send("[INTERCEPT]");
 				
-		if(input_len != 0){
-			// Hex mode
-			user_write_data = user_write_data;
-			var list_user_data = user_write_data.split(" ");
-			var input_array = new Array();
-				
-			for(var i in list_user_data){
-				input_array[i] = parseInt(list_user_data[i],16);
-			}
-			Memory.writeByteArray(this.buf,input_array);
-			input_len = input_array.length;
-				
-			// fill zero if input_length is longer than origin length
-			if(input_len < retVal.toInt32()){
-				var null_array = new Array();
-				for(var i = 0; i<(this.buf.toInt32()-input_len); i++){null_array[i] = 0;}
+			// Receive User Data
+			op.wait();
+									
+			var input_len;
+			input_len = user_write_data.length;
 					
-				Memory.writeByteArray(this.buf.add(input_len),null_array);
-			}else{
-				this.buf_len = this.buf_len.xor(this.buf_len.toInt32());
-				this.buf_len = this.buf_len.add(input_len);
+			if(input_len != 0){
+				// Hex mode
+				user_write_data = user_write_data;
+				var list_user_data = user_write_data.split(" ");
+				var input_array = new Array();
+					
+				for(var i in list_user_data){
+					input_array[i] = parseInt(list_user_data[i],16);
+				}
+				Memory.writeByteArray(this.buf,input_array);
+				input_len = input_array.length;
+					
+				// fill zero if input_length is longer than origin length
+				if(input_len < retVal.toInt32()){
+					var null_array = new Array();
+					for(var i = 0; i<(this.buf.toInt32()-input_len); i++){null_array[i] = 0;}
+						
+					Memory.writeByteArray(this.buf.add(input_len),null_array);
+				}else{
+					retVal.replace(input_len);
+					/*
+					this.buf_len = this.buf_len.xor(this.buf_len.toInt32());
+					this.buf_len = this.buf_len.add(input_len);
+					*/
+				}
 			}
-		}	
+		}
 	}
 });
 
