@@ -169,8 +169,29 @@ class MyWindow(QMainWindow):
 		print("MyWindow resizeEvent called!")
 		#print("resize")
 		self.match_and_replace.resize()
+		self.proxyHistory_resize()
 	#################################################
+
+	def proxyHistory_resize(self):
+
+		print("this is proxyHistory resize..")
+		#size = self.tableWidget_proxyHistory.width()
+		
+		# history column size init
+		size = self.ui.tableWidget_proxyHistory.width()
+		if(size < 978):
+			size = 978
+		print(size)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(0,size/3/5*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(1,size/3/5*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(2,size/3/5*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(3,size/3/5*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(4,size/3/5*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(5,size/3/1)	
+
+
 	
+		
 	# openProcess Click 하면 실행되는 함수
 	def openProcess(self):
 		print("MyWindow openProcess called!")
@@ -205,12 +226,17 @@ class MyWindow(QMainWindow):
 	# customs context menu	
 	def tableWidget_proxyHistory_right_click(self):
 		print("MyWindow tableWidget_proxyHistory_right_click called!")
+		self.ui.tableWidget_proxyHistory.setSelectionBehavior(QTableView.SelectRows) # select column? then select all column!
 		
 		self.ui.tableWidget_proxyHistory.setContextMenuPolicy(Qt.ActionsContextMenu)
 		send_repeater = QAction("Send to Repeater", self.ui.tableWidget_proxyHistory)
 		self.ui.tableWidget_proxyHistory.addAction(send_repeater)
 		
 		send_repeater.triggered.connect(self.tableWidget_proxyHistory_right_click_event)
+		
+		remove = QAction("remove", self.ui.tableWidget_proxyHistory)
+		self.ui.tableWidget_proxyHistory.addAction(remove)		
+		remove.triggered.connect(self.tableWidget_proxyHistory_right_click_remove_event)
 		
 	def tableWidget_proxyHistory_right_click_event(self):
 		print("MyWindow tableWidget_proxyHistory_right_click_event called!")
@@ -225,7 +251,20 @@ class MyWindow(QMainWindow):
 			
 			self.send_packet_to_Repeater(row)
 			self.ui.tabWidget_tab.setCurrentIndex(2)
+
+
+	def tableWidget_proxyHistory_right_click_remove_event(self):
+		index_list = []                                                          
+		for model_index in self.ui.tableWidget_proxyHistory.selectionModel().selectedRows():       
+			index = QPersistentModelIndex(model_index)         
+			index_list.append(index)                                             
 		
+		for index in index_list:
+			
+				
+			#self.remove(index.row()) #remove internal data in list
+			self.ui.tableWidget_proxyHistory.removeRow(index.row()) #remove gui
+			
 	############ikeeby
 	
 	def process_list_set(self):

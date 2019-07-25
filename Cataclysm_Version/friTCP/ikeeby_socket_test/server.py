@@ -1,12 +1,14 @@
 import socket
 import threading
+import os
 
 def msg_recv(sock):
-   while(True):
-      msg = "Welcome Client!".encode()
-      sock.send(msg)
-      data = sock.recv(65535).decode()
-      print(data)
+	while(True):
+		print(os.getpid())
+		msg = "Welcome Client!".encode()
+		sock.send(msg)
+		data = sock.recv(65535).decode()
+		print(data)
       
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print(server_socket)

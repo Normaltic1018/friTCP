@@ -755,6 +755,16 @@
        <string>decryptmessage</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>SSL_write</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>SSL_read</string>
+      </property>
+     </item>
     </widget>
     <widget class="QLabel" name="label_12">
      <property name="geometry">
