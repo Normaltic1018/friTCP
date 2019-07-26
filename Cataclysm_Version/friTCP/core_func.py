@@ -5,6 +5,7 @@ import sys, os, time, queue
 from core.tcp_proxy_config import *
 from PyQt5.QtCore import QObject, pyqtSignal
 import threading
+from Queue_Monitor import *
 
 def get_process_list():
 	print("get_process_list called!")
@@ -83,6 +84,7 @@ class FridaAgent(QObject):
 
 	from_agent_data = pyqtSignal(str)
 	error_signal = pyqtSignal(str)
+	queue_get_signal = pyqtSignal(str)
 	
 	def __init__(self, gui_window,parent=None):
 		print("FridaAgent __init__ called!")
@@ -96,8 +98,9 @@ class FridaAgent(QObject):
 		self.current_isIntercept = False
 		self.proxy_history = []
 		self.thread_queue = queue.Queue()
-		monitor_thread = threading.Thread(target=self.monitor_queue)
-		monitor_thread.start()
+		#monitor_thread = threading.Thread(target=self.monitor_queue)
+		#monitor_thread.start()
+		self.queue_monitor = Queue_Monitor(self)
 	
 	# 프로세스를 실행시키고 frida를 inject한 후 resume 그리고 pid를 return 함.
 	def start_process(self,cmd, args):
@@ -217,6 +220,8 @@ class FridaAgent(QObject):
 				queue_data = {"pid":knock_pid,"func":knock_func,"thread_id":knock_threadId}
 				self.thread_queue.put_nowait(queue_data)
 				
+				if(self.current_isIntercept == False):
+					self.continue_script()
 				"""
 				if(self.current_isIntercept == True):
 					# insert queue
@@ -230,6 +235,7 @@ class FridaAgent(QObject):
 			elif(message['payload'].startswith('[END]')):
 				knock_pid = parsing_pid(message['payload'])
 				self.current_isIntercept = False
+				self.queue_get_signal.emit("END")
 			else:
 				self.from_agent_data.emit(message['payload'])
 			#self.current_isIntercept = True
