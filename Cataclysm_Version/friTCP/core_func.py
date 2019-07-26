@@ -53,15 +53,15 @@ def parsing_hex(hexdump):
 	hexdata = hexdump.split("[HEXDUMP]")[1].split()
 
 	hex_len = int(hexdata[0])
-	start_address = int(hexdata[1],16)
-
 	hex_list = []
-	
-	for i in range(hex_len):
-		indexing = format(start_address + (int(i/16)*16),'x').zfill(8)
-	
-		start_index = hexdata.index(indexing)
-		hex_list.append(hexdata[start_index+1+(i%16)])
+	if(hex_len > 0):
+		start_address = int(hexdata[1],16)
+		
+		for i in range(hex_len):
+			indexing = format(start_address + (int(i/16)*16),'x').zfill(8)
+		
+			start_index = hexdata.index(indexing)
+			hex_list.append(hexdata[start_index+1+(i%16)])
 
 	return hex_list
 
@@ -168,16 +168,20 @@ class FridaAgent(QObject):
 	
 	def continue_script(self):
 		if(self.thread_queue.empty() == False):
-			data = self.thread_queue.get_nowait()
-		
-			intercept_pid = data["pid"]
-			func_name = data["func"]
-			thread_id = data["thread_id"]
-			
-			print("CONTINUE script")
-			self.current_isIntercept = True
-			self.script_list[intercept_pid][func_name].post({'type':thread_id,'payload':'continue'})
-
+			print("GET_THEAD_QUEUE~~~~~")
+			try:
+				data = self.thread_queue.get_nowait()
+				intercept_pid = data["pid"]
+				func_name = data["func"]
+				thread_id = data["thread_id"]
+				
+				print("CONTINUE script Thread : {} / func_name : {}".format(thread_id,func_name))
+				self.current_isIntercept = True
+				self.script_list[intercept_pid][func_name].post({'type':thread_id,'payload':'continue'})
+			except:
+				print("ERROR RAISE EMPTY QUEUE")
+		else:
+			print("EMPTY QUEUE @@@")
 		
 	def send_spoofData(self, intercept_pid,func_name,hexList):
 		print("send_spoofData called!")
@@ -219,7 +223,7 @@ class FridaAgent(QObject):
 				
 				queue_data = {"pid":knock_pid,"func":knock_func,"thread_id":knock_threadId}
 				self.thread_queue.put_nowait(queue_data)
-				
+				#print("Q SIZE !! : {}".format(self.thread_queue.qsize()))
 				if(self.current_isIntercept == False):
 					self.continue_script()
 				"""
@@ -270,9 +274,4 @@ class FridaAgent(QObject):
 			self.script_list[pid][func_name].unload()
 			self.gui_window.ui.textBrowser_log.append("[-] [PID:{}] UnHook {} Function".format(pid,func_name))
 			
-	def monitor_queue(self):
-		while(True):
-			if(self.current_isIntercept == False):
-				if(self.thread_queue.empty() == False):
-					self.continue_script()
 				

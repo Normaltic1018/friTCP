@@ -16,6 +16,7 @@ for(var idx in module_list){
 		}
 	}
 }  
+var call_num = 0;
 
 for(var key in hook_diction){
 	var hook_module_name = key;
@@ -35,9 +36,14 @@ for(var key in hook_diction){
 		},
 		onLeave: function(retVal){
 			var threadId = Process.getCurrentThreadId();
-			console.log("================================= SCRIPT START" + threadId);
-			send("[KNOCK] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
-			var gogo = recv(threadId,function(value){
+			if(call_num > 5000){
+				call_num = 0;
+			}else{
+				call_num = call_num + 1;
+			}
+			console.log("================================= SCRIPT START" + threadId+"_"+call_num);
+			send("[KNOCK] [THREAD_ID]"+threadId+"_"+call_num+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
+			var gogo = recv(threadId+"_"+call_num,function(value){
 			//console.log("GET POST DATA");
 				console.log("GOGO Script");
 			});

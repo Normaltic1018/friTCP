@@ -28,7 +28,8 @@ var hookPtr = Module.findExportByName(hook_module_name, hook_function_name);
 //send("[HOOK_INFO][PID]"+Process.id+" [MODULE]"+hook_module_name+" [FUNCTION]"+hook_function_name+" [ADDRESS]"+ hookPtr.toString());
 	
 var buf_ptr;
-	
+var call_num = 0;
+
 Interceptor.attach(hookPtr,{
 	onEnter: function(args){
 		this.sock = args[0];
@@ -36,12 +37,16 @@ Interceptor.attach(hookPtr,{
 		this.buf_len = args[2];
 	},
 	onLeave: function(retVal){
-		
+		if(call_num > 5000){
+			call_num = 0;
+		}else{
+			call_num = call_num + 1;
+		}		
 		// wait for ready gui
 		var threadId = Process.getCurrentThreadId();
-		console.log("================================= SCRIPT START" + threadId);
-		send("[KNOCK] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
-		var gogo = recv(threadId,function(value){
+		console.log("================================= SCRIPT START" + threadId+"_"+call_num);
+			send("[KNOCK] [THREAD_ID]"+threadId+"_"+call_num+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
+		var gogo = recv(threadId+"_"+call_num,function(value){
 			//console.log("GET POST DATA");
 			console.log("GOGO Script");
 		});

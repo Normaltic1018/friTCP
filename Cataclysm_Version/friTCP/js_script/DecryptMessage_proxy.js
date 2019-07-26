@@ -18,49 +18,55 @@ for(var idx in module_list){
 }  
 */
 var hook_module_name = "Secur32.dll";
-var hook_function_name = "EncryptMessage"
+var hook_function_name = "DecryptMessage"
 	
 var hookPtr = Module.findExportByName(hook_module_name, hook_function_name);
 //send("[HOOK_INFO][PID]"+Process.id+" [MODULE]"+hook_module_name+" [FUNCTION]"+hook_function_name+" [ADDRESS]"+ hookPtr.toString());
 	
 var buf_ptr;
-	
+var call_num = 0;
+
 Interceptor.attach(hookPtr,{
 	onEnter: function(args){
 		// wait for ready gui
+		if(call_num > 5000){
+			call_num = 0;
+		}else{
+			call_num = call_num + 1;
+		}
+		var buf_index;
+		buf_index = 1;
+		
+		this.pMessage_address = ptr(args[buf_index]);
 		var threadId = Process.getCurrentThreadId();
-		console.log("================================= SCRIPT START" + threadId);
-		send("[KNOCK] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
-		var gogo = recv(threadId,function(value){
+		console.log("================================= SCRIPT START" + threadId+"_"+call_num);
+		send("[KNOCK] [THREAD_ID]"+threadId+"_"+call_num+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
+		var gogo = recv(threadId+"_"+call_num,function(value){
 			//console.log("GET POST DATA");
 			console.log("GOGO Script");
 		});
 		
 		gogo.wait();
-		console.log("================================= SCRIPT RESTART" + threadId);
+	},
+	onLeave: function(retVal){
+		var threadId = Process.getCurrentThreadId();
+		console.log("================================= SCRIPT RESTART" + threadId+"_"+call_num);
 		console.log("GOGO START");
 		var op = recv('input',function(value){
 			//console.log("GET POST DATA");
 			user_write_data = value.payload;
 		});
-			
-		var buf_index;
-		buf_index = 2;
-			
+					
 			// i is arg index
 		var user_write_data;
 			
-		
 		// Buffer Information
-		var pMessage_address = ptr(args[buf_index]);
-		console.log("pMessage_address : " + (pMessage_address));
-		
+		//var pMessage_address = ptr(args[buf_index]);
+		//console.log("pMessage_address : " + (pMessage_address));
 		
 		//console.log(Memory.readByteArray(pMessage_address,64));
 		
-		var pBuffer_address = Memory.readPointer(pMessage_address.add(8));
-		console.log("pBUffer_address : "+pBuffer_address);
-		
+		var pBuffer_address = Memory.readPointer(this.pMessage_address.add(8));
 		var num_of_buffer = Memory.readULong(this.pMessage_address.add(4));
 		console.log("pBUffer_address : "+pBuffer_address);
 		
@@ -77,6 +83,7 @@ Interceptor.attach(hookPtr,{
 				break;
 			}
 		}
+		console.log(Memory.readByteArray(pBuffer_address,256));
 		
 		console.log("buf_len : " + buf_length);
 		console.log("buf_address : " + buf_address);
@@ -84,41 +91,46 @@ Interceptor.attach(hookPtr,{
 		//console.log(Memory.readByteArray(buf_address,32));
 		// if buf_length is so large, it becomes very slow as it stop...
 		//if(buf_length > 4096){buf_length = 4096;}
-
-		var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
-			
-		send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]- [PORT]- "+"[HEXDUMP]"+buf_length+" " + res);
 		
-		op.wait();
-			
-			//console.log("wait end");
-		var input_len;
-		input_len = user_write_data.length;
+		if((buf_address === undefined || buf_address === null || buf_length === undefined || buf_length ===null) == false){
+			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 				
-		if(input_len != 0){
-				// Hex mode
-			user_write_data = user_write_data;
-			var list_user_data = user_write_data.split(" ");
-			var input_array = new Array();
+			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]- [PORT]- "+"[HEXDUMP]"+buf_length+" " + res);
+			
+			op.wait();
+				
+				//console.log("wait end");
+			var input_len;
+			input_len = user_write_data.length;
 					
-			for(var i in list_user_data){
-				input_array[i] = parseInt(list_user_data[i],16);
-			}
-			Memory.writeByteArray(buf_address,input_array);
-			input_len = input_array.length;
-					
-			// fill zero if input_length is longer than origin length
-			if(input_len < buf_length){
-				var null_array = new Array();
-				for(var i = 0; i<(buf_length-input_len); i++){null_array[i] = 0;}
+			if(input_len != 0){
+					// Hex mode
+				user_write_data = user_write_data;
+				var list_user_data = user_write_data.split(" ");
+				var input_array = new Array();
 						
-				Memory.writeByteArray(buf_address.add(input_len),null_array);
-			}else{
-				pBuffer_address.add(12).replace(input_len);
+				for(var i in list_user_data){
+					input_array[i] = parseInt(list_user_data[i],16);
+				}
+				Memory.writeByteArray(buf_address,input_array);
+				input_len = input_array.length;
+						
+				// fill zero if input_length is longer than origin length
+				if(input_len < buf_length){
+					var null_array = new Array();
+					for(var i = 0; i<(buf_length-input_len); i++){null_array[i] = 0;}
+							
+					Memory.writeByteArray(buf_address.add(input_len),null_array);
+				}else{
+					pBuffer_address.add(12).replace(input_len);
+				}
 			}
+		}else{
+			console.log("UNDEFINED....@@");
+			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]- [PORT]- "+"[HEXDUMP]"+0+" " + "");
 		}
-		console.log("================================= SCRIPT END" + threadId);
-		send("[END] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
+		console.log("================================= SCRIPT END" + threadId+"_"+call_num);
+		send("[END] [THREAD_ID]"+threadId+"_"+call_num+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);
 	}
 });
 	

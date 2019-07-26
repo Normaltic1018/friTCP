@@ -150,19 +150,19 @@ class MyWindow(QMainWindow):
 		print("MyWindow click_hook_encryptmessage called!")
 		if state == Qt.Checked:
 			#hook
-			self.ui.textBrowser_log.append("[^] Encryptmessage is not supported yet...")
+			self.frida_agent.hook_js("EncryptMessage")
 		else:
 			#unhook
-			self.ui.textBrowser_log.append("[^] Encryptmessage is not supported yet...")
+			self.frida_agent.unhook_js("EncryptMessage")
 
 	def click_hook_decryptmessage(self, state):
 		print("MyWindow click_hook_decryptmessage called!")
 		if state == Qt.Checked:
 			#hook
-			self.ui.textBrowser_log.append("[^] Decryptmessage is not supported yet...")
+			self.frida_agent.hook_js("DecryptMessage")
 		else:
 			#unhook
-			self.ui.textBrowser_log.append("[^] Decryptmessage is not supported yet...")	
+			self.frida_agent.unhook_js("DecryptMessage")
 	
 	#################################################
 	def resizeEvent(self, event):

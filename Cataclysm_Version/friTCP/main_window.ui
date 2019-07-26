@@ -1414,7 +1414,7 @@ QDateEdit::down-arrow:focus
            </font>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>3</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -1907,7 +1907,7 @@ QDateEdit::down-arrow:focus
                      <string>encryptmessage</string>
                     </property>
                     <property name="checkable">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -1947,7 +1947,7 @@ QDateEdit::down-arrow:focus
                      <string>decryptmessage</string>
                     </property>
                     <property name="checkable">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
