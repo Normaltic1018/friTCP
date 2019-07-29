@@ -254,8 +254,8 @@ class Match_and_Replace():
 		
 	def tableWidget_right_click(self):
 		self.tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
-		add = QAction("add", self.tableWidget)
-		remove = QAction("remove", self.tableWidget)
+		add = QAction("Add", self.tableWidget)
+		remove = QAction("Remove", self.tableWidget)
 		self.tableWidget.addAction(add)
 		self.tableWidget.addAction(remove)		
 		add.triggered.connect(self.tableWidget_right_click_add_event)

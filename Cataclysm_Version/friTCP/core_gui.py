@@ -1,9 +1,9 @@
 # core_gui.py
 import sys
 from PyQt5.QtWidgets import QDialog, QApplication, QMainWindow, QTableWidgetItem, QHeaderView,QTableWidget, QMessageBox,QLineEdit,QAbstractItemView, QAction, QMenu
-from PyQt5.QtGui import QStandardItemModel,QStandardItem, QPixmap,QIcon, QRegExpValidator, QCursor
+from PyQt5.QtGui import QStandardItemModel,QStandardItem, QPixmap,QIcon, QRegExpValidator, QCursor, QColor
 from PyQt5 import uic
-from PyQt5.QtCore import Qt, QRegExp, QThread, pyqtSignal, pyqtSlot
+from PyQt5.QtCore import Qt, QRegExp, QThread, pyqtSignal, pyqtSlot, QPoint
 from core_func import *
 import ast
 import socket
@@ -34,9 +34,10 @@ class MyWindow(QMainWindow):
 		
 		# 아래 4 줄은 헥스뷰와 스트링뷰를 연동하기 위한 것.
 		self.ui.tableWidget_hexTable.cellChanged.connect(self.intercept_hexTable_changed)
-		self.ui.tableWidget_hexTable.itemSelectionChanged.connect(self.hexTable_itemSelected)
-		
 		self.ui.tableWidget_stringTable.cellChanged.connect(self.intercept_strTable_changed)
+		
+		self.ui.tableWidget_hexTable.itemSelectionChanged.connect(self.hexTable_itemSelected)
+
 		self.ui.tableWidget_stringTable.itemSelectionChanged.connect(self.strTable_itemSelected)
 	
 		# ikeeby
@@ -223,36 +224,109 @@ class MyWindow(QMainWindow):
 		
 		# 두번째 proxy 탭으로 이동
 		self.ui.tabWidget_tab.setCurrentIndex(1)
-	# customs context menu	
+
+		# customs context menu
+	@pyqtSlot(QPoint)	
+	def custom_context_menu(self, position):
+		main_menu = QMenu()
+		
+		send_repeater = main_menu.addAction("Send to Repeater")
+		main_menu.addAction(send_repeater)
+		send_repeater.triggered.connect(self.tableWidget_proxyHistory_right_click_repeater_event)
+
+		remove = main_menu.addAction("Remove")
+		main_menu.addAction(remove)		
+		remove.triggered.connect(self.tableWidget_proxyHistory_right_click_remove_event)		
+		
+		highlight = QMenu("Highlight")
+
+		main_menu.addMenu(highlight)
+		white = QAction("White", highlight)
+		highlight.addAction(white)
+		red = QAction("Red", highlight)
+		highlight.addAction(red)
+		orange = QAction("Orange", highlight)
+		highlight.addAction(orange)
+		yellow = QAction("Yellow", highlight)
+		highlight.addAction(yellow)
+		green = QAction("Green", highlight)
+		highlight.addAction(green)
+		blue = QAction("Blue", highlight)
+		highlight.addAction(blue)
+		darkblue = QAction("DarkBlue", highlight)
+		highlight.addAction(darkblue)
+		purple = QAction("Purple", highlight)
+		highlight.addAction(purple)
+		black = QAction("Black", highlight)
+		highlight.addAction(black)		
+		
+		white.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(255, 255, 255), QColor(0, 0, 0)))
+		red.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(255, 0, 0), QColor(0, 0, 0)))
+		orange.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(255, 170, 0), QColor(0, 0, 0)))
+		yellow.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(255, 255, 0), QColor(0, 0, 0)))
+		green.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(0, 255, 0), QColor(0, 0, 0)))
+		blue.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(0, 0, 255), QColor(255, 255, 255)))
+		darkblue.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(0, 0, 127), QColor(255, 255, 255)))
+		purple.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(170, 0, 255), QColor(255, 255, 255)))
+		black.triggered.connect(lambda: self.tableWidget_proxyHistory_right_click_highlight_event(QColor(0, 0, 0), QColor(255, 255, 255)))
+		
+		action = main_menu.exec_(QCursor.pos())		
+
+	
 	def tableWidget_proxyHistory_right_click(self):
 		print("MyWindow tableWidget_proxyHistory_right_click called!")
 		self.ui.tableWidget_proxyHistory.setSelectionBehavior(QTableView.SelectRows) # select column? then select all column!
+		#self.ui.tableWidget_proxyHistory.setContextMenuPolicy(Qt.ActionsContextMenu)
+		self.ui.tableWidget_proxyHistory.setContextMenuPolicy(Qt.CustomContextMenu)
 		
-		self.ui.tableWidget_proxyHistory.setContextMenuPolicy(Qt.ActionsContextMenu)
-		send_repeater = QAction("Send to Repeater", self.ui.tableWidget_proxyHistory)
-		self.ui.tableWidget_proxyHistory.addAction(send_repeater)
+		self.ui.tableWidget_proxyHistory.customContextMenuRequested.connect(self.custom_context_menu)
 		
-		send_repeater.triggered.connect(self.tableWidget_proxyHistory_right_click_event)
+	
+	def packet_highlight(self, rowIndex, background_color, font_color):
+		for j in range(self.ui.tableWidget_proxyHistory.columnCount()):
+			self.ui.tableWidget_proxyHistory.item(rowIndex, j).setBackground(background_color)
+			self.ui.tableWidget_proxyHistory.item(rowIndex, j).setForeground(font_color)				
+			
+	def tableWidget_proxyHistory_right_click_highlight_event(self, background_color, font_color):
+		print("MyWindow tableWidget_proxyHistory_right_click_highlight_event called!")
+		index_list = []                                                          
+		for model_index in self.ui.tableWidget_proxyHistory.selectionModel().selectedRows():       
+			index = QPersistentModelIndex(model_index)         
+			index_list.append(index)                                             
 		
-		remove = QAction("remove", self.ui.tableWidget_proxyHistory)
-		self.ui.tableWidget_proxyHistory.addAction(remove)		
-		remove.triggered.connect(self.tableWidget_proxyHistory_right_click_remove_event)
+		if(len(index_list)>0):
+			#print(index_list[0].row())
+			for index in index_list:
+				self.packet_highlight(index.row(), background_color, font_color)
+			#self.ui.tabWidget_tab.setCurrentIndex(2)		
 		
-	def tableWidget_proxyHistory_right_click_event(self):
-		print("MyWindow tableWidget_proxyHistory_right_click_event called!")
+	def tableWidget_proxyHistory_right_click_repeater_event(self):
+		print("MyWindow tableWidget_proxyHistory_right_click_repeater_event called!")
 		
+		'''
 		# get mouse pos
 		pos = QCursor.pos() # PyQt5.QtCore.QPoint(262, 215)
 		
 		# get proxyHistory row 
 		row = self.ui.tableWidget_proxyHistory.rowAt(self.ui.tableWidget_proxyHistory.viewport().mapFromGlobal(pos).y())
-		
+		print(row)
 		if(row>-1):
 			
 			self.send_packet_to_Repeater(row)
 			self.ui.tabWidget_tab.setCurrentIndex(2)
-
-
+			
+		'''
+		
+		index_list = []                                                          
+		for model_index in self.ui.tableWidget_proxyHistory.selectionModel().selectedRows():       
+			index = QPersistentModelIndex(model_index)         
+			index_list.append(index)                                             
+		
+		if(len(index_list)>0):
+			#print(index_list[0].row())
+			self.send_packet_to_Repeater(index_list[0].row())
+			self.ui.tabWidget_tab.setCurrentIndex(2)
+			
 	def tableWidget_proxyHistory_right_click_remove_event(self):
 		index_list = []                                                          
 		for model_index in self.ui.tableWidget_proxyHistory.selectionModel().selectedRows():       
@@ -455,7 +529,12 @@ class MyWindow(QMainWindow):
 
 	#ikeeby
 	def send_packet_to_Repeater(self,row):
-		print("MyWindow send_packet_to_Repeater called!")	
+		print("MyWindow send_packet_to_Repeater called!")
+		
+		self.ui.tableWidget_hexTable_3.cellChanged.disconnect()
+		self.ui.tableWidget_stringTable_3.cellChanged.disconnect()
+
+		
 		# 기존 데이터 초기화
 		self.ui.tableWidget_hexTable_3.setRowCount(0)
 		self.ui.tableWidget_stringTable_3.setRowCount(0)
@@ -502,7 +581,9 @@ class MyWindow(QMainWindow):
 					self.ui.tableWidget_stringTable_3.setItem(row, i, QTableWidgetItem(chr(int(hex_data[(16*row)+i],16))))
 					self.ui.tableWidget_stringTable_3.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
 
-
+		self.ui.tableWidget_hexTable_3.cellChanged.connect(self.intercept_hexTable_changed_3)
+		self.ui.tableWidget_stringTable_3.cellChanged.connect(self.intercept_strTable_changed_3)
+		
 	def recv_packet_to_Repeater(self, packet):
 		print("MyWindow recv_packet_to_Repeater called!")	
 		# 기존 데이터 초기화
@@ -552,6 +633,10 @@ class MyWindow(QMainWindow):
 	
 	def intercept_view(self,pid,func_name,ip_info,port_info,hex_data):
 		print("MyWindow intercept_view called!")	
+		
+		self.ui.tableWidget_hexTable.cellChanged.disconnect()
+		self.ui.tableWidget_stringTable.cellChanged.disconnect()	
+		
 		proc_name = get_process_name(pid)
 		self.ui.lineEdit_intercept_info.setText("PID : {} / Process Name : {} / FUNCTION : {} / ADDRESS : {}:{}".format(pid,proc_name,func_name,ip_info,port_info))
 		need_row_num = int(len(hex_data) / 16)
@@ -581,7 +666,10 @@ class MyWindow(QMainWindow):
 					
 					self.ui.tableWidget_stringTable.setItem(row, i, QTableWidgetItem(chr(int(hex_data[(16*row)+i],16))))
 					self.ui.tableWidget_stringTable.item(numRows,i).setTextAlignment(Qt.AlignVCenter | Qt.AlignHCenter)
-	
+
+		
+		self.ui.tableWidget_hexTable.cellChanged.connect(self.intercept_hexTable_changed)
+		self.ui.tableWidget_stringTable.cellChanged.connect(self.intercept_strTable_changed)					
 	
 	def hexTableToList(self):
 		print("MyWindow hexTableToList called!")	
