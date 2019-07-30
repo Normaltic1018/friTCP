@@ -112,6 +112,9 @@ Interceptor.attach(hookPtr,{
 				for(var i in list_user_data){
 					input_array[i] = parseInt(list_user_data[i],16);
 				}
+				input_len = input_array.length;
+				input_array.splice(input_len-1,1);
+				
 				Memory.writeByteArray(buf_address,input_array);
 				input_len = input_array.length;
 						

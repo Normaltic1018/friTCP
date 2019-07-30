@@ -14,6 +14,6 @@ while(True):
 	#count = count * 2
 	print(os.getpid())
 	print(data.decode())
-	time.sleep(1)
+	time.sleep(0.5)
 
 sock.close()

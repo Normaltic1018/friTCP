@@ -80,10 +80,11 @@ Interceptor.attach(hookPtr,{
 			console.log("BUF Length : " + buf_length);
 			//if(buf_length > 4096){buf_length = 4096;}
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
-			
+
+			console.log("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);			
 			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);		
 			//send("[INTERCEPT]");
-			console.log("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
+
 				
 			// Receive User Data
 			op.wait();
@@ -100,6 +101,10 @@ Interceptor.attach(hookPtr,{
 				for(var i in list_user_data){
 					input_array[i] = parseInt(list_user_data[i],16);
 				}
+				
+				input_len = input_array.length;
+				input_array.splice(input_len-1,1);
+				
 				Memory.writeByteArray(this.buf,input_array);
 				input_len = input_array.length;
 					

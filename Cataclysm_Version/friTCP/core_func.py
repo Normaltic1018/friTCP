@@ -71,7 +71,7 @@ def hexDump2Str(hex_list):
 	str_text = ""
 	for hex in hex_list:
 		hex_text += hex + " "
-		str_text += chr(int(hex,16)) + " "
+		str_text += chr(int(hex,16))
 
 	return hex_text, str_text
 	
@@ -195,6 +195,7 @@ class FridaAgent(QObject):
 
 		print("Send GOGO!")
 		self.script_list[intercept_pid][func_name].post({'type':'input','payload':strHex})
+		print("Send GOGO Complete!")
 		# 만약 op.wait 에서 멈추는 문제가 계속 발생한다면 여기서 체크하고 멈췄으면 reload 하는 코드를 넣을 것.
 		
 		#self.current_isIntercept = False

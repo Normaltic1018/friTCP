@@ -94,9 +94,12 @@ Interceptor.attach(hookPtr,{
 			for(var i in list_user_data){
 				input_array[i] = parseInt(list_user_data[i],16);
 			}
+			input_len = input_array.length;
+			input_array.splice(input_len-1,1);
+			
 			Memory.writeByteArray(args[buf_index],input_array);
 			input_len = input_array.length;
-					
+				
 			// fill zero if input_length is longer than origin length
 			if(input_len < WSA_buffer_length){
 				var null_array = new Array();
@@ -108,6 +111,7 @@ Interceptor.attach(hookPtr,{
 				WSA_buffer_structure = WSA_buffer_structure.add(input_len);
 				buf_ptr = buf_address;
 			}
+			
 		}
 		console.log("================================= SCRIPT END" + threadId);
 		send("[END] [THREAD_ID]"+threadId+" [PID]"+Process.id+" [FUNC_NAME]"+hook_function_name);

@@ -693,10 +693,12 @@ class MyWindow(QMainWindow):
 		#print("intercept_info!")
 		#print(intercept_info)
 		
-		
-		pid = intercept_info[2]
-		func_name = intercept_info[11]
-		ip_info, port_info = intercept_info[-1].split(":")
+		try:
+			pid = intercept_info[2]
+			func_name = intercept_info[11]
+			ip_info, port_info = intercept_info[-1].split(":")
+		except Exception as e:
+			return     
 		
 		if(self.frida_agent.current_isIntercept):
 			hex_data = self.hexTableToList()
@@ -771,15 +773,20 @@ class MyWindow(QMainWindow):
 	def toggle_intercept_on(self):
 		print("MyWindow toggle_intercept_on called!")	
 		self.frida_agent.intercept_on = self.ui.pushButton_interceptToggle.isChecked()
-		
+		"""
 		if(self.frida_agent.current_isIntercept):
 			# 현재 인터셉트 중인지 확인, 인터셉트 중이라면 intercept_go 버튼 클릭
 			self.intercept_go_button()
-		
+		"""
 		if(self.frida_agent.intercept_on):
 			self.ui.pushButton_interceptToggle.setText("Intercept ON")
 		else:
 			self.ui.pushButton_interceptToggle.setText("Intercept OFF")
+			try:
+				pid = intercept_info[2]
+				self.intercept_go_button()
+			except Exception as e:
+				pass           
 			
 	def intercept_hexTable_changed(self, row, col):
 		print("MyWindow intercept_hexTable_changed called!")	

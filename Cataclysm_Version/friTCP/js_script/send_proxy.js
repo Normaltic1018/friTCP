@@ -85,10 +85,17 @@ for(var key in hook_diction){
 				for(var i in list_user_data){
 					input_array[i] = parseInt(list_user_data[i],16);
 				}
+				input_len = input_array.length;
+				input_array.splice(input_len-1,1);
+				
 				Memory.writeByteArray(args[buf_index],input_array);
 				input_len = input_array.length;
-					
+				
 				// fill zero if input_length is longer than origin length
+				console.log("###########################################################");
+				console.log("input length : " + input_len + " / args[buf_index+1].toInt32() : " + args[buf_index+1].toInt32());
+				console.log(input_array);
+				console.log("###########################################################");
 				if(input_len < args[buf_index+1].toInt32()){
 					var null_array = new Array();
 					for(var i = 0; i<(args[buf_index+1].toInt32()-input_len); i++){null_array[i] = 0;}
