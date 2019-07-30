@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>410</width>
-    <height>243</height>
+    <height>247</height>
    </rect>
   </property>
   <property name="palette">
@@ -1349,7 +1349,7 @@
      <string>Cancel</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="add_btn">
+   <widget class="QPushButton" name="modify_btn">
     <property name="geometry">
      <rect>
       <x>230</x>
@@ -1477,7 +1477,33 @@
      </palette>
     </property>
     <property name="text">
-     <string>Add</string>
+     <string>Modify</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="idx">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>0</y>
+      <width>56</width>
+      <height>12</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="use">
+    <property name="geometry">
+     <rect>
+      <x>180</x>
+      <y>0</y>
+      <width>81</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>CheckBox</string>
     </property>
    </widget>
   </widget>

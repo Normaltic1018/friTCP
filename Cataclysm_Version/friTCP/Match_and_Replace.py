@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, QRegExp, QThread, pyqtSignal, pyqtSlot, QPersistent
 from core_func import *
 
 match_and_replace_add_Ui_MainWindow, match_and_replace_add_QtBaseClass = uic.loadUiType("match_and_replace_add.ui")
+match_and_replace_modify_Ui_MainWindow, match_and_replace_modify_QtBaseClass = uic.loadUiType("match_and_replace_modify.ui")
 
 class Match_and_Replace():
 	#arg0 = self.ui.tableWidget_MatchAndReplace
@@ -12,6 +13,7 @@ class Match_and_Replace():
 	def __init__(self, tableWidget_MatchAndReplace):
 		# data init
 		self.tableWidget = tableWidget_MatchAndReplace
+		self.tableWidget.verticalHeader().setVisible(False)
 		self.data_list = []
 		self.enabled_list = []
 		
@@ -24,31 +26,69 @@ class Match_and_Replace():
 		self.match_former_text=""
 		self.replace_former_text=""
 		self.ip_former_text=""
+		
+		# idx
+		self.tableWidget_count = 0
 
 		
 	def add(self, data_structure):
 		self.data_list.append(data_structure)
+	
+	def modify(self, new_data):
+		idx = new_data['idx']
+		for i in range(0,len(self.data_list)):
+			print(self.data_list[i]['idx'])
+			print(idx)
+			if self.data_list[i]['idx'] == idx:
+				self.data_list[i] = new_data
 				
+	
 	def remove(self, row):
 		del self.data_list[row]
 		
 	def get_list(self):
 		return self.data_list
 		
+	def refresh(self):
+		self.tableWidget.setRowCount(0);
+		
+		for my_dict in self.data_list:
+			numRows = self.tableWidget.rowCount()
+			self.tableWidget.insertRow(numRows)
+			
+			pCheckBox = QCheckBox()
+			
+			self.tableWidget.setCellWidget(numRows, 0, pCheckBox)
+			pCheckBox.clicked.connect(self.enable_checkbox_clicked)
+			
+			# checkbox click listener
+			#pCheckBox.clicked.connect(self.enable_checkbox_clicked)
+			
+			self.tableWidget.setItem(numRows, 1, QTableWidgetItem(my_dict['idx']))
+			self.tableWidget.setItem(numRows, 2, QTableWidgetItem(my_dict['name']))
+			self.tableWidget.setItem(numRows, 3, QTableWidgetItem(my_dict['function']))
+			self.tableWidget.setItem(numRows, 4, QTableWidgetItem(my_dict['ip']))
+			self.tableWidget.setItem(numRows, 5, QTableWidgetItem(my_dict['port']))
+			self.tableWidget.setItem(numRows, 6, QTableWidgetItem(my_dict['match']))
+			self.tableWidget.setItem(numRows, 7, QTableWidgetItem(my_dict['replace']))
+		
+		# checkbox click listener
 		
 	#gui
 	
 		
 	
-	def add_btn_clicked(self):
+	def add_addbtn_clicked(self):
 		print("add clicked!")
 		
 		pCheckBox = QCheckBox()
 		
+		self.tableWidget_count += 1
 		
 		my_dict = {}
 		#my_dict["use"] = "disabled"
 		my_dict["use"] = pCheckBox
+		my_dict["idx"] = str(self.tableWidget_count)
 		my_dict["name"] = self.ui.name.text()
 		my_dict["function"] = self.ui.function.currentText()
 		my_dict["ip"] = self.ui.ip.text()
@@ -77,12 +117,13 @@ class Match_and_Replace():
 		# checkbox click listener
 		pCheckBox.clicked.connect(self.enable_checkbox_clicked)
 		
-		self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.ui.name.text())))
-		self.tableWidget.setItem(numRows, 2, QTableWidgetItem(str(self.ui.function.currentText())))
-		self.tableWidget.setItem(numRows, 3, QTableWidgetItem(str(self.ui.ip.text())))
-		self.tableWidget.setItem(numRows, 4, QTableWidgetItem(str(self.ui.port.text())))
-		self.tableWidget.setItem(numRows, 5, QTableWidgetItem(str(self.ui.match.text())))
-		self.tableWidget.setItem(numRows, 6, QTableWidgetItem(str(self.ui.replace.text())))
+		self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.tableWidget_count)))
+		self.tableWidget.setItem(numRows, 2, QTableWidgetItem(str(self.ui.name.text())))
+		self.tableWidget.setItem(numRows, 3, QTableWidgetItem(str(self.ui.function.currentText())))
+		self.tableWidget.setItem(numRows, 4, QTableWidgetItem(str(self.ui.ip.text())))
+		self.tableWidget.setItem(numRows, 5, QTableWidgetItem(str(self.ui.port.text())))
+		self.tableWidget.setItem(numRows, 6, QTableWidgetItem(str(self.ui.match.text())))
+		self.tableWidget.setItem(numRows, 7, QTableWidgetItem(str(self.ui.replace.text())))
 		
 		#print(numRows)
 		print(self.data_list)
@@ -101,17 +142,20 @@ class Match_and_Replace():
 			print(self.data_list[index.row()]["use"].isChecked())
 			print(self.data_list[index.row()]["use"])
 			if(self.data_list[index.row()]["use"].isChecked()):
+				print("enabled_list append")
 				self.enabled_list.append(self.data_list[index.row()])
 			else:
+				print("enabled_list remove!")
+				print(self.data_list[index.row()]["use"].isChecked())
 				self.enabled_list.remove(self.data_list[index.row()])
 		print(self.enabled_list)
 		
-	def cancel_btn_clicked(self):
+	def add_cancelbtn_clicked(self):
 		print("cancel clicked!")
 		self.main.close()
 		
-	def open_window(self):
-		print("open_window called!")
+	def open_add_window(self):
+		print("open_add_window called!")
 		# ui init ## window text clear를 시키기 위해 open 할때 ui를 새로 호출함
 		self.main = QMainWindow()
 		self.ui = match_and_replace_add_Ui_MainWindow()
@@ -119,8 +163,8 @@ class Match_and_Replace():
 		
 		# window event init
 		
-		self.ui.add_btn.clicked.connect(self.add_btn_clicked)
-		self.ui.cancel_btn.clicked.connect(self.cancel_btn_clicked)
+		self.ui.add_btn.clicked.connect(self.add_addbtn_clicked)
+		self.ui.cancel_btn.clicked.connect(self.add_cancelbtn_clicked)
 		
 		self.ui.ip.textEdited.connect(self.ip_text_changed)
 		self.ui.port.textEdited.connect(self.port_text_changed)
@@ -134,28 +178,139 @@ class Match_and_Replace():
 		#self.ui.match.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
 		self.main.show()
 
-	#def ip_textEvent(self):
 		
+	def modify_modifybtn_clicked(self):
+		print("modify_modifybtn_clicked!")
+		
+		pCheckBox = QCheckBox()
+
+		my_dict = {}
+		my_dict["use"] = pCheckBox
+		my_dict["idx"] = self.ui.idx.text()
+		my_dict["name"] = self.ui.name.text()
+		my_dict["function"] = self.ui.function.currentText()
+		my_dict["ip"] = self.ui.ip.text()
+		my_dict["port"] = self.ui.port.text()
+		my_dict["match"] = self.ui.match.text()
+		my_dict["replace"] = self.ui.replace.text()
+		
+		self.modify(my_dict)
+		self.refresh()
+		#show list
+		#numRows = self.tableWidget.rowCount()
+		#self.tableWidget.insertRow(numRows)
+		
+		# checkbox with aligncenter
+		'''
+		pWidget = QWidget()
+		pCheckBox = QCheckBox()
+		pLayout = QHBoxLayout(pWidget)
+		pLayout.addWidget(pCheckBox)
+		pLayout.setAlignment(Qt.AlignCenter)
+		pLayout.setContentsMargins(0,0,0,0)
+		pWidget.setLayout(pLayout)
+		'''
+		'''
+		self.tableWidget.setCellWidget(numRows, 0, pCheckBox)
+		
+		# checkbox click listener
+		pCheckBox.clicked.connect(self.enable_checkbox_clicked)
+		
+		#self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.tableWidget_count)))
+		self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.ui.name.text())))
+		self.tableWidget.setItem(numRows, 2, QTableWidgetItem(str(self.ui.function.currentText())))
+		self.tableWidget.setItem(numRows, 3, QTableWidgetItem(str(self.ui.ip.text())))
+		self.tableWidget.setItem(numRows, 4, QTableWidgetItem(str(self.ui.port.text())))
+		self.tableWidget.setItem(numRows, 5, QTableWidgetItem(str(self.ui.match.text())))
+		self.tableWidget.setItem(numRows, 6, QTableWidgetItem(str(self.ui.replace.text())))
+		
+		#print(numRows)
+		'''
+		
+		print(self.data_list)
+		
+		self.main.close()
+
+	def modify_cancelbtn_clicked(self):
+		print("cancel clicked!")
+		self.main.close()
+	
+	#def ip_textEvent(self):
+	def open_modify_window(self, idx):
+		print("open_modify_window called!")
+		print(idx)
+		my_dict = {}
+		for data in self.data_list:
+			if data['idx'] == idx:
+				print("idx same!")
+				my_dict = data
+		
+		print(my_dict)
+		
+		# ui init ## window text clear를 시키기 위해 open 할때 ui를 새로 호출함
+		self.main = QMainWindow()
+		self.ui = match_and_replace_modify_Ui_MainWindow()
+		self.ui.setupUi(self.main)
+		self.ui.idx.hide()
+		self.ui.use.hide()
+		# window event init
+		
+		self.ui.modify_btn.clicked.connect(self.modify_modifybtn_clicked)
+		self.ui.cancel_btn.clicked.connect(self.modify_cancelbtn_clicked)
+		
+		self.ui.use = my_dict["use"]
+		self.ui.idx.setText(idx)
+		'''
+		my_dict["use"] = pCheckBox
+		my_dict["idx"] = str(self.tableWidget_count)
+		my_dict["name"] = self.ui.name.text()
+		my_dict["function"] = self.ui.function.currentText()
+		my_dict["ip"] = self.ui.ip.text()
+		my_dict["port"] = self.ui.port.text()
+		my_dict["match"] = self.ui.match.text()
+		my_dict["replace"] = self.ui.replace.text()
+		'''
+		self.ui.name.setText(my_dict["name"])
+
+		index = self.ui.function.findText(my_dict["function"], Qt.MatchFixedString)
+		self.ui.function.setCurrentIndex(index)
+		
+		self.ui.ip.setText(my_dict['ip'])
+		self.ui.port.setText(my_dict['port'])
+		self.ui.match.setText(my_dict['match'])
+		self.ui.replace.setText(my_dict['replace'])
+		
+		self.ui.ip.textEdited.connect(self.ip_text_changed)
+		self.ui.port.textEdited.connect(self.port_text_changed)
+		#self.ui.ip.setInputMask('000.000.000.000;')
+
+		self.ui.match.textEdited.connect(self.match_text_changed)
+		self.ui.replace.textEdited.connect(self.replace_text_changed)
+		
+		#self.ui.match.textChanged.connect(self.text_changed)
+		#self.ui.match.setInputMask('HH-'*500)
+		#self.ui.match.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
+		self.main.show()		
 		
 	def text_format(self, x):
-		if('0'<= x <= '9' or 'a' <= x <= 'f' or 'A' <= x <= 'F'):
+		if('0'<= x <= '9' or 'A' <= x <= 'F'):
 			return x
 		else:
 			return None
 	def ip_format(self, x):
-		if('0'<= x <= '9' or '.'==x):
+		if('0'<= x <= '9' or '.'==x or '*'==x):
 			return x
 		else:
 			return None
 	def port_format(self, x):
-		if('0'<= x <= '9'):
+		if('0'<= x <= '9' or '*'==x):
 			return x
 		else:
 			return None
 			
 	def replace_text_changed(self, text):
 		print(text)
-		text = text.lower()
+		text = text.upper()
 		text = text.replace(' ','')
 		filtered_text = filter(self.text_format,text)
 		
@@ -204,11 +359,19 @@ class Match_and_Replace():
 		text = text.replace(' ','')
 		filtered_text = filter(self.port_format,text)
 		filtered_text = "".join(filtered_text)
-		if(filtered_text == ''):
-			pass
-		elif(int(filtered_text)<1 or int(filtered_text)>65535):
-			filtered_text = filtered_text[:-1]
+		try:
+			if(filtered_text == ''):
+				pass
+			elif(int(filtered_text)<1 or int(filtered_text)>65535):
+				filtered_text = filtered_text[:-1]
+		except:
+			tmp = filtered_text.split('*')
+			if(len(tmp)>1):
+				filtered_text = '*'
+				self.ui.port.setText(filtered_text)	
+				return
 		self.ui.port.setText(filtered_text)		
+		
 	def ip_text_changed(self, text):
 		print(text)
 		text = text.lower()
@@ -231,9 +394,17 @@ class Match_and_Replace():
 			if j == '':
 				break
 			print(j)
-			print(int(j))
-			if(int(j)<0 or int(j)>255):
-				flag = False
+			
+			try:	
+				if(int(j)<0 or int(j)>255):
+					flag = False
+			except:
+				tmp = j.split('*')
+				if(len(tmp)>1):
+					tmp_text = '*'
+					self.ui.ip.setText(tmp_text)
+					return
+					
 			if(j.startswith("0") and len(j)!=1):
 				flag = False
 		# . add logic & . remove logic
@@ -251,19 +422,42 @@ class Match_and_Replace():
 				
 		self.ui.ip.setText(tmp_text)
 		self.ip_former_text = tmp_text
+	
+	def custom_context_menu(self):
+		print("custom_context_menu")
+		main_menu = QMenu()
+		
+		add = main_menu.addAction("Add")
+		main_menu.addAction(add)
+		add.triggered.connect(self.tableWidget_right_click_add_event)
+
+		remove = main_menu.addAction("Remove")
+		main_menu.addAction(remove)		
+		remove.triggered.connect(self.tableWidget_right_click_remove_event)		
+
+		modify = main_menu.addAction("Modify")
+		main_menu.addAction(modify)		
+		modify.triggered.connect(self.tableWidget_right_click_modify_event)			
+		
+		action = main_menu.exec_(QCursor.pos())	
 		
 	def tableWidget_right_click(self):
-		self.tableWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
-		add = QAction("Add", self.tableWidget)
-		remove = QAction("Remove", self.tableWidget)
-		self.tableWidget.addAction(add)
-		self.tableWidget.addAction(remove)		
-		add.triggered.connect(self.tableWidget_right_click_add_event)
-		remove.triggered.connect(self.tableWidget_right_click_remove_event)
+		self.tableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+		self.tableWidget.customContextMenuRequested.connect(self.custom_context_menu)
+
 		
 	def tableWidget_right_click_add_event(self):
-		self.open_window()
-	
+		self.open_add_window()
+
+	def tableWidget_right_click_modify_event(self):
+		index_list = []                                                          
+		for model_index in self.tableWidget.selectionModel().selectedRows():       
+			index = QPersistentModelIndex(model_index)         
+			index_list.append(index)
+		idx = self.data_list[index_list[0].row()]['idx']
+		print("IDX: "+idx)
+		self.open_modify_window(idx)
+		
 	def tableWidget_right_click_remove_event(self):
 		index_list = []                                                          
 		for model_index in self.tableWidget.selectionModel().selectedRows():       

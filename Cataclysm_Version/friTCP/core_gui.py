@@ -59,9 +59,15 @@ class MyWindow(QMainWindow):
 		
 		# custom mouse right click event init
 		self.tableWidget_proxyHistory_right_click()
-		######## ikeeby
-
-	
+		
+		# history detail
+		self.ui.tableWidget_proxyHistory.verticalHeader().setVisible(False)
+		self.ui.tableWidget_proxyHistory.cellClicked.connect(self.history_detail)
+		
+		# idx
+		self.idx = 0
+		
+		
 		# Core Frida Agent 클래스 생성
 		self.frida_agent = FridaAgent(self)
 		self.ui.textBrowser_log.append("[#] Create Frdia Agent")
@@ -92,6 +98,8 @@ class MyWindow(QMainWindow):
 		self.ui.checkBox_wsarecv.stateChanged.connect(self.click_hook_wsarecv)
 		self.ui.checkBox_encryptmessage.stateChanged.connect(self.click_hook_encryptmessage)
 		self.ui.checkBox_decryptmessage.stateChanged.connect(self.click_hook_decryptmessage)
+		
+
 	
 	def click_hook_send(self, state):
 		print("MyWindow click_hook_send called!")
@@ -183,14 +191,13 @@ class MyWindow(QMainWindow):
 		if(size < 978):
 			size = 978
 		print(size)
-		self.ui.tableWidget_proxyHistory.setColumnWidth(0,size/3/5*2)
-		self.ui.tableWidget_proxyHistory.setColumnWidth(1,size/3/5*2)
-		self.ui.tableWidget_proxyHistory.setColumnWidth(2,size/3/5*2)
-		self.ui.tableWidget_proxyHistory.setColumnWidth(3,size/3/5*2)
-		self.ui.tableWidget_proxyHistory.setColumnWidth(4,size/3/5*2)
-		self.ui.tableWidget_proxyHistory.setColumnWidth(5,size/3/1)	
-
-
+		self.ui.tableWidget_proxyHistory.setColumnWidth(0,size/3/6*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(1,size/3/6*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(2,size/3/6*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(3,size/3/6*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(4,size/3/6*2)
+		self.ui.tableWidget_proxyHistory.setColumnWidth(5,size/3/6*2)	
+		self.ui.tableWidget_proxyHistory.setColumnWidth(6,size/3/1)	
 	
 		
 	# openProcess Click 하면 실행되는 함수
@@ -417,9 +424,9 @@ class MyWindow(QMainWindow):
 			func_name, ip_info, port_info = parsing_info(data)
 			pid = parsing_pid(data)
 			hex_data = parsing_hex(data) 
-			
+			self.idx += 1
 			# packet이 들어오면 먼저 match_and_replace !
-			change_flag, hex_data = self.match_and_replace_func(pid, func_name, ip_info, port_info, hex_data)
+			change_flag, hex_data = self.match_and_replace_func(self.idx, pid, func_name, ip_info, port_info, hex_data)
 			
 			# 인터셉트 모드일 경우
 			if(self.frida_agent.intercept_on):
@@ -460,7 +467,7 @@ class MyWindow(QMainWindow):
 				print(filter_function)
 				print(func_name)
 
-				if(filter_ip == ip_info and filter_port == port_info and filter_function == func_name):
+				if((filter_ip == ip_info or filter_ip == "*") and (filter_port == port_info or filter_port == "*") and (filter_function == func_name or filter_function == "ANY")):
 					print("match and replace start")
 					# match and replace start!
 					
@@ -476,15 +483,22 @@ class MyWindow(QMainWindow):
 					idx = strHex.find(match_data)
 					if(idx > -1):
 						print("match find! replace complete")
-						strHex = strHex.replace(match_data,replace_data)
-						hex_data = strHex.split(' ')
+						newHex = strHex.replace(match_data,replace_data)
+						hex_data = newHex.split(' ')
 						change_flag = True
+						self.ui.textBrowser_log.append("[#] Match And Replace >")
+						self.ui.textBrowser_log.append("pid : "+pid+", func_name : "+func_name+", ip_info : "+ip_info+", port_info : "+port_info)
+						self.ui.textBrowser_log.append("match_data : "+match_data+", replace_data : "+replace_data)
+						self.ui.textBrowser_log.append("origin_data   : "+strHex)
+						self.ui.textBrowser_log.append("modified_data : "+newHex)
 						#print(hex_data)
+				
+				
 					
 		return change_flag, hex_data
 					
 	#def history_addRow(self,history_item):
-	def history_addRow(self,pid, func_name, ip_info, port_info, hex_data):
+	def history_addRow(self, idx, pid, func_name, ip_info, port_info, hex_data):
 		print("MyWindow history_addRow called!")	
 		#pid = parsing_pid(history_item)
 		proc_name = get_process_name(pid)
@@ -502,14 +516,16 @@ class MyWindow(QMainWindow):
 
 		add_item = self.frida_agent.proxy_history[-1]
 		
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 0, QTableWidgetItem(add_item['pid']))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 1, QTableWidgetItem(add_item["proc_name"]))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 2, QTableWidgetItem(add_item["func_name"]))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 3, QTableWidgetItem(add_item["ip"]))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 4, QTableWidgetItem(add_item["port"]))
-		self.ui.tableWidget_proxyHistory.setItem(numRows, 5, QTableWidgetItem(add_item["str_text"]))
 		
-		self.ui.tableWidget_proxyHistory.cellClicked.connect(self.history_detail)
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 0, QTableWidgetItem(str(idx)))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 1, QTableWidgetItem(add_item['pid']))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 2, QTableWidgetItem(add_item["proc_name"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 3, QTableWidgetItem(add_item["func_name"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 4, QTableWidgetItem(add_item["ip"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 5, QTableWidgetItem(add_item["port"]))
+		self.ui.tableWidget_proxyHistory.setItem(numRows, 6, QTableWidgetItem(add_item["str_text"]))
+		
+		
 		
 		if(self.ui.checkBox_autoScroll.isChecked()):
 			current_item = self.ui.tableWidget_proxyHistory.item(numRows, 0)
