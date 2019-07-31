@@ -177,17 +177,20 @@ class MyWindow(QMainWindow):
 	def resizeEvent(self, event):
 		print("MyWindow resizeEvent called!")
 		#print("resize")
-		self.match_and_replace.resize()
-		self.proxyHistory_resize()
+		size = self.ui.tabWidget_tab.width()-60
+		#size2 = self.ui.tableWidget_MatchAndReplace.width()
+		#size = max(size1,size2)
+		self.match_and_replace.resize(size)
+		self.proxyHistory_resize(size)
 	#################################################
 
-	def proxyHistory_resize(self):
+	def proxyHistory_resize(self, size):
 
 		print("this is proxyHistory resize..")
 		#size = self.tableWidget_proxyHistory.width()
 		
 		# history column size init
-		size = self.ui.tableWidget_proxyHistory.width()
+		# size = self.ui.tableWidget_proxyHistory.width()
 		if(size < 978):
 			size = 978
 		print(size)
@@ -199,7 +202,7 @@ class MyWindow(QMainWindow):
 		self.ui.tableWidget_proxyHistory.setColumnWidth(5,size/3/6*2)	
 		self.ui.tableWidget_proxyHistory.setColumnWidth(6,size/3/1)	
 	
-		
+		#return size
 	# openProcess Click 하면 실행되는 함수
 	def openProcess(self):
 		print("MyWindow openProcess called!")
@@ -442,13 +445,13 @@ class MyWindow(QMainWindow):
 				else:
 					self.frida_agent.send_spoofData(pid,func_name,[])
 					
-				self.history_addRow(pid, func_name, ip_info, port_info, hex_data)
+				self.history_addRow(self.idx, pid, func_name, ip_info, port_info, hex_data)
 					
 			# 전송 후, 히스토리에 기록
 			
 			#self.history_addRow(pid, func_name, ip_info, port_info, hex_data)
 
-	def match_and_replace_func(self, pid, func_name, ip_info, port_info, hex_data):
+	def match_and_replace_func(self, idx, pid, func_name, ip_info, port_info, hex_data):
 		print("MyWindow match_and_replace_func called!")	
 		strHex = ""
 		change_flag = False
@@ -480,14 +483,14 @@ class MyWindow(QMainWindow):
 						hex_data = strHex.split(' ')
 						change_flag = True
 					'''
-					idx = strHex.find(match_data)
-					if(idx > -1):
+					flag = strHex.find(match_data)
+					if(flag > -1):
 						print("match find! replace complete")
 						newHex = strHex.replace(match_data,replace_data)
 						hex_data = newHex.split(' ')
 						change_flag = True
 						self.ui.textBrowser_log.append("[#] Match And Replace >")
-						self.ui.textBrowser_log.append("pid : "+pid+", func_name : "+func_name+", ip_info : "+ip_info+", port_info : "+port_info)
+						self.ui.textBrowser_log.append("idx: "+str(idx)+" pid : "+pid+", func_name : "+func_name+", ip_info : "+ip_info+", port_info : "+port_info)
 						self.ui.textBrowser_log.append("match_data : "+match_data+", replace_data : "+replace_data)
 						self.ui.textBrowser_log.append("origin_data   : "+strHex)
 						self.ui.textBrowser_log.append("modified_data : "+newHex)
@@ -506,7 +509,7 @@ class MyWindow(QMainWindow):
 		#hex_data = parsing_hex(history_item)
 		hex_text, str_text = hexDump2Str(hex_data)
 		
-		append_data = {"pid":pid,"proc_name":proc_name,"func_name":func_name,"ip":ip_info,"port":port_info,"hex_data":hex_data,"hex_text":hex_text,"str_text":str_text}
+		append_data = {"idx":idx, "pid":pid,"proc_name":proc_name,"func_name":func_name,"ip":ip_info,"port":port_info,"hex_data":hex_data,"hex_text":hex_text,"str_text":str_text}
 		# History 기록
 		self.frida_agent.proxy_history.append(append_data)
 		
@@ -721,7 +724,7 @@ class MyWindow(QMainWindow):
 			
 			self.frida_agent.send_spoofData(pid, func_name, hex_data)
 			
-			self.history_addRow(pid, func_name, ip_info, port_info, hex_data)
+			self.history_addRow(self.idx, pid, func_name, ip_info, port_info, hex_data)
 			
 			for i in reversed(range(self.ui.tableWidget_hexTable.rowCount())):
 				self.ui.tableWidget_hexTable.removeRow(i)

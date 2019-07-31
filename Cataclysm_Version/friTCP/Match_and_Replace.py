@@ -27,6 +27,8 @@ class Match_and_Replace():
 		self.replace_former_text=""
 		self.ip_former_text=""
 		
+		self.qCheckbox_list = []
+		
 		# idx
 		self.tableWidget_count = 0
 
@@ -50,27 +52,38 @@ class Match_and_Replace():
 		return self.data_list
 		
 	def refresh(self):
-		self.tableWidget.setRowCount(0);
+		print("refresh")
 		
+		#remove all
+		numRows = self.tableWidget.rowCount()
+		for i in range(0,numRows):
+			self.tableWidget.removeRow(0)
+		
+		#refresh gui
 		for my_dict in self.data_list:
+			print("refresh for loop")
 			numRows = self.tableWidget.rowCount()
 			self.tableWidget.insertRow(numRows)
 			
 			pCheckBox = QCheckBox()
 			
+			# refresh 할때만 pcheckbox를 넣어주자.
+			# my_dict['use']는 pcheckbox filter enable/disable 여부를 설정하기 위한 로직에 사용
+			print(my_dict)
+			if my_dict["use"] == "True":
+				pCheckBox.setChecked(True)
+
 			self.tableWidget.setCellWidget(numRows, 0, pCheckBox)
 			pCheckBox.clicked.connect(self.enable_checkbox_clicked)
 			
-			# checkbox click listener
-			#pCheckBox.clicked.connect(self.enable_checkbox_clicked)
-			
-			self.tableWidget.setItem(numRows, 1, QTableWidgetItem(my_dict['idx']))
-			self.tableWidget.setItem(numRows, 2, QTableWidgetItem(my_dict['name']))
-			self.tableWidget.setItem(numRows, 3, QTableWidgetItem(my_dict['function']))
-			self.tableWidget.setItem(numRows, 4, QTableWidgetItem(my_dict['ip']))
-			self.tableWidget.setItem(numRows, 5, QTableWidgetItem(my_dict['port']))
-			self.tableWidget.setItem(numRows, 6, QTableWidgetItem(my_dict['match']))
-			self.tableWidget.setItem(numRows, 7, QTableWidgetItem(my_dict['replace']))
+		
+			self.tableWidget.setItem(numRows, 1, QTableWidgetItem(my_dict["idx"]))
+			self.tableWidget.setItem(numRows, 2, QTableWidgetItem(my_dict["name"]))
+			self.tableWidget.setItem(numRows, 3, QTableWidgetItem(my_dict["function"]))
+			self.tableWidget.setItem(numRows, 4, QTableWidgetItem(my_dict["ip"]))
+			self.tableWidget.setItem(numRows, 5, QTableWidgetItem(my_dict["port"]))
+			self.tableWidget.setItem(numRows, 6, QTableWidgetItem(my_dict["match"]))
+			self.tableWidget.setItem(numRows, 7, QTableWidgetItem(my_dict["replace"]))
 		
 		# checkbox click listener
 		
@@ -80,14 +93,14 @@ class Match_and_Replace():
 	
 	def add_addbtn_clicked(self):
 		print("add clicked!")
-		
-		pCheckBox = QCheckBox()
+	
 		
 		self.tableWidget_count += 1
 		
+		
 		my_dict = {}
-		#my_dict["use"] = "disabled"
-		my_dict["use"] = pCheckBox
+		#my_dict["use"] = pCheckBox
+		my_dict["use"] = "False"
 		my_dict["idx"] = str(self.tableWidget_count)
 		my_dict["name"] = self.ui.name.text()
 		my_dict["function"] = self.ui.function.currentText()
@@ -97,11 +110,8 @@ class Match_and_Replace():
 		my_dict["replace"] = self.ui.replace.text()
 		
 		self.add(my_dict)
-		
-		#show list
-		numRows = self.tableWidget.rowCount()
-		self.tableWidget.insertRow(numRows)
-		
+		self.refresh()
+
 		# checkbox with aligncenter
 		'''
 		pWidget = QWidget()
@@ -112,20 +122,7 @@ class Match_and_Replace():
 		pLayout.setContentsMargins(0,0,0,0)
 		pWidget.setLayout(pLayout)
 		'''
-		self.tableWidget.setCellWidget(numRows, 0, pCheckBox)
-		
-		# checkbox click listener
-		pCheckBox.clicked.connect(self.enable_checkbox_clicked)
-		
-		self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.tableWidget_count)))
-		self.tableWidget.setItem(numRows, 2, QTableWidgetItem(str(self.ui.name.text())))
-		self.tableWidget.setItem(numRows, 3, QTableWidgetItem(str(self.ui.function.currentText())))
-		self.tableWidget.setItem(numRows, 4, QTableWidgetItem(str(self.ui.ip.text())))
-		self.tableWidget.setItem(numRows, 5, QTableWidgetItem(str(self.ui.port.text())))
-		self.tableWidget.setItem(numRows, 6, QTableWidgetItem(str(self.ui.match.text())))
-		self.tableWidget.setItem(numRows, 7, QTableWidgetItem(str(self.ui.replace.text())))
-		
-		#print(numRows)
+
 		print(self.data_list)
 		self.main.close()
 	
@@ -139,15 +136,22 @@ class Match_and_Replace():
 		
 		for index in index_list:
 			print(index.row())
-			print(self.data_list[index.row()]["use"].isChecked())
 			print(self.data_list[index.row()]["use"])
-			if(self.data_list[index.row()]["use"].isChecked()):
+			if(self.data_list[index.row()]["use"] == "False"):
 				print("enabled_list append")
-				self.enabled_list.append(self.data_list[index.row()])
+				self.data_list[index.row()]["use"] = "True"
+				self.enabled_list.append(self.data_list[index.row()])	
 			else:
 				print("enabled_list remove!")
-				print(self.data_list[index.row()]["use"].isChecked())
-				self.enabled_list.remove(self.data_list[index.row()])
+				self.data_list[index.row()]["use"] = "False"
+				print("enabled_length")
+				print(len(self.enabled_list))
+				for count in range(0, len(self.enabled_list)):
+					if self.enabled_list[count]['idx'] == self.data_list[index.row()]['idx']:
+						print("delete enabled_list")
+						del self.enabled_list[count]
+						break
+		print("enabled_list: ")
 		print(self.enabled_list)
 		
 	def add_cancelbtn_clicked(self):
@@ -173,19 +177,34 @@ class Match_and_Replace():
 		self.ui.match.textEdited.connect(self.match_text_changed)
 		self.ui.replace.textEdited.connect(self.replace_text_changed)
 		
-		#self.ui.match.textChanged.connect(self.text_changed)
-		#self.ui.match.setInputMask('HH-'*500)
-		#self.ui.match.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
 		self.main.show()
 
+	def modify_enable_handler_add(self, my_dict):
+		# enabled check 되어 있으면 등록
+		print("enabled_list append")
+		self.enabled_list.append(my_dict)	
+		print("enabled_list")
+		print(self.enabled_list)
+
+	def modify_enable_handler_remove(self, my_dict):
+		# enabled_list remove!
+			
+		print("enabled_list remove!")
+		print("enabled_length")
+		print(len(self.enabled_list))
 		
+		for count in range(0, len(self.enabled_list)):
+			if self.enabled_list[count]['idx'] == my_dict['idx']:
+				print("delete enabled_list")
+				del self.enabled_list[count]
+				break
+			
 	def modify_modifybtn_clicked(self):
 		print("modify_modifybtn_clicked!")
 		
-		pCheckBox = QCheckBox()
 
 		my_dict = {}
-		my_dict["use"] = pCheckBox
+		my_dict["use"] = self.ui.use.text()
 		my_dict["idx"] = self.ui.idx.text()
 		my_dict["name"] = self.ui.name.text()
 		my_dict["function"] = self.ui.function.currentText()
@@ -194,38 +213,15 @@ class Match_and_Replace():
 		my_dict["match"] = self.ui.match.text()
 		my_dict["replace"] = self.ui.replace.text()
 		
+		
 		self.modify(my_dict)
+		
+		# enabled check 되어 있으면 등록
+		if(my_dict["use"] == "True"):
+			self.modify_enable_handler_add(my_dict)
+		
+		#refresh data and gui
 		self.refresh()
-		#show list
-		#numRows = self.tableWidget.rowCount()
-		#self.tableWidget.insertRow(numRows)
-		
-		# checkbox with aligncenter
-		'''
-		pWidget = QWidget()
-		pCheckBox = QCheckBox()
-		pLayout = QHBoxLayout(pWidget)
-		pLayout.addWidget(pCheckBox)
-		pLayout.setAlignment(Qt.AlignCenter)
-		pLayout.setContentsMargins(0,0,0,0)
-		pWidget.setLayout(pLayout)
-		'''
-		'''
-		self.tableWidget.setCellWidget(numRows, 0, pCheckBox)
-		
-		# checkbox click listener
-		pCheckBox.clicked.connect(self.enable_checkbox_clicked)
-		
-		#self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.tableWidget_count)))
-		self.tableWidget.setItem(numRows, 1, QTableWidgetItem(str(self.ui.name.text())))
-		self.tableWidget.setItem(numRows, 2, QTableWidgetItem(str(self.ui.function.currentText())))
-		self.tableWidget.setItem(numRows, 3, QTableWidgetItem(str(self.ui.ip.text())))
-		self.tableWidget.setItem(numRows, 4, QTableWidgetItem(str(self.ui.port.text())))
-		self.tableWidget.setItem(numRows, 5, QTableWidgetItem(str(self.ui.match.text())))
-		self.tableWidget.setItem(numRows, 6, QTableWidgetItem(str(self.ui.replace.text())))
-		
-		#print(numRows)
-		'''
 		
 		print(self.data_list)
 		
@@ -233,6 +229,20 @@ class Match_and_Replace():
 
 	def modify_cancelbtn_clicked(self):
 		print("cancel clicked!")
+
+		my_dict = {}
+		my_dict["use"] = self.ui.use.text()
+		my_dict["idx"] = self.ui.idx.text()
+		my_dict["name"] = self.ui.name.text()
+		my_dict["function"] = self.ui.function.currentText()
+		my_dict["ip"] = self.ui.ip.text()
+		my_dict["port"] = self.ui.port.text()
+		my_dict["match"] = self.ui.match.text()
+		my_dict["replace"] = self.ui.replace.text()
+		
+		# enabled check 되어 있으면 등록
+		if(my_dict["use"] == "True"):
+			self.modify_enable_handler_add(my_dict)
 		self.main.close()
 	
 	#def ip_textEvent(self):
@@ -253,23 +263,13 @@ class Match_and_Replace():
 		self.ui.setupUi(self.main)
 		self.ui.idx.hide()
 		self.ui.use.hide()
-		# window event init
 		
 		self.ui.modify_btn.clicked.connect(self.modify_modifybtn_clicked)
 		self.ui.cancel_btn.clicked.connect(self.modify_cancelbtn_clicked)
-		
-		self.ui.use = my_dict["use"]
+
 		self.ui.idx.setText(idx)
-		'''
-		my_dict["use"] = pCheckBox
-		my_dict["idx"] = str(self.tableWidget_count)
-		my_dict["name"] = self.ui.name.text()
-		my_dict["function"] = self.ui.function.currentText()
-		my_dict["ip"] = self.ui.ip.text()
-		my_dict["port"] = self.ui.port.text()
-		my_dict["match"] = self.ui.match.text()
-		my_dict["replace"] = self.ui.replace.text()
-		'''
+		self.ui.use.setText(my_dict['use'])
+		
 		self.ui.name.setText(my_dict["name"])
 
 		index = self.ui.function.findText(my_dict["function"], Qt.MatchFixedString)
@@ -286,10 +286,7 @@ class Match_and_Replace():
 
 		self.ui.match.textEdited.connect(self.match_text_changed)
 		self.ui.replace.textEdited.connect(self.replace_text_changed)
-		
-		#self.ui.match.textChanged.connect(self.text_changed)
-		#self.ui.match.setInputMask('HH-'*500)
-		#self.ui.match.setValidator(QRegExpValidator(QRegExp("[a-fA-F0-9]{0,1000}")))
+
 		self.main.show()		
 		
 	def text_format(self, x):
@@ -450,13 +447,20 @@ class Match_and_Replace():
 		self.open_add_window()
 
 	def tableWidget_right_click_modify_event(self):
+		print("tableWidget_right_click_modify_event called!")
 		index_list = []                                                          
 		for model_index in self.tableWidget.selectionModel().selectedRows():       
 			index = QPersistentModelIndex(model_index)         
 			index_list.append(index)
-		idx = self.data_list[index_list[0].row()]['idx']
+			
+		my_dict = self.data_list[index_list[0].row()]
+		idx = my_dict['idx']
 		print("IDX: "+idx)
 		self.open_modify_window(idx)
+		
+		# enabled_list remove!
+		if my_dict["use"] == "True":	
+			self.modify_enable_handler_remove(my_dict)
 		
 	def tableWidget_right_click_remove_event(self):
 		index_list = []                                                          
@@ -511,16 +515,21 @@ class Match_and_Replace():
 		self.ui.tableWidget_proxyHistory.setColumnWidth(5,size/3/1)	
 		'''
 		
-	def resize(self):
+	def resize(self, size):
+		print("match_and_replace resize called!")
 		# match and replace column size init
-		size = self.tableWidget.width()
+		#size = self.tableWidget.width()
 		#default minimum size 978.. but initial size 622
 		if(size < 978):
 			size = 978
-		self.tableWidget.setColumnWidth(0,size/3/5/1)
-		self.tableWidget.setColumnWidth(1,size/3/5/1)
-		self.tableWidget.setColumnWidth(2,size/3/5/1)
-		self.tableWidget.setColumnWidth(3,size/3/5/1)
-		self.tableWidget.setColumnWidth(4,size/3/5/1)
-		self.tableWidget.setColumnWidth(5,size/3/1)
+		print(size)
+		self.tableWidget.setColumnWidth(0,size/3/6/1)
+		self.tableWidget.setColumnWidth(1,size/3/6/1)
+		self.tableWidget.setColumnWidth(2,size/3/6/1)
+		self.tableWidget.setColumnWidth(3,size/3/6/1)
+		self.tableWidget.setColumnWidth(4,size/3/6/1)
+		self.tableWidget.setColumnWidth(5,size/3/6/1)
 		self.tableWidget.setColumnWidth(6,size/3/1)
+		self.tableWidget.setColumnWidth(7,size/3/1)
+		
+		#return size
