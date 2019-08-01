@@ -99,7 +99,10 @@ class MyWindow(QMainWindow):
 		self.ui.checkBox_encryptmessage.stateChanged.connect(self.click_hook_encryptmessage)
 		self.ui.checkBox_decryptmessage.stateChanged.connect(self.click_hook_decryptmessage)
 		
-
+		self.ui.pushButton_refreshAgetnt.clicked.connect(self.refreshFridaAgent)
+	
+	def refreshFridaAgent(self):
+		self.frida_agent.init_fridaAgent()
 	
 	def click_hook_send(self, state):
 		print("MyWindow click_hook_send called!")

@@ -1994,6 +1994,13 @@ QDateEdit::down-arrow:focus
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="pushButton_refreshAgetnt">
+                  <property name="text">
+                   <string>agent refresh</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QCheckBox" name="checkBox_autoScroll">
                   <property name="text">
                    <string>Auto Scroll</string>

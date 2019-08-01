@@ -102,6 +102,19 @@ class FridaAgent(QObject):
 		#monitor_thread.start()
 		self.queue_monitor = Queue_Monitor(self)
 	
+	def init_fridaAgent(self):
+		print("REFRESH %!%!%!%!%!%!%!%!%!%%!%!")
+		for pid in self.session_list:
+			self.session_list[pid].detach()
+			self.current_isIntercept = False
+			self.script_list = {}
+			self.thread_queue = queue.Queue()
+			
+			self.session_list[pid] = frida.attach(int(pid))
+			self.script_list[pid] = {}
+			self.inject_script(pid)
+			
+			
 	# 프로세스를 실행시키고 frida를 inject한 후 resume 그리고 pid를 return 함.
 	def start_process(self,cmd, args):
 		print("FridaAgent start_process called!")
@@ -262,6 +275,7 @@ class FridaAgent(QObject):
 			
 			script = session.create_script(script)
 			self.script_list[pid].update({func_name:script})
+			self.hook_list.append(func_name)
 			
 			script.on('message', self.on_message)
 			script.load()
@@ -273,6 +287,7 @@ class FridaAgent(QObject):
 			session = self.session_list[pid]
 
 			self.script_list[pid][func_name].unload()
+			self.hook_list.remove(func_name)
 			self.gui_window.ui.textBrowser_log.append("[-] [PID:{}] UnHook {} Function".format(pid,func_name))
 			
 				
