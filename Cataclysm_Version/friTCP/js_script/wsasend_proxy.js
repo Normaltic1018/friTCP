@@ -66,9 +66,6 @@ Interceptor.attach(hookPtr,{
 		var buf_address = WSA_buffer_address;
 		var buf_length = WSA_buffer_length;
 
-		// if buf_length is so large, it becomes very slow as it stop...
-		//if(buf_length > 4096){buf_length = 4096;}
-
 		console.log(buf_address);
 		console.log(buf_length);
 		var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});

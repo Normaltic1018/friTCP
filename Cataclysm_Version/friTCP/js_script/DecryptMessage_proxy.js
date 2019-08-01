@@ -87,11 +87,7 @@ Interceptor.attach(hookPtr,{
 		
 		console.log("buf_len : " + buf_length);
 		console.log("buf_address : " + buf_address);
-		
-		//console.log(Memory.readByteArray(buf_address,32));
-		// if buf_length is so large, it becomes very slow as it stop...
-		//if(buf_length > 4096){buf_length = 4096;}
-		
+				
 		if((buf_address === undefined || buf_address === null || buf_length === undefined || buf_length ===null) == false){
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 				

@@ -78,7 +78,7 @@ Interceptor.attach(hookPtr,{
 			
 			console.log("BUF Address : " + buf_address);
 			console.log("BUF Length : " + buf_length);
-			//if(buf_length > 4096){buf_length = 4096;}
+			
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 
 			console.log("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);			

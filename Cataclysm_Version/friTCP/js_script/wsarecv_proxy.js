@@ -63,9 +63,6 @@ for(var key in hook_diction){
 			var socket_fd = this.sock.toInt32();
 			var socket_address = Socket.peerAddress(socket_fd);
 
-			// if buf_length is so large, it becomes very slow as it stop...
-			//if(buf_length > 4096){buf_length = 4096;}
-
 			var buf_address = this.wsa_buffer_address;
 			var buf_length = this.wsa_buffer_length;
 

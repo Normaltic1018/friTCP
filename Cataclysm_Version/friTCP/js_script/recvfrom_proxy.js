@@ -62,9 +62,6 @@ for(var key in hook_diction){
 			var buf_address = ptr(this.buf);
 			var buf_length = retVal.toInt32();
 
-			// if buf_length is so large, it becomes very slow as it stop...
-			if(buf_length > 4096){buf_length = 4096;}
-
 			var res = hexdump(buf_address,{offset:0,length:buf_length,header:false,ansi:false});
 			
 			send("[PROXY]"+"[PID]"+Process.id+" [FUNC_NAME]"+hook_function_name+" [IP]"+socket_address.ip+" [PORT]"+socket_address.port+" "+"[HEXDUMP]"+buf_length+" " + res);
